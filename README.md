@@ -2,7 +2,7 @@ Fungalmaterials
 ===
 
 ### Description
-A curated list of fungal material references
+A curated list of fungal material references.
 
 
 ### Contributing
