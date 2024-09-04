@@ -2,7 +2,7 @@ Fungalmaterials
 ===
 
 ### Description
-Fungalmaterials is a database for fungal materials.
+A curated list of fungal material references
 
 
 ### Contributing
