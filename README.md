@@ -40,7 +40,9 @@ Sometimes pip has to be used as a python3 module, instead of using `pip` you wou
 
 3. Make a local environment setup
 
-To do this, you have to create a dotenv file, named `.env` with contents suitable for your setup. An example is provided in `env-example`.
+The current configuration automatically uses an insecure token and local SQLite DB for development purposes.
+To override this you have to create a dotenv file, (aptly named `.env`) with contents suitable for your setup. An example is provided in `env-example`.
+
 
 4. Once your environment is setup, you can start the django development server and optionally run migrations:
 
