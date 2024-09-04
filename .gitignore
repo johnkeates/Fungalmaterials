@@ -1,0 +1,10 @@
+# FILES THAT GIT NEEDS TO IGNORE
+db.sqlite3
+venv
+.venv
+.DS_Store
+__pycache__/
+.env
+.idea
+.DS_Store
+node_modules
