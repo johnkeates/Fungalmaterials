@@ -1,0 +1,28 @@
+/* Navbar CSS */
+
+.navbar {
+    background-color: #f3f3f3;
+    font-size: 19px;
+    min-height: 40px;
+    margin-bottom: 30px;
+    /*border: 2px solid red;*/
+}
+
+.navbar ul li a {
+    color: #000000 !important;
+}
+
+.navbar ul li a:hover {
+    background-color: #000000;
+    border-radius: 5px;
+    color: white !important;
+}
+
+.navbar-nav li .nav-item { 
+    margin: 0; 
+    padding: 0;
+}
+
+.nav-link {
+    border-radius: 5px;
+}

@@ -3,6 +3,16 @@ from django.http import HttpResponse
 
 
 def articles(request):
-    return HttpResponse("Hello, world.")
+	context = {}
+	return render(request, "main/articles.html", context)
 
-# Create your views here.
+
+def reviews(request):
+	context = {}
+	return render(request, "main/reviews.html", context)
+
+
+def about(request):
+	context = {}
+	return render(request, "main/about.html", context)
+

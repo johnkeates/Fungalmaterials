@@ -1,0 +1,26 @@
+/* General CSS */
+
+/* Greybar */
+#grey-bar {
+    background-color: #DCDCDC;
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+/* Searchbar */
+#searchbar, .searchbar {
+    min-width: 335px;
+    padding: 10px 0px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 575.98px) {
+    #searchbar, .searchbar {
+        width: 100%;
+    }
+}
