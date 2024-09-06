@@ -1,7 +1,6 @@
-import json
 from asyncio.log import logger
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Max, Min, Count, Q, F, Value, IntegerField, Subquery, OuterRef
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Species, Substrate, Topic, Method, Article, Review
@@ -20,96 +19,83 @@ def articles(request):
 
 
 def articles_search(request):
-	# Get the start position as requested by DataTables
-	startPositionString = request.GET.get('start')
-	# Get the search value (if any)
-	searchQuery = request.GET.get('search[value]')
+	# Get the start position and search value
+	start_position = int(request.GET.get('start', 0))
+	search_query = request.GET.get('search[value]', '')
 
-	try:
-		startPosition = abs(int(startPositionString))
-	except TypeError:
-		logger.critical("startPosition not an integer, setting to 0")
-		startPosition = 0
-	except ValueError:
-		logger.critical("startPosition not usable, setting to 0")
-		startPosition = 0
-
+	# Default sorting parameters
 	record_order_sorting = "asc"
-
 	record_column_id = 0
 
 	field_to_column = {
 		"0": "title",
 		"1": "authors",
 		"2": "year",
-		"3": "topic",
-		"4": "method",
+		# "3": "topic",
+		# "4": "method",
 	}
 
-	for url_parameter in request.GET.dict():
-		if url_parameter.startswith("order"):
-			if "dir" in url_parameter:
-				record_order_sorting = "desc" if request.GET.get(url_parameter) == "desc" else "asc"
-			if "column" in url_parameter:
-				record_column_id = request.GET.get(url_parameter)
-		if url_parameter.startswith("columns") and "[data]" in url_parameter:
-			parts = url_parameter.split("]")[0].split("[")
-			if len(parts) == 2:
-				col_id = parts[1]
-				field_value = request.GET.get(url_parameter)
-				field_parts = field_value.split(".")
-				if len(field_parts) == 2:
-					field_to_column[col_id] = field_parts[1]
+	# Process sorting parameters
+	order_column_index = request.GET.get('order[0][column]', '0')
+	order_direction = request.GET.get('order[0][dir]', 'asc')
 
-	if record_column_id in field_to_column:
-		record_order_field = field_to_column[record_column_id]
+	# Update the field to column mapping if necessary
+	if order_column_index in field_to_column:
+		order_field = field_to_column[order_column_index]
 	else:
-		record_order_field = "title"
+		order_field = "title"
 
-	# Order by the specified field, with null values last
-	if record_order_sorting == "desc":
-		record_order_field = F(record_order_field).desc(nulls_last=True)
+	# Determine sorting direction
+	if order_direction == 'desc':
+		order_field = F(order_field).desc(nulls_last=True)
 	else:
-		record_order_field = F(record_order_field).asc(nulls_last=True)
+		order_field = F(order_field).asc(nulls_last=True)
 
-	unfilteredCount = Article.objects.filter(approved=True).all().count()
-	filteredCount = unfilteredCount
+	# Filter and sort articles
+	article_query = Article.objects.filter(approved=True)
+	
+	if search_query:
+		article_query = article_query.filter(
+			Q(title__icontains=search_query) |
+			Q(authors__icontains=search_query) |
+			Q(year__icontains=search_query)
+		)
 
-	if searchQuery:
-		object_list = Article.objects.filter(approved=True).filter(Q(title__icontains=searchQuery) 
-			| Q(authors__icontains=searchQuery) | Q(year__icontains=searchQuery))
-		filteredCount = object_list.count()
-	else:
-		object_list = Article.objects.filter(approved=True)
+	# Apply ordering
+	article_query = article_query.order_by(order_field)
 
-	paginator = Paginator(object_list, 125)
+	# Pagination
+	paginator = Paginator(article_query, 125)
+	page_number = (start_position // 125) + 1
 
 	try:
-		object_list = paginator.page(1 + (startPosition / 125))
+		articles_page = paginator.page(page_number)
 	except PageNotAnInteger:
-		object_list = paginator.page(1)
+		articles_page = paginator.page(1)
 	except EmptyPage:
-		object_list = paginator.page(paginator.num_pages)
+		articles_page = paginator.page(paginator.num_pages)
 
+	# Prepare the data payload
 	payload = []
-	for article in object_list:
-		if article.approved:  # check if the article is approved
-			# Split the authors string by commas and take the first author
-			first_author = article.authors.split(',')[0].strip() if article.authors else ''
+	for article in articles_page:
+		first_author = article.authors.split(',')[0].strip() if article.authors else ''
+		payload.append({
+			"title": article.title,
+			"authors": first_author,
+			"year": article.year,
+			"topic": list(article.topic.values_list('name', flat=True)),
+			"method": list(article.method.values_list('name', flat=True)),
+			"pk": article.pk,
+		})
 
-			payload.append({
-				"title": article.title,
-				"authors": first_author,
-				"year": article.year,
-				# Serialize ManyToMany fields to lists of names
-				"topic": list(article.topic.values_list('name', flat=True)),
-				"method": list(article.method.values_list('name', flat=True)),
-				"pk": article.pk,
-			})
+	# Prepare response data
+	response_data = {
+		"recordsTotal": paginator.count,
+		"recordsFiltered": article_query.count(),
+		"data": payload,
+	}
 
-	return HttpResponse('{"recordsTotal": ' + str(unfilteredCount) + ', "recordsFiltered": ' + str(
-		filteredCount) + ',"data": ' + json.dumps(payload) + "}",
-		content_type='application/json')
+	return JsonResponse(response_data)
 
 
 def articles_info(request, pk):
