@@ -5,6 +5,9 @@
 <html lang="en">
 <head>
 
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -30,6 +33,10 @@
 			background-color: #f3f3f3;
 		}
 
+		.navbar-nav .nav-link {
+            color: #fff;
+        }
+
 		/* Style for large screen (above xl) */
 		@media (min-width: 1200px) {
 
@@ -54,22 +61,22 @@
 			}
 		}
 
-		.bottom-shadow {
+		/*.bottom-shadow {
 			box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.09);
-		}
+		}*/
 	</style>
 
 </head>
 
 <body>
 <!-- TEXT ABOVE NAVBAR ITEMS -->
-<div class="text-center py-2 nav-background">
+<!-- <div class="text-center py-2 nav-background">
 	<a class="navbar-brand mx-auto" href="/" style="font-family: 'Monaco', monospace; color: black; text-decoration: none;">fungalmaterials.com</a>
-</div>
+</div> -->
 <!-- NAVBAR -->
-<div class="row-fluid bottom-shadow nav-background">
+<div class="row-fluid shadow-sm nav-background">
 	<div class="container" id="container-navbar">
-		<nav class="navbar navbar-expand-md navbar-light ">
+		<nav class="navbar navbar-expand-md navbar-light">
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 					data-bs-target="#navbarNavDropdown"
 					aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">

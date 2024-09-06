@@ -3,9 +3,8 @@
 .navbar {
     background-color: #f3f3f3;
     font-size: 19px;
-    min-height: 40px;
+    min-height: 75px;
     margin-bottom: 30px;
-    /*border: 2px solid red;*/
 }
 
 .navbar ul li a {
