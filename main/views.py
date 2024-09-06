@@ -93,9 +93,12 @@ def articles_search(request):
 	payload = []
 	for article in object_list:
 		if article.approved:  # check if the article is approved
+			# Split the authors string by commas and take the first author
+			first_author = article.authors.split(',')[0].strip() if article.authors else ''
+
 			payload.append({
 				"title": article.title,
-				"authors": article.authors,
+				"authors": first_author,
 				"year": article.year,
 				# Serialize ManyToMany fields to lists of names
 				"topic": list(article.topic.values_list('name', flat=True)),
