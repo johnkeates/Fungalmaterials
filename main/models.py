@@ -57,19 +57,25 @@ class Article(models.Model):
     method = models.ManyToManyField(Method, blank=True)
     approved = models.BooleanField('Approved',default=False)
 
+    class Meta:
+        unique_together = ['title', 'doi']
+
     def __str__(self):
         return self.title
 
 
 # Review
 class Review(models.Model):
-    title = models.CharField(max_length=300, unique=True)
+    title = models.CharField(max_length=300)
     year = models.PositiveIntegerField()
     authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
     journal = models.CharField(max_length=100, blank=True)
     doi = models.URLField(max_length=100, unique=True, blank=True)
     topic = models.ManyToManyField(Topic, blank=True)
     approved = models.BooleanField('Approved',default=False)
+
+    class Meta:
+        unique_together = ['title', 'doi']
 
     def __str__(self):
         return self.title
@@ -80,15 +86,15 @@ class Review(models.Model):
 #     name = models.CharField(max_length=100)
 
 #     def __str__(self):
-#         return self.type
+#         return self.name
 
 
 # Material property
 # class MaterialProperty(models.Model):
-#     article = models.ForeignKey('Article', on_delete=models.CASCADE)
-#     species = models.ForeignKey('Species', on_delete=models.CASCADE)
-#     substrate = models.ForeignKey('Substrate', on_delete=models.CASCADE)
-#     treatment = models.CharField(max_length=255, blank=True)
+#     article = models.ForeignKey(Article, on_delete=models.CASCADE)
+#     species = models.ForeignKey(Species, on_delete=models.CASCADE)
+#     substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
+#     treatment = models.CharField(max_length=50, blank=True)
 #     property = models.ForeignKey(Property, on_delete=models.CASCADE)
 #     value = models.FloatField(help_text="Measured value of the property")
 #     unit = models.CharField(max_length=50, help_text="Unit of the measured property, e.g., g/cm³, MPa, etc.")
