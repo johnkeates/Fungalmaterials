@@ -68,6 +68,7 @@ class Review(models.Model):
     authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
     journal = models.CharField(max_length=100, blank=True)
     doi = models.URLField(max_length=100, unique=True, blank=True)
+    topic = models.ManyToManyField(Topic, blank=True)
     approved = models.BooleanField('Approved',default=False)
 
 
