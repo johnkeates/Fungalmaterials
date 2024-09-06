@@ -76,7 +76,8 @@ def articles_search(request):
 	filteredCount = unfilteredCount
 
 	if searchQuery:
-		object_list = Article.objects.filter(approved=True).filter(Q(title__icontains=searchQuery))
+		object_list = Article.objects.filter(approved=True).filter(Q(title__icontains=searchQuery) 
+			| Q(authors__icontains=searchQuery) | Q(year__icontains=searchQuery))
 		filteredCount = object_list.count()
 	else:
 		object_list = Article.objects.filter(approved=True)

@@ -3,6 +3,19 @@
 {% load static %}
 
 <style>
+  /* Custom colors for pill badges*/
+  .bg-LSF {
+    background-color: #0d6efd;
+    color: #fff;
+  }
+  .bg-SSF {
+    background-color: #dc3545; 
+    color: #fff;
+  }
+  .bg-FB {
+    background-color: #198754; 
+    color: #fff;
+  }
 </style>
 
 <title>Articles | Fungalmaterials</title>
@@ -30,7 +43,7 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th>Author</th>
+      <th>First author</th>
       <th>Year</th>
       <th>Topic</th>
       <th>Method</th>
@@ -76,19 +89,28 @@
       columns: [
         { "data": "title",
           "render": function ( data, type, row ) {
-                      let max_name_length = 40;
-                      if(data && data.length > max_name_length){
-                          return data.slice(0, max_name_length) + "..."
-                      }
-                      return data; }
+            let max_name_length = 40;
+            if(data && data.length > max_name_length){
+            return data.slice(0, max_name_length) + "..."}
+          return data; }
         },
         { "data": "authors" },
         { "data": "year" },
-        { "data": "topic" },
-        { "data": "method" },
-        { "data": "pk",
-        "render": function ( data, type, row ) {
-          return '<a href="#">More info</a>'; }
+        { "data": "topic", 
+          "render": function ( data, type, row ) {
+            return data.map(function(topic) {
+              return '<span class="badge rounded-pill bg-secondary">' + topic + '</span>';
+            }).join(' '); }
+        },
+        { "data": "method" ,
+          "render": function ( data, type, row ) {
+              return data.map(function(method) {
+                return '<span class="badge rounded-pill bg-' + method + '">' + method + '</span>';
+              }).join(' '); }
+        },
+        { "data": "pk", 
+          "render": function ( data, type, row ) {
+            return '<a href="#">More info</a>'; }
         },
       ],
       createdRow: function (row, data, index) {             // To make row double clickable
