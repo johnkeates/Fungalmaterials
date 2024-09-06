@@ -3,6 +3,27 @@
 {% load static %}
 
 <style>
+  .switch-button {
+    text-align: center;
+    color: black;
+    background-color: #D3D3D3;
+    width: 90px;
+    padding: 10px 0px 10px 0px;
+    border: 0px solid #ddd;
+    margin-bottom: 10px;
+  }
+  .switch-button:hover, .switch-button.active {
+    background-color: #000000;
+    color: #FFFFFF;
+  }
+  #list-articles {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  #list-species {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
   /* Custom colors for pill badges*/
   .bg-LSF {
     background-color: #0d6efd;
@@ -28,10 +49,18 @@
     </div>
 </div>
 
-<!-- SEARCH -->
+
 <div class="row">
+  <!-- SEARCH -->
   <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-8">
     <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="">
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="col-9 col-sm-9 col-md-5 col-lg-4 col-xl-4">
+    <div class="switch-buttons">
+      <button class="switch-button active" id="list-articles" disabled>Articles</button><button class="switch-button" id="list-species">Species</button>
+    </div>
   </div>
 </div>
 
