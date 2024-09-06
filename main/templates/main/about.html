@@ -3,17 +3,82 @@
 {% load static %}
 
 <style>
-	
+	#about-container {
+    	text-align: justify;
+    	margin: auto;
+  	}
+	/* For screens below 540px */
+	@media screen and (max-width: 540px) {
+		#about-container {
+	      	max-width: 650px;
+	    }
+	    .column-container span {
+	      	width: 100%;
+	    }
+	}
+	/* For screens between 541px and 992px */
+	@media screen and (min-width: 541px) and (max-width: 992px) {
+	    #about-container {
+	      	max-width: 650px;
+	    }
+	    .column-container span {
+	      	width: 50%;
+	    }
+	}
+	/* For screens above 992px */
+	@media screen and (min-width: 992px) {
+	    #about-container {
+	      	max-width: 800px;
+	    }
+	    .column-container span {
+	      	width: 33.33%;
+	    }
+	}
+	#about-container a {
+	    color: var(--text);
+	    text-decoration: none;
+	}
+	h4 {
+    	text-align: center;
+  	}
+  	#contact-box {
+	    background-color: #f5f5f5;
+	    padding: 12px;
+	    border-radius: 15px;
+	    text-align: center;
+	    max-width: 450px;
+	    margin: 0 auto;
+  	}
 </style>
 
 <title>About | Fungalmaterials</title>
 
 <meta name="description" content="A curated list of fungal material references">
 
-<div class="row" style="margin-bottom: 10px;">
-	<div class="col-12">
-        <h4>About</h4>
-    </div>
+<div id="about-container">
+
+<!-- Text -->
+<h4>Description</h4>
+<p>
+Fungalmaterials, is a curated list of fungal material references. This database is an extension of the review <i><a href="https://doi.org/10.1186/s40694-022-00134-x">Risk assessment of fungal materials</a></i>, published in 2022.
+</p>
+
+<div id="contact-box" class="shadow-sm">
+    <i class="bi bi-envelope" style="font-size: 1.15rem;"> </i> j.g.vandenbrandhof@uu.nl
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <i class="bi bi-github" style="font-size: 1rem;"> </i><a href="https://github.com/Realitijd/Fungalmaterials">Fungalmaterials</a>
+</div>
+
+<br>
+<br>
+
+<h4>Fungal materials</h4>
+<p>
+[Pure mycelium & composite mycelium]
+<br>
+[Growth methods]
+</p>
+
 </div>
 
 {% endblock %}
