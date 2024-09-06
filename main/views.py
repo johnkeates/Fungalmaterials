@@ -112,6 +112,19 @@ def articles_search(request):
 		content_type='application/json')
 
 
+def articles_info(request, pk):
+	article = Article.objects.get(id=pk)
+
+	context = {
+		'article': article,
+	}
+
+	if article.approved:
+		return render(request, "main/articles_info.html", context)
+	else:
+		return HttpResponseNotFound("<h1>Page not found</h1>")
+
+
 def reviews(request):
 	context = {}
 	return render(request, "main/reviews.html", context)

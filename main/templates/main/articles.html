@@ -20,7 +20,7 @@
 
 <title>Articles | Fungalmaterials</title>
 
-<meta name="description" content="A curated list of fungal material references">
+<meta name="description" content="Database of fungal material references">
 
 <div class="row" style="margin-bottom: 10px;">
 	<div class="col-12">
@@ -43,10 +43,10 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th>First author</th>
-      <th>Year</th>
-      <th>Topic</th>
-      <th>Method</th>
+      <th class="desktop large-only">First author</th>
+      <th class="desktop large-only">Year</th>
+      <th class="desktop tablet-l">Topic</th>
+      <th class="desktop tablet-l">Method</th>
       <th></th>
     </tr>
   </thead>
@@ -110,7 +110,7 @@
         },
         { "data": "pk", 
           "render": function ( data, type, row ) {
-            return '<a href="#">More info</a>'; }
+            return '<a href="/articles/' + data + '">More info</a>'; }
         },
       ],
       createdRow: function (row, data, index) {             // To make row double clickable
