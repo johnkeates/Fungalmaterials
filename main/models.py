@@ -64,7 +64,7 @@ class Article(models.Model):
 # Review
 class Review(models.Model):
     title = models.CharField(max_length=300, unique=True)
-    year = models.PositiveIntegerField(null=True)
+    year = models.PositiveIntegerField()
     authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
     journal = models.CharField(max_length=100, blank=True)
     doi = models.URLField(max_length=100, unique=True, blank=True)
