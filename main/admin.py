@@ -42,6 +42,13 @@ class ArticleAdmin(admin.ModelAdmin):
     filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
     autocomplete_fields = ('species', 'substrate', 'topic', 'method')
 
+    # disable green "+" buttons to add new objects
+    def get_form(self, request, obj=None, **kwargs):
+    	form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
+    	form.base_fields['topic'].widget.can_add_related = False
+    	form.base_fields['method'].widget.can_add_related = False
+    	return form
+
 
 # Review
 @admin.register(Review)
@@ -52,4 +59,11 @@ class ReviewAdmin(admin.ModelAdmin):
 	filter_horizontal = ('topic',)
 	autocomplete_fields = ('topic',)
 
-	
+	# disable green "+" buttons to add new objects
+	def get_form(self, request, obj=None, **kwargs):
+		form = super(ReviewAdmin, self).get_form(request, obj, **kwargs)
+		form.base_fields['topic'].widget.can_add_related = False
+		return form
+
+		
+
