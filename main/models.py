@@ -50,7 +50,7 @@ class Article(models.Model):
     year = models.PositiveIntegerField()
     authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
     journal = models.CharField(max_length=100, blank=True)
-    doi = models.URLField(unique=True, blank=True)
+    doi = models.URLField(max_length=100, unique=True, blank=True)
     species = models.ManyToManyField(Species, blank=True)
     substrate = models.ManyToManyField(Substrate, blank=True)
     topic = models.ManyToManyField(Topic, blank=True)
@@ -59,6 +59,17 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# Review
+class Review(models.Model):
+    title = models.CharField(max_length=300, unique=True)
+    year = models.PositiveIntegerField(null=True)
+    authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
+    journal = models.CharField(max_length=100, blank=True)
+    doi = models.URLField(max_length=100, unique=True, blank=True)
+    approved = models.BooleanField('Approved',default=False)
+
 
 
 # Property
