@@ -37,11 +37,10 @@ class MethodAdmin(admin.ModelAdmin):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'year', 'approved')
-    list_filter = ('approved', 'year', 'species', 'substrate', 'topic', 'method')
     search_fields = ('title', 'authors')
     ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
     filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
-    autocomplete_fields = ('species', 'substrate')
+    autocomplete_fields = ('species', 'substrate', 'topic', 'method')
 
 
 # Review
@@ -50,3 +49,7 @@ class ReviewAdmin(admin.ModelAdmin):
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title', 'authors')
 	ordering = ('-year', 'title')
+	filter_horizontal = ('topic',)
+	autocomplete_fields = ('topic',)
+
+	
