@@ -71,6 +71,8 @@ class Review(models.Model):
     topic = models.ManyToManyField(Topic, blank=True)
     approved = models.BooleanField('Approved',default=False)
 
+    def __str__(self):
+        return self.title
 
 
 # Property
