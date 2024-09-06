@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Species, Substrate, Topic, Method, Article
+from .models import Species, Substrate, Topic, Method, Article, Review
 
 # Species
 @admin.register(Species)
@@ -36,9 +36,17 @@ class MethodAdmin(admin.ModelAdmin):
 # Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'year', 'journal', 'approved')
+    list_display = ('title', 'year', 'approved')
     list_filter = ('approved', 'year', 'species', 'substrate', 'topic', 'method')
-    search_fields = ('title', 'authors', 'doi', 'journal')
+    search_fields = ('title', 'authors')
     ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
     filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
     autocomplete_fields = ('species', 'substrate')
+
+
+# Review
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+	list_display = ('title', 'year', 'approved')
+	search_fields = ('title', 'authors')
+	ordering = ('-year', 'title')
