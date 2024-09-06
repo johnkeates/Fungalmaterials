@@ -1,0 +1,118 @@
+/* DataTable CSS */
+
+.dataTables_filter input {
+    min-width: 335px !important;
+    padding: 10px 0px 10px 15px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 5px !important;
+    margin-bottom: 10px !important;
+}
+
+.dataTables_filter {
+    float: left !important;
+}
+
+#table_id thead tr th {
+    background-color: #DCDCDC;
+}
+
+#table_id tbody tr:not(.child-table-row):hover {
+    background-color: #f1f1f1;
+}
+
+#table_id > tbody > tr.child-table-row > td {
+    padding: 0;
+}
+
+#table_id tbody tr td {
+    border-bottom: 1px solid #dddddd !important;
+    padding: 5.5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 15px;
+}  
+
+#table_id thead tr th {
+    border: 0px !important;
+}
+
+table.dataTable.no-footer {
+    border-bottom: none;
+}
+
+#table_id a {
+    text-decoration: none;
+}
+
+#table_id_previous, #table_id_next {
+    background-color: #D3D3D3 !important;
+    width: 95px;
+    padding: 9px 0px 9px 0px;
+    border: none !important;
+    border-radius: 5px;
+    color: #000000;
+}
+
+.paginate_button.current {
+    background-color: #C0C0C0 !important;
+}
+
+.paginate_button {
+    background-color: #D3D3D3;
+    padding: 10px 0px 10px 0px;
+    border-radius: 5px !important;
+}
+
+.dataTables_filter {
+    display: none;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: none;
+    text-align: center;
+    padding-top: .25em;
+    margin-top: 15px;
+}
+
+/* Mytable CSS */
+
+.myTable {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: auto;
+}
+
+.myTable th {
+    padding: 8px;
+    padding-left: 12px;
+}
+
+.myTable td {
+    border-bottom: 1px solid #dddddd;
+    padding: 4.75px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 15px;
+}
+
+.myTable tbody:hover {
+    background-color: #f1f1f1;
+}
+
+#myTableHeader {
+    background-color: #DCDCDC;
+}
+
+table th:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+table th:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.MyTable {
+    animation: fadeInAnimation ease 1.5s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
