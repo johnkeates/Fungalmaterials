@@ -5,6 +5,13 @@ from django.db import models
 class Species(models.Model):
     name = models.CharField(max_length=100, unique=True)
     alternative_names = models.TextField(blank=True, help_text="Comma-separated common names or synonyms")
+    phylum_choice = (
+        ('Basidiomycota','Basidiomycota'),
+        ('Ascomycota','Ascomycota'),
+        ('Blastocladiomycota','Blastocladiomycota'),
+        ('Mycoromycota','Mycoromycota'),
+        ('Opisthosporidia','Opisthosporidia'))
+    phylum = models.CharField(max_length=20, choices=phylum_choice, blank=True)
 
     class Meta:
         verbose_name_plural = "Species" 
