@@ -111,6 +111,20 @@
 
 <!-- ADD SCRIPTS -->
 <script>
+    // Add target="_blank" and rel="noopener noreferrer" to all external links
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all anchor tags
+        const links = document.querySelectorAll('a[href^="http"]');
+
+        // Loop through each link
+        links.forEach(link => {
+            // Check if the link is external (starts with http or https, and is not the current domain)
+            if (link.hostname !== window.location.hostname) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            }
+        });
+    });
 </script>
 
 </body>
