@@ -1,12 +1,21 @@
 from django.contrib import admin
-from .models import Species, Substrate, Topic, Method, Article, Review
+from .models import Author, Species, Substrate, Topic, Method, Article, Review
+
+
+# Author
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+	list_display = ('name',)  # Fields to display in the list view
+	search_fields = ('name',)  # Searchable fields
+	ordering = ('name',)  # Order by the 'name' field
+
 
 # Species
 @admin.register(Species)
 class SpeciesAdmin(admin.ModelAdmin):
-	list_display = ('name',)  # Fields to display in the list view
-	search_fields = ('name', 'alternative_names')  # Searchable fields
-	ordering = ('name',)  # Order by the 'name' field
+	list_display = ('name',)
+	search_fields = ('name', 'alternative_names')
+	ordering = ('name',)
 
 
 # Substrate
@@ -41,7 +50,7 @@ class ArticleAdmin(admin.ModelAdmin):
 	search_fields = ('title', 'authors')
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
 	filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
-	autocomplete_fields = ('species', 'substrate', 'topic', 'method')
+	autocomplete_fields = ('authors', 'species', 'substrate', 'topic', 'method')
 
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):
@@ -59,7 +68,7 @@ class ReviewAdmin(admin.ModelAdmin):
 	search_fields = ('title', 'authors')
 	ordering = ('-year', 'title')
 	filter_horizontal = ('topic',)
-	autocomplete_fields = ('topic',)
+	autocomplete_fields = ('authors', 'topic')
 
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):

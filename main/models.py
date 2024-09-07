@@ -17,6 +17,15 @@ class Date(models.Model):
 		abstract = True 
 
 
+# Author
+class Author(models.Model):
+	name = models.CharField(max_length=50, unique=True, 
+		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
+
+	def __str__(self):
+		return self.name
+
+
 # Species
 class Species(models.Model):
 	name = models.CharField(max_length=100, unique=True)
@@ -63,7 +72,8 @@ class Method(models.Model):
 # Article
 class Article(Date):
 	title = models.CharField(max_length=300)
-	authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
+	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)", 
+		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
@@ -84,7 +94,8 @@ class Article(Date):
 # Review
 class Review(Date):
 	title = models.CharField(max_length=300)
-	authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
+	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)", 
+		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)

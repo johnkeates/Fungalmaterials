@@ -78,7 +78,7 @@ def articles_search(request):
 	# Prepare the data payload
 	payload = []
 	for article in articles_page:
-		first_author = article.authors.split(',')[0].strip() if article.authors else ''
+		first_author = article.authors.values_list('name', flat=True).first()
 		payload.append({
 			"title": article.title,
 			"authors": first_author,
