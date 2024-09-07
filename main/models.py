@@ -6,9 +6,12 @@ from datetime import datetime
 # Date
 class Date(models.Model):
 	current_year = datetime.now().year
-	year = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1850), MaxValueValidator(current_year + 1)])
-	month = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
-	day = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(31)])
+	year = models.PositiveIntegerField(help_text="Year published online",
+		blank=True, null=True, validators=[MinValueValidator(1850), MaxValueValidator(current_year + 1)])
+	month = models.PositiveIntegerField(help_text="Month published online",
+		blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
+	day = models.PositiveIntegerField(help_text="Day published online",
+		blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(31)])
 
 	class Meta:
 		abstract = True 
