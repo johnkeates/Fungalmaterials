@@ -1,84 +1,95 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import datetime
+
+
+# Date
+class Date(models.Model):
+	current_year = datetime.now().year
+	year = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1850), MaxValueValidator(current_year + 1)])
+	month = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(12)])
+	day = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(31)])
+
+	class Meta:
+		abstract = True 
 
 
 # Species
 class Species(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    alternative_names = models.TextField(blank=True, help_text="Comma-separated common names or synonyms")
-    phylum_choice = (
-        ('Basidiomycota','Basidiomycota'),
-        ('Ascomycota','Ascomycota'),
-        ('Blastocladiomycota','Blastocladiomycota'),
-        ('Mycoromycota','Mycoromycota'),
-        ('Opisthosporidia','Opisthosporidia'))
-    phylum = models.CharField(max_length=20, choices=phylum_choice, blank=True)
+	name = models.CharField(max_length=100, unique=True)
+	alternative_names = models.TextField(blank=True, help_text="Comma-separated common names or synonyms")
+	phylum_choice = (
+		('Basidiomycota','Basidiomycota'),
+		('Ascomycota','Ascomycota'),
+		('Blastocladiomycota','Blastocladiomycota'),
+		('Mycoromycota','Mycoromycota'),
+		('Opisthosporidia','Opisthosporidia'))
+	phylum = models.CharField(max_length=20, choices=phylum_choice, blank=True)
 
-    class Meta:
-        verbose_name_plural = "Species" 
+	class Meta:
+		verbose_name_plural = "Species" 
 
-    def __str__(self):
-        return self.name
+	def __str__(self):
+		return self.name
 
 
 # Substrate 
 class Substrate(models.Model):
-    name = models.CharField("Substrate/Medium", max_length=100, unique=True)
+	name = models.CharField("Substrate/Medium", max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
+	def __str__(self):
+		return self.name
 
 
 # Topic
 class Topic(models.Model):
-    name = models.CharField(max_length=20, unique=True)
+	name = models.CharField(max_length=20, unique=True)
 
-    def __str__(self):
-        return self.name
+	def __str__(self):
+		return self.name
 
 
 # Method
 class Method(models.Model):
-    name = models.CharField(max_length=20, unique=True)
+	name = models.CharField(max_length=20, unique=True)
 
-    def __str__(self):
-        return self.name
+	def __str__(self):
+		return self.name
 
 
 # Article
-class Article(models.Model):
-    title = models.CharField(max_length=300)
-    year = models.PositiveIntegerField()
-    authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
-    journal = models.CharField(max_length=100, blank=True)
-    doi = models.URLField(max_length=100, unique=True, blank=True)
-    species = models.ManyToManyField(Species, blank=True)
-    substrate = models.ManyToManyField(Substrate, blank=True, verbose_name="Substrate/Medium")
-    topic = models.ManyToManyField(Topic, blank=True)
-    method = models.ManyToManyField(Method, blank=True)
-    approved = models.BooleanField('Approved',default=False)
+class Article(Date):
+	title = models.CharField(max_length=300)
+	authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
+	journal = models.CharField(max_length=100, blank=True)
+	doi = models.URLField(max_length=100, unique=True, blank=True)
+	species = models.ManyToManyField(Species, blank=True)
+	substrate = models.ManyToManyField(Substrate, blank=True, verbose_name="Substrate/Medium")
+	topic = models.ManyToManyField(Topic, blank=True)
+	method = models.ManyToManyField(Method, blank=True)
+	approved = models.BooleanField('Approved',default=False)
 
-    class Meta:
-        unique_together = ['title', 'doi']
+	class Meta:
+		unique_together = ['title', 'doi']
 
-    def __str__(self):
-        return self.title
+	def __str__(self):
+		return self.title
 
 
 # Review
-class Review(models.Model):
-    title = models.CharField(max_length=300)
-    year = models.PositiveIntegerField()
-    authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
-    journal = models.CharField(max_length=100, blank=True)
-    doi = models.URLField(max_length=100, unique=True, blank=True)
-    topic = models.ManyToManyField(Topic, blank=True)
-    approved = models.BooleanField('Approved',default=False)
+class Review(Date):
+	title = models.CharField(max_length=300)
+	authors = models.TextField(help_text="Comma-separated list of authors", blank=True)
+	journal = models.CharField(max_length=100, blank=True)
+	doi = models.URLField(max_length=100, unique=True, blank=True)
+	topic = models.ManyToManyField(Topic, blank=True)
+	approved = models.BooleanField('Approved',default=False)
 
-    class Meta:
-        unique_together = ['title', 'doi']
+	class Meta:
+		unique_together = ['title', 'doi']
 
-    def __str__(self):
-        return self.title
+	def __str__(self):
+		return self.title
 
 
 # Property
