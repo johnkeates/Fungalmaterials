@@ -12,11 +12,11 @@
 
 <div class="row" style="margin-bottom: 10px;">
 	<div class="col-12">
-        <h4>Article info</h4>
 
-        <br>
-
-        Article | Published:
+        <p class="text-secondary">
+        Article 
+        &nbsp;|&nbsp; 
+        Published:
         {% if article.day %}
             {{ article.day }}
         {% endif %}
@@ -27,13 +27,52 @@
             {{ article.year }}
         {% endif %}
 
+        {% if article.journal %}
+             &nbsp;|&nbsp; {{ article.journal|capfirst }}
+        {% endif %}
+        </p>
+
+        <h3>{{ article.title }} </h3>
+
         <br>
+
+        <p>
+        {% if article.authors.all %}
+            {% for author in article.authors.all %}
+                {{ author.name }}{% if not forloop.last %}; {% endif %}
+            {% endfor %}
+        {% else %}
+            No authors available.
+        {% endif %}
+
+        <br>
+        <br>
+
+        {% if article.doi %}
+            DOI: {{ article.doi }}
+        {% endif %}
+
+        <br>
+        <br>
+
+        [Abstract]
+        [Topic]
+        [Method]
+
+        <br>
+        <br>
+
+        [Species]
+        [Substrates]
+
+        </p>
+
+
         <br>
         <br>
         <br>
         <br>
 
-        {{ article.title }} {{ article.year }}
     </div>
 </div>
 
