@@ -31,10 +31,10 @@ def articles_search(request):
 
 	field_to_column = {
 		"0": "title",
-		"1": "authors",
+		# "1": "authors", # off because manytomany field
 		"2": "year",
-		# "3": "topic",
-		# "4": "method",
+		# "3": "topic", # off because manytomany field
+		# "4": "method", # off because manytomany field
 	}
 
 	# Process sorting parameters
@@ -135,9 +135,9 @@ def reviews_search(request):
 
 	field_to_column = {
 		"0": "title",
-		"1": "authors",
+		# "1": "authors", # off because manytomany field
 		"2": "year",
-		# "3": "topic",
+		# "3": "topic", # off because manytomany field
 	}
 
 	# Process sorting parameters
