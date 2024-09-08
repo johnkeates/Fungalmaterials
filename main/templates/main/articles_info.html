@@ -53,17 +53,34 @@
         {% endif %}
 
         <br>
+        
+        <br> [Abstract]
+        <br> [Topic] 
+        {% if article.topic.all %}
+            {% for topic in article.topic.all %}
+                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+            {% endfor %}
+        {% endif %}
+        
+        <br> [Method]
+        {% if article.method.all %}
+            {% for method in article.method.all %}
+                <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
+            {% endfor %}
+        {% endif %}
+
         <br>
 
-        [Abstract]
-        [Topic]
-        [Method]
+        <br> [Species]
+        {% if sorted_species %}
+            <ul class="list-group" style="max-width: 300px;">
+                {% for species in sorted_species %}
+                    <li class="list-group-item"><i>{{ species.name }}</i></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-        <br>
-        <br>
-
-        [Species]
-        [Substrates]
+        <br> [Substrates]
 
         </p>
 

@@ -102,9 +102,11 @@ def articles_search(request):
 
 def articles_info(request, pk):
 	article = Article.objects.get(id=pk)
+	sorted_species = article.species.all().order_by('name')
 
 	context = {
 		'article': article,
+		'sorted_species': sorted_species,
 	}
 
 	if article.approved:
