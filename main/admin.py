@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Author, Species, Substrate, Topic, Method, Article, Review
+from .models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, MaterialProperty
+from .forms import MaterialPropertyForm
 
 
 # Author
@@ -76,5 +77,42 @@ class ReviewAdmin(admin.ModelAdmin):
 		form.base_fields['topic'].widget.can_add_related = False
 		return form
 
-		
 
+# Property
+@admin.register(Property)
+class PropertyAdmin(admin.ModelAdmin):
+	list_display = ('name',)
+	search_fields = ('name',)
+
+
+# Unit
+@admin.register(Unit)
+class UnitAdmin(admin.ModelAdmin):
+	list_display = ('symbol', 'name')
+	search_fields = ('symbol', 'name')
+
+
+# MaterialProperty
+@admin.register(MaterialProperty)
+class MaterialPropertyAdmin(admin.ModelAdmin):
+	list_display = ('get_first_author_and_year', 'species', 'substrate', 'treatment', 'material_property', 'value', 'unit')
+	search_fields = ('article__name', 'species__name', 'substrate__name', 'material_property__name')
+	autocomplete_fields = ('article', 'species', 'substrate')
+
+	# Custom method to get the first author and year of the article
+	def get_first_author_and_year(self, obj):
+		authors = obj.article.authors.all()  # Get all authors related to the article
+		if authors.exists():
+			first_author = authors[0].name  # Get the first author's name
+		else:
+			first_author = "No author"  # Fallback if no authors are present
+		
+		# Get the year from the related article
+		year = obj.article.year if obj.article.year else "Unknown year"
+		
+		# Return the format: "Author Name (Year)"
+		return f"{first_author} ({year})"
+
+	# Rename the column in the admin panel
+	get_first_author_and_year.short_description = 'First Author (Year)'
+		
