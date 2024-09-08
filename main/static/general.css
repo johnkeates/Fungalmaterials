@@ -26,19 +26,34 @@
 }
 
 /* Add Button */
-    #add-button {
-        text-align: center;
-        color: black;
-        float: right;
-        background-color: #D3D3D3;
-        width: 110px;
-        padding: 10px 0px 10px 0px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
+#add-button {
+    text-align: center;
+    color: black;
+    float: right;
+    background-color: #D3D3D3;
+    width: 110px;
+    padding: 10px 0px 10px 0px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
 
-    #add-button:hover {
-        background-color: #000000;
-        color: #FFFFFF;
-    }
+#add-button:hover {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+/* Custom colors for pill badges*/
+.bg-LSF {
+    background-color: #0d6efd;
+    color: #fff;
+}
+.bg-SSF {
+    background-color: #dc3545; 
+    color: #fff;
+}
+.bg-FB {
+    background-color: #198754; 
+    color: #fff;
+}
+
