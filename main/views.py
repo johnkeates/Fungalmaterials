@@ -58,7 +58,9 @@ def articles_search(request):
 		article_query = article_query.filter(
 			Q(title__icontains=search_query) |
 			Q(authors__name__icontains=search_query) |
-			Q(year__icontains=search_query)
+			Q(year__icontains=search_query) |
+			Q(topic__name__icontains=search_query) |
+			Q(method__name__icontains=search_query)
 		).distinct()
 
 	# Apply ordering
