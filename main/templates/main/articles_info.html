@@ -82,8 +82,54 @@
 
         <br> [Material properties]
 
-        </p>
+        <br> [Treatment]
 
+        <br> [Overview table]
+
+        <br>
+        <br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Species</th>
+                        <th scope="col">Treatment</th>
+                        <!-- Loop through distinct properties to create table headers dynamically -->
+                        {% for x in distinct_properties %}
+                        <th scope="col">{{ x }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop over distinct treatments -->
+                    {% for treatment in distinct_treatments %}
+                    <tr>
+                        <!-- For each treatment, display the species (assuming one species per treatment) -->
+                        <td>
+                            {% for material_property in article.materialproperty_set.all %}
+                                {% if material_property.treatment == treatment %}
+                                    {{ material_property.species.name }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+
+                        <td>{{ treatment }}</td>
+
+                        <!-- For each treatment, display values for all properties -->
+                        {% for x in distinct_properties %}
+                        <td>
+                            {% for material_property in article.materialproperty_set.all %}
+                                {% if material_property.treatment == treatment and material_property.material_property.name == x %}
+                                    {{ material_property.value }} {{ material_property.unit.symbol }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </p>
 
         <br>
         <br>

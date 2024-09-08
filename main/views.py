@@ -98,10 +98,21 @@ def articles_search(request):
 def articles_info(request, pk):
 	article = Article.objects.get(id=pk)
 	sorted_species = article.species.all().order_by('name')
+	material_property = MaterialProperty.objects.filter(article=article).values_list('species', flat=True).distinct()
+
+
+	# Get distinct treatments for the article
+	distinct_treatments = MaterialProperty.objects.filter(article=article).values_list('treatment', flat=True).distinct()
+
+	# Get distinct material property names for the article (e.g., "Density", "Elongation")
+	distinct_properties = MaterialProperty.objects.filter(article=article).values_list('material_property__name', flat=True).distinct()
 
 	context = {
 		'article': article,
 		'sorted_species': sorted_species,
+		'material_property': material_property,
+		'distinct_treatments': distinct_treatments,
+		'distinct_properties': distinct_properties,
 	}
 
 	if article.approved:
