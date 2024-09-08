@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
+import calendar
 
 
 # Date
@@ -15,6 +16,11 @@ class Date(models.Model):
 
 	class Meta:
 		abstract = True 
+	
+	def get_month_name(self):
+		if self.month:
+			return calendar.month_name[self.month]
+		return ''
 
 
 # Author

@@ -14,6 +14,25 @@
 	<div class="col-12">
         <h4>Article info</h4>
 
+        <br>
+
+        Article | Published:
+        {% if article.day %}
+            {{ article.day }}
+        {% endif %}
+        {% if article.month %}
+            {{ article.get_month_name }}
+        {% endif %}
+        {% if article.year %}
+            {{ article.year }}
+        {% endif %}
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
         {{ article.title }} {{ article.year }}
     </div>
 </div>
