@@ -118,19 +118,28 @@ class Review(Date):
 
 # Property
 # class Property(models.Model):
-#     name = models.CharField(max_length=100)
+#     name = models.CharField(max_length=50, unique=True)
 
 #     def __str__(self):
 #         return self.name
 
 
-# Material property
+# # Unit
+# class Unit(models.Model):
+# 	name = models.CharField(max_length=50, unique=True, help_text="Full name of the unit (e.g. grams per cubic centimeter")
+# 	symbol = models.CharField(max_length=10, blank=True, help_text="Symbol of the unit (e.g. g/cm³)")
+
+# 	def __str__(self):
+# 		return self.name
+
+
+# # Material property
 # class MaterialProperty(models.Model):
-#     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-#     species = models.ForeignKey(Species, on_delete=models.CASCADE)
-#     substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
-#     treatment = models.CharField(max_length=50, blank=True)
-#     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-#     value = models.FloatField(help_text="Measured value of the property")
-#     unit = models.CharField(max_length=50, help_text="Unit of the measured property, e.g., g/cm³, MPa, etc.")
+# 	article = models.ForeignKey(Article, on_delete=models.CASCADE)
+# 	species = models.ForeignKey(Species, on_delete=models.CASCADE)
+# 	substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
+# 	treatment = models.CharField(max_length=50, blank=True)
+# 	material_property = models.ForeignKey(Property, on_delete=models.CASCADE)
+# 	value = models.FloatField(help_text="Measured value of the property")
+# 	unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
 
