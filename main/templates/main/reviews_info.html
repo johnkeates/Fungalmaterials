@@ -1,0 +1,75 @@
+{% extends 'main/base.html'%}
+{% block content %}
+{% load static %}
+
+<style>
+	
+</style>
+
+<title>Review info | Fungalmaterials</title>
+
+<meta name="description" content="Database of fungal material references">
+
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-12">
+
+        <p class="text-secondary">
+        Review 
+        &nbsp;|&nbsp; 
+        Published:
+        {% if review.day %}
+            {{ review.day }}
+        {% endif %}
+        {% if review.month %}
+            {{ review.get_month_name }}
+        {% endif %}
+        {% if review.year %}
+            {{ review.year }}
+        {% endif %}
+
+        {% if review.journal %}
+             &nbsp;|&nbsp; {{ review.journal|capfirst }}
+        {% endif %}
+        </p>
+
+        <h3>{{ review.title }} </h3>
+
+        <br>
+
+        <p>
+        {% if review.authors.all %}
+            {% for author in review.authors.all %}
+                {{ author.name }}{% if not forloop.last %}; {% endif %}
+            {% endfor %}
+        {% else %}
+            No authors available.
+        {% endif %}
+
+        <br>
+        <br>
+
+        {% if review.doi %}
+            DOI: {{ review.doi }}
+        {% endif %}
+
+        <br>
+        
+        <br> [Abstract]
+        <br> [Topic] 
+        {% if review.topic.all %}
+            {% for topic in review.topic.all %}
+                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+            {% endfor %}
+        {% endif %}
+        </p>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+    </div>
+</div>
+
+{% endblock %}
