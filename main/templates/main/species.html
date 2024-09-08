@@ -1,0 +1,135 @@
+{% extends 'main/base.html'%}
+{% block content %}
+{% load static %}
+
+<style>
+	
+</style>
+
+<title>Species | Fungalmaterials</title>
+
+<meta name="description" content="Database of fungal material references">
+
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-12">
+        <h4>A list of species</h4>
+    </div>
+</div>
+
+
+<div class="row">
+  <!-- SEARCH -->
+  <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-8">
+    <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="">
+  </div>
+</div>
+
+<!-- GREY BAR -->
+<div id=grey-bar></div>
+
+<!-- DATATABLE -->
+<table id="table_id" class="responsive" style="width:100%">
+  <thead>
+    <tr>
+      <th>Species</th>
+      <th>Treatment</th>
+      <th>Properties</th>
+      <th class="desktop large-only">Topic</th>
+      <th class="desktop large-only">Method</th>
+      <th>Article</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+  const dataSourceUrl = "/species/search";
+  const searchTableHandler = function(e) {
+      $('#table_id').DataTable().search($('#searchbar').val() || "").draw();
+  };
+
+  $(document).ready(function() {
+    $('#table_id').DataTable({
+      ajax: dataSourceUrl,
+      serverSide: true,
+      responsive: {
+        details: false
+      },
+      autoWidth: false,               // Disable automatic column width calculation
+      info: false,                    // Hide number of entries
+      lengthChange: false,            // Hide length of entries
+      pageLength: 125,                // Number of items per page, requires also changes in views.py
+
+      // Hide pagination buttons if there are less than 125 species
+      drawCallback: function(settings) {
+          let api = this.api();
+          let recordsDisplay = api.page.info().recordsDisplay;
+          let pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+          
+          // Hide pagination if the number of records is less than or equal to 124
+          if (recordsDisplay <= 124) {
+              pagination.hide();
+          } else {
+              pagination.show();
+          }
+      },
+
+      columns: [
+        { "data": "species" },
+        { "data": "treatment" },
+        { "data": "property" },
+        { "data": "topic", 
+          "render": function ( data, type, row ) {
+            return data.map(function(topic) {
+              return '<span class="badge rounded-pill bg-secondary">' + topic + '</span>';
+            }).join(' '); }
+        },
+        { "data": "method" ,
+          "render": function ( data, type, row ) {
+              return data.map(function(method) {
+                return '<span class="badge rounded-pill bg-' + method + '">' + method + '</span>';
+              }).join(' '); }
+        },
+        { "data": "article" },
+        { "data": "pk", 
+          "render": function ( data, type, row ) {
+            return '<a href="/articles/' + data + '">More info</a>'; }
+        },
+      ],
+      createdRow: function (row, data, index) {             // To make row double clickable
+        $(row).addClass('species-row');
+      },
+      columnDefs: [
+        { "width": "auto", "targets": [0] },
+        { "width": "auto", "targets": [1] },
+        { "width": "100px", "targets": [2] },
+        { "width": "150px", "targets": [3] },
+        { "width": "120px", "targets": [4], "searchable": false, "orderable": false },
+        { "width": "200px", "targets": [5], "searchable": false, "orderable": false },
+        { "width": "80px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false }
+      ],
+      language: {
+        paginate: {"previous": "Previous", "next": "Next"},                     // Change name of button
+        zeroRecords: 'No results found <i class="bi bi-emoji-neutral"></i>',    // Text when 0 items
+      },
+    });
+  });
+
+  $('#searchbar').on("input", $.debounce(250, searchTableHandler)); // Searchbar
+
+  $('#table_id tbody').on('dblclick', '.species-row', function () { // Doubleclick on row
+    window.location.href = $(this).find('a').attr('href');
+  });
+
+  // When the page event gets triggered, scroll back to top
+  $('#table_id').on('page.dt', function () {
+      $('html, body').animate({scrollTop: 0}, 800);
+  });
+</script>
+
+<br>
+<br>
+
+{% endblock %}

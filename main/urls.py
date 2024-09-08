@@ -10,5 +10,7 @@ urlpatterns = [
     path("reviews/", views.reviews, name="reviews"),
     path("reviews/search", views.reviews_search, name="reviews_search"),
     path("reviews/<str:pk>", views.reviews_info, name="reviews_info"),
+    path("species/", views.species, name="species"),
+    path("species/search", views.species_search, name="species_search"),
     path("about/", views.about, name="about"),
 ]
