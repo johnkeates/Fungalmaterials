@@ -33,7 +33,6 @@
     <tr>
       <th>Species</th>
       <th>Treatment</th>
-      <th>Properties</th>
       <th class="desktop large-only">Topic</th>
       <th class="desktop large-only">Method</th>
       <th>Article</th>
@@ -79,7 +78,6 @@
       columns: [
         { "data": "species" },
         { "data": "treatment" },
-        { "data": "property" },
         { "data": "topic", 
           "render": function ( data, type, row ) {
             return data.map(function(topic) {
@@ -104,10 +102,9 @@
       columnDefs: [
         { "width": "auto", "targets": [0] },
         { "width": "auto", "targets": [1] },
-        { "width": "100px", "targets": [2] },
-        { "width": "150px", "targets": [3] },
-        { "width": "120px", "targets": [4], "searchable": false, "orderable": false },
-        { "width": "200px", "targets": [5], "searchable": false, "orderable": false },
+        { "width": "auto", "targets": [2] },
+        { "width": "auto", "targets": [3] },
+        { "width": "auto", "targets": [4], "searchable": false, "orderable": false },
         { "width": "80px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false }
       ],
       language: {
