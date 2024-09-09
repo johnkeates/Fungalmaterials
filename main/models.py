@@ -83,7 +83,7 @@ class Article(Date):
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
-	# abstract = models.TextField(max_length=1500, blank=True)
+	abstract = models.TextField(max_length=1500, blank=True)
 	species = models.ManyToManyField(Species, blank=True)
 	substrate = models.ManyToManyField(Substrate, blank=True, verbose_name="Substrate/Medium")
 	topic = models.ManyToManyField(Topic, blank=True)
@@ -105,7 +105,7 @@ class Review(Date):
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
-	# abstract = models.TextField(max_length=1500, blank=True)
+	abstract = models.TextField(max_length=1500, blank=True)
 	topic = models.ManyToManyField(Topic, blank=True)
 	approved = models.BooleanField('Approved',default=False)
 
