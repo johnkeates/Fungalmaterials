@@ -3,7 +3,14 @@
 {% load static %}
 
 <style>
-	
+    h3 {
+        font-weight: 600;
+    }
+    h5 {
+        border-bottom: 2px solid #d5d5d5;
+        padding-bottom: 8px;
+        font-weight: 600;
+    }
 </style>
 
 <title>Review info | Fungalmaterials</title>
@@ -36,36 +43,57 @@
 
         <br>
 
-        <p>
+        <!-- Authors -->
         {% if review.authors.all %}
             {% for author in review.authors.all %}
                 {{ author.name }}{% if not forloop.last %}; {% endif %}
             {% endfor %}
+            <br>
+            <br>
+            <br>
         {% else %}
-            No authors available.
+            <i>No authors available</i>
+            <br>
+            <br>
+            <br>
         {% endif %}
 
-        <br>
-        <br>
 
-        {% if review.doi %}
-            DOI: {{ review.doi }}
+        <!-- Abstract -->
+        {% if review.abstract %}
+            <h5>Abstract</h5>
+            <div style="text-align: justify;">
+            {{ review.abstract }}
+            </div>
+            <br>
+            <br>
         {% endif %}
 
-        <br>
-        
-        <br> [Abstract]
-        <br> [Topic] 
-        {% if review.topic.all %}
-            {% for topic in review.topic.all %}
-                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
-            {% endfor %}
+
+        <!-- Info -->
+        {% if review.doi or review.topic.all %}
+        <h5>Info</h5>
+            <!-- Topic(s) -->
+            {% if review.topic.all %}
+                {% with review.topic.all|length as topic_count %}
+                    {% if topic_count == 1 %}
+                        Topic: 
+                    {% else %}
+                        Topics: 
+                    {% endif %}
+                    {% for topic in review.topic.all %}
+                        <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+                    {% endfor %}
+                    <br>
+                {% endwith %}
+            {% endif %}
+
+            <!-- DOI -->
+            {% if review.doi %}
+                <a href="{{ review.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ review.doi }}">DOI</a>
+                <br>
+            {% endif %}
         {% endif %}
-        </p>
-
-
-        <br>
-        <br>
         <br>
         <br>
 

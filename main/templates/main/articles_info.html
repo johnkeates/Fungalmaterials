@@ -64,7 +64,6 @@
         {% endif %}
 
         
-        
         <!-- Abstract -->
         {% if article.abstract %}
             <h5>Abstract</h5>
@@ -140,12 +139,6 @@
         <!-- Info -->
         {% if article.doi or article.topic.all or article.method.all %}
         <h5>Info</h5>
-            <!-- DOI -->
-            {% if article.doi %}
-                DOI: {{ article.doi }}
-                <br>
-            {% endif %}
-
             <!-- Topic(s) -->
             {% if article.topic.all %}
                 {% with article.topic.all|length as topic_count %}
@@ -175,8 +168,13 @@
                     <br>
                 {% endwith %}
             {% endif %}
+
+            <!-- DOI -->
+            {% if article.doi %}
+                <a href="{{ article.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ article.doi }}">DOI</a>
+                <br>
+            {% endif %}
         {% endif %}
-        <br>
         <br>
         <br>
 
