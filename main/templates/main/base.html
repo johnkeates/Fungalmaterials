@@ -117,10 +117,13 @@
 			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 			crossorigin="anonymous">
 	</script>
-</div>
 
-<!-- ADD SCRIPTS -->
-<script>
+	<script>
+		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+	</script>
+
+	<script>
 	// Add target="_blank" and rel="noopener noreferrer" to all external links
 	document.addEventListener("DOMContentLoaded", function () {
 		// Select all anchor tags
@@ -135,7 +138,9 @@
 			}
 		});
 	});
-</script>
+	</script>
+
+</div>
 
 </body>
 
