@@ -254,106 +254,54 @@ def species(request):
 
 
 def species_search(request):
-# Get the start position and search value
-	start_position = int(request.GET.get('start', 0))
-	search_query = request.GET.get('search[value]', '')
+	# Query the MaterialProperty model for all data
+	material_properties = MaterialProperty.objects.select_related('species', 'substrate', 'material_property', 'article')
+	
+	# Prepare data to send as JSON
+	data = []
+	property_names = set()  # To track unique material properties
+	property_values = {}  # To store values for each unique species, treatment, and substrate
 
-	# Default sorting parameters
-	record_order_sorting = "asc"
-	record_column_id = 0
+	for mp in material_properties:
+		species = mp.species.name
+		treatment = mp.treatment or "-"
+		substrate = mp.substrate.name
+		property_name = mp.material_property.name
+		value = mp.value
+		unit = mp.unit.symbol
+		topic = mp.article.topic
+		method = mp.article.method
+		first_author = mp.article.authors.values_list('name', flat=True).first()
+		article_reference = f"{first_author} ({mp.article.year})"
 
-	field_to_column = {
-		"0": "species",
-		"1": "property",
-		#"2": "topic", # off because manytomany field
-		#"3": "method", # off because manytomany field
-		"4": "article"
-	}
+		# Track unique material property names
+		property_names.add(property_name)
 
-	# Process sorting parameters
-	order_column_index = request.GET.get('order[0][column]', '0')
-	order_direction = request.GET.get('order[0][dir]', 'asc')
+		# Create a unique key for each combination of species, treatment, and substrate
+		key = (species, treatment, substrate)
+		if key not in property_values:
+			property_values[key] = {
+				'species': species,
+				'treatment': treatment,
+				'substrate': substrate,
+				'topic': list(topic.values_list('name', flat=True)),
+				'method': list(method.values_list('name', flat=True)),
+				'article': article_reference,
+				# Initialize all properties with a placeholder
+				**{prop: '-' for prop in property_names}
+			}
 
-	# Update the field to column mapping if necessary
-	if order_column_index in field_to_column:
-		order_field = field_to_column[order_column_index]
-	else:
-		order_field = "species"
+		# Update the value for the material property
+		property_values[key][property_name] = f"{value} {unit}"
 
-	# Determine sorting direction
-	if order_direction == 'desc':
-		order_field = F(order_field).desc(nulls_last=True)
-	else:
-		order_field = F(order_field).asc(nulls_last=True)
+	# Convert dictionary to list
+	data = list(property_values.values())
 
-	# Prepare the base query
-	material_property_query = MaterialProperty.objects.select_related('article').prefetch_related('species', 'article__topic', 'article__method')
-
-	# Filtering based on search query
-	if search_query:
-		material_property_query = material_property_query.filter(
-			Q(species__name__icontains=search_query) |
-			Q(treatment__icontains=search_query) |
-			Q(material_property__name__icontains=search_query) |
-			Q(article__title__icontains=search_query) |
-			Q(article__topic__name__icontains=search_query) |
-			Q(article__method__name__icontains=search_query)
-		).distinct()
-
-	# Apply ordering
-	# Note: Sorting by fields that are not directly part of the MaterialProperty model needs special handling
-	# For simplicity, we will sort by species name as a default approach
-	if order_field == "species":
-		material_property_query = material_property_query.order_by('species__name')
-	elif order_field == "property":
-		material_property_query = material_property_query.order_by('material_property__name')
-	elif order_field == "topic":
-		material_property_query = material_property_query.order_by('article__topic__name')
-	elif order_field == "method":
-		material_property_query = material_property_query.order_by('article__method__name')
-	elif order_field == "article":
-		material_property_query = material_property_query.order_by('article__title')
-
-	# Pagination
-	paginator = Paginator(material_property_query, 125)
-	page_number = (start_position // 125) + 1
-
-	try:
-		properties_page = paginator.page(page_number)
-	except PageNotAnInteger:
-		properties_page = paginator.page(1)
-	except EmptyPage:
-		properties_page = paginator.page(paginator.num_pages)
-
-	# Prepare the data payload
-	payload = []
-	for material_property in properties_page:
-		species_name = material_property.species.name
-		treatment = material_property.treatment
-		property_name = material_property.material_property.name
-		first_author = material_property.article.authors.first()
-		first_author_name = first_author.name if first_author else "Unknown"
-		year = material_property.article.year if material_property.article.year else "Unknown"
-		article_info = f"{first_author_name} ({year})"
-
-		payload.append({
-			"species": species_name,
-			"treatment": treatment,
-			"property": property_name,
-			"topic": list(material_property.article.topic.values_list('name', flat=True)),
-			"method": list(material_property.article.method.values_list('name', flat=True)),
-			"article": article_info,
-			"pk": material_property.article.pk,
-		})
-
-	# Prepare response data
-	response_data = {
-		"recordsTotal": paginator.count,
-		"recordsFiltered": material_property_query.count(),
-		"data": payload,
-	}
-
-	return JsonResponse(response_data)
+	# Return the data as JSON for DataTable consumption
+	return JsonResponse({
+		'data': data,
+		'property_names': list(property_names)  # Include unique material property names
+	})
 	
 
 ############ ABOUT ###########
