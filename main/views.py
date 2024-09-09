@@ -1,5 +1,5 @@
 from asyncio.log import logger
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Max, Min, Count, Q, F, Value, IntegerField, Subquery, OuterRef
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -96,29 +96,55 @@ def articles_search(request):
 
 
 def articles_info(request, pk):
-	article = Article.objects.get(id=pk)
+	# Get the article instance by the primary key (pk)
+	article = get_object_or_404(Article, pk=pk)
+
+	# For species list
 	sorted_species = article.species.all().order_by('name')
-	material_property = MaterialProperty.objects.filter(article=article).values_list('species', flat=True).distinct()
 
+	# Query the MaterialProperty model for the specified article, ordered by species name
+	material_properties = MaterialProperty.objects.filter(article=article).order_by('species__name')
 
-	# Get distinct treatments for the article
-	distinct_treatments = MaterialProperty.objects.filter(article=article).values_list('treatment', flat=True).distinct()
+	# Organize the data by species, treatment, and substrate
+	data = {}
+	unique_material_properties = {}
 
-	# Get distinct material property names for the article (e.g., "Density", "Elongation")
-	distinct_properties = MaterialProperty.objects.filter(article=article).values_list('material_property__name', flat=True).distinct()
+	for mp in material_properties:
+		species = mp.species.name
+		treatment = mp.treatment
+		substrate = mp.substrate.name
+		property_name = mp.material_property.name
+		value = mp.value
+		unit = mp.unit.symbol
 
+		# Keep track of the unique material properties with units for column headers
+		unique_material_properties[property_name] = unit
+
+		# Ensure that species, treatment, and substrate exist in the dictionary
+		if species not in data:
+			data[species] = {}
+
+		if treatment not in data[species]:
+			data[species][treatment] = {}
+
+		if substrate not in data[species][treatment]:
+			data[species][treatment][substrate] = {}
+
+		# Add the material property value to the correct species-treatment-substrate entry
+		data[species][treatment][substrate][property_name] = value
+
+	# Sort material properties for column headers
+	sorted_material_properties = sorted(unique_material_properties.items())
+
+	# Pass the data and sorted material properties to the template
 	context = {
 		'article': article,
+		'data': data,
 		'sorted_species': sorted_species,
-		'material_property': material_property,
-		'distinct_treatments': distinct_treatments,
-		'distinct_properties': distinct_properties,
+		'sorted_material_properties': sorted_material_properties,
 	}
 
-	if article.approved:
-		return render(request, "main/articles_info.html", context)
-	else:
-		return HttpResponseNotFound("<h1>Page not found</h1>")
+	return render(request, 'main/articles_info.html', context)
 
 
 ############ REVIEWS ###########

@@ -1,9 +1,17 @@
 {% extends 'main/base.html'%}
 {% block content %}
 {% load static %}
+{% load custom_filters %}
 
 <style>
-	
+    h3 {
+        font-weight: 600;
+    }
+    h5 {
+        border-bottom: 2px solid #d5d5d5;
+        padding-bottom: 8px;
+        font-weight: 600;
+    }
 </style>
 
 <title>Article info | Fungalmaterials</title>
@@ -36,102 +44,91 @@
 
         <br>
 
-        <p>
         {% if article.authors.all %}
             {% for author in article.authors.all %}
                 {{ author.name }}{% if not forloop.last %}; {% endif %}
             {% endfor %}
+            <br>
         {% else %}
             No authors available.
-        {% endif %}
-
-        <br>
-        <br>
-
-        {% if article.doi %}
-            DOI: {{ article.doi }}
+            <br>
         {% endif %}
 
         <br>
         
-        <br> [Abstract]
-        <br> [Topic] 
-        {% if article.topic.all %}
-            {% for topic in article.topic.all %}
-                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
-            {% endfor %}
-        {% endif %}
-        
-        <br> [Method]
-        {% if article.method.all %}
-            {% for method in article.method.all %}
-                <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
-            {% endfor %}
-        {% endif %}
+        <h5>Abstract</h5>
 
-        <br> [Species]
+        <br>
+
         {% if sorted_species %}
-            <ul class="list-group" style="max-width: 300px;">
+        <h5>Species</h5>
+            <ul class="list-group" style="font-size: 14px; max-width: 250px;">
                 {% for species in sorted_species %}
                     <li class="list-group-item"><i>{{ species.name }}</i></li>
                 {% endfor %}
             </ul>
+        <br>
         {% endif %}
 
-        <br> [Substrates]
-
-        <br> [Material properties]
-
-        <br> [Treatment]
-
-        <br> [Overview table]
+        <h5>Substrates</h5>
 
         <br>
-        <br>
-            <table class="table table-bordered">
+
+        {% if sorted_material_properties %}
+        <h5>Material properties</h5>
+            <table class="table table-bordered table-hover" style="font-size: 14px; width: 100%;">
                 <thead>
-                    <tr>
-                        <th scope="col">Species</th>
-                        <th scope="col">Treatment</th>
-                        <!-- Loop through distinct properties to create table headers dynamically -->
-                        {% for x in distinct_properties %}
-                        <th scope="col">{{ x }}</th>
+                    <tr class="table-light">
+                        <th>Species</th>
+                        <th>Treatment</th>
+                        <th>Substrate</th>
+                        {% for property, unit in sorted_material_properties %}
+                            <th>{{ property }} ({{ unit }})</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop over distinct treatments -->
-                    {% for treatment in distinct_treatments %}
-                    <tr>
-                        <!-- For each treatment, display the species (assuming one species per treatment) -->
-                        <td>
-                            {% for material_property in article.materialproperty_set.all %}
-                                {% if material_property.treatment == treatment %}
-                                    {{ material_property.species.name }}
-                                {% endif %}
+                    {% for species, treatments in data.items %}
+                        {% for treatment, substrates in treatments.items %}
+                            {% for substrate, properties in substrates.items %}
+                                <tr>
+                                    <td><i>{{ species }}</i></td>
+                                    <td>{{ treatment|default:"-" }}</td>
+                                    <td>{{ substrate }}</td>
+                                    {% for property, unit in sorted_material_properties %}
+                                        <td>{{ properties|get_item:property|default:"-" }}</td>
+                                    {% endfor %}
+                                </tr>
                             {% endfor %}
-                        </td>
-
-                        <td>{{ treatment }}</td>
-
-                        <!-- For each treatment, display values for all properties -->
-                        {% for x in distinct_properties %}
-                        <td>
-                            {% for material_property in article.materialproperty_set.all %}
-                                {% if material_property.treatment == treatment and material_property.material_property.name == x %}
-                                    {{ material_property.value }} {{ material_property.unit.symbol }}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
                         {% endfor %}
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
-        </p>
+        {% endif %}
 
         <br>
+
+        {% if article.doi %}
+            DOI: {{ article.doi }}
+            <br>
+        {% endif %}
+
+        [Topic] 
+        {% if article.topic.all %}
+            {% for topic in article.topic.all %}
+                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+            {% endfor %}
+            <br>
+        {% endif %}
+        
+        [Method]
+        {% if article.method.all %}
+            {% for method in article.method.all %}
+                <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
+            {% endfor %}
+            <br>
+        {% endif %}
+
         <br>
         <br>
         <br>
