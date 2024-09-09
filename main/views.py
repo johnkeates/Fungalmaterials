@@ -99,8 +99,9 @@ def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
 
-	# For species list
+	# For species & substrate list
 	sorted_species = article.species.all().order_by('name')
+	sorted_substrate = article.substrate.all().order_by('name')
 
 	# Query the MaterialProperty model for the specified article, ordered by species name
 	material_properties = MaterialProperty.objects.filter(article=article).order_by('species__name')
@@ -141,6 +142,7 @@ def articles_info(request, pk):
 		'article': article,
 		'data': data,
 		'sorted_species': sorted_species,
+		'sorted_substrate': sorted_substrate,
 		'sorted_material_properties': sorted_material_properties,
 	}
 

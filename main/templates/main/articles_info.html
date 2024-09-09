@@ -12,6 +12,10 @@
         padding-bottom: 8px;
         font-weight: 600;
     }
+    #table_id thead tr th {
+        padding: 8px;
+        padding-left: 12px;
+    }
 </style>
 
 <title>Article info | Fungalmaterials</title>
@@ -44,44 +48,43 @@
 
         <br>
 
+        <!-- Authors -->
         {% if article.authors.all %}
             {% for author in article.authors.all %}
                 {{ author.name }}{% if not forloop.last %}; {% endif %}
             {% endfor %}
             <br>
+            <br>
+            <br>
         {% else %}
-            No authors available.
+            <i>No authors available</i>
+            <br>
+            <br>
             <br>
         {% endif %}
 
-        <br>
         
-        <h5>Abstract</h5>
-
-        <br>
-
-        {% if sorted_species %}
-        <h5>Species</h5>
-            <ul class="list-group" style="font-size: 14px; max-width: 250px;">
-                {% for species in sorted_species %}
-                    <li class="list-group-item"><i>{{ species.name }}</i></li>
-                {% endfor %}
-            </ul>
-        <br>
+        
+        <!-- Abstract -->
+        {% if article.abstract %}
+            <h5>Abstract</h5>
+            <div style="text-align: justify;">
+            {{ article.abstract }}
+            </div>
+            <br>
+            <br>
         {% endif %}
+        
 
-        <h5>Substrates</h5>
-
-        <br>
-
+        <!-- Material properties -->
         {% if sorted_material_properties %}
         <h5>Material properties</h5>
-            <table class="table table-bordered table-hover" style="font-size: 14px; width: 100%;">
+            <table id="table_id" style="font-size: 14px; width: 100%;">
                 <thead>
-                    <tr class="table-light">
+                    <tr>
                         <th>Species</th>
-                        <th>Treatment</th>
                         <th>Substrate</th>
+                        <th>Treatment</th>
                         {% for property, unit in sorted_material_properties %}
                             <th>{{ property }} ({{ unit }})</th>
                         {% endfor %}
@@ -93,8 +96,8 @@
                             {% for substrate, properties in substrates.items %}
                                 <tr>
                                     <td><i>{{ species }}</i></td>
-                                    <td>{{ treatment|default:"-" }}</td>
                                     <td>{{ substrate }}</td>
+                                    <td>{{ treatment|default:"-" }}</td>
                                     {% for property, unit in sorted_material_properties %}
                                         <td>{{ properties|get_item:property|default:"-" }}</td>
                                     {% endfor %}
@@ -104,31 +107,75 @@
                     {% endfor %}
                 </tbody>
             </table>
-        {% endif %}
-
         <br>
-
-        {% if article.doi %}
-            DOI: {{ article.doi }}
+        <br>
+        {% else %}
+            <!-- Species -->
+            {% if sorted_species %}
+            <h5>Species</h5>
+                <ul class="list-group" style="font-size: 14px; max-width: 250px;">
+                    {% for species in sorted_species %}
+                        <li class="list-group-item"><i>{{ species.name }}</i></li>
+                    {% endfor %}
+                </ul>
             <br>
+            <br>
+            {% endif %}
+
+
+            <!-- Substrate -->
+            {% if sorted_substrate %}
+            <h5>Substrate</h5>
+                <ul class="list-group" style="font-size: 14px; max-width: 250px;">
+                    {% for substrate in sorted_substrate %}
+                        <li class="list-group-item"><i>{{ substrate.name }}</i></li>
+                    {% endfor %}
+                </ul>
+            <br>
+            <br>
+            {% endif %}
         {% endif %}
 
-        [Topic] 
-        {% if article.topic.all %}
-            {% for topic in article.topic.all %}
-                <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
-            {% endfor %}
-            <br>
-        {% endif %}
-        
-        [Method]
-        {% if article.method.all %}
-            {% for method in article.method.all %}
-                <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
-            {% endfor %}
-            <br>
-        {% endif %}
 
+        <!-- Info -->
+        {% if article.doi or article.topic.all or article.method.all %}
+        <h5>Info</h5>
+            <!-- DOI -->
+            {% if article.doi %}
+                DOI: {{ article.doi }}
+                <br>
+            {% endif %}
+
+            <!-- Topic(s) -->
+            {% if article.topic.all %}
+                {% with article.topic.all|length as topic_count %}
+                    {% if topic_count == 1 %}
+                        Topic: 
+                    {% else %}
+                        Topics: 
+                    {% endif %}
+                    {% for topic in article.topic.all %}
+                        <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+                    {% endfor %}
+                    <br>
+                {% endwith %}
+            {% endif %}
+            
+            <!-- Method(s) -->
+            {% if article.method.all %}
+                {% with article.method.all|length as method_count %}
+                    {% if method_count == 1 %}
+                        Method: 
+                    {% else %}
+                        Methods: 
+                    {% endif %}
+                    {% for method in article.method.all %}
+                        <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
+                    {% endfor %}
+                    <br>
+                {% endwith %}
+            {% endif %}
+        {% endif %}
         <br>
         <br>
         <br>
