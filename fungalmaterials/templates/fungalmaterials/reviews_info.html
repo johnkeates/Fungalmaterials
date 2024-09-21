@@ -1,0 +1,103 @@
+{% extends 'fungalmaterials/base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    h3 {
+        font-weight: 600;
+    }
+    h5 {
+        border-bottom: 2px solid #d5d5d5;
+        padding-bottom: 8px;
+        font-weight: 600;
+    }
+</style>
+
+<title>Review info | Fungalmaterials</title>
+
+<meta name="description" content="Database of fungal material references">
+
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-12">
+
+        <p class="text-secondary">
+        Review 
+        &nbsp;|&nbsp; 
+        Published:
+        {% if review.day %}
+            {{ review.day }}
+        {% endif %}
+        {% if review.month %}
+            {{ review.get_month_name }}
+        {% endif %}
+        {% if review.year %}
+            {{ review.year }}
+        {% endif %}
+
+        {% if review.journal %}
+             &nbsp;|&nbsp; {{ review.journal|capfirst }}
+        {% endif %}
+        </p>
+
+        <h3>{{ review.title }} </h3>
+
+        <br>
+
+        <!-- Authors -->
+        {% if review.authors.all %}
+            {% for author in review.authors.all %}
+                {{ author.name }}{% if not forloop.last %}; {% endif %}
+            {% endfor %}
+            <br>
+            <br>
+            <br>
+        {% else %}
+            <i>No authors available</i>
+            <br>
+            <br>
+            <br>
+        {% endif %}
+
+
+        <!-- Abstract -->
+        {% if review.abstract %}
+            <h5>Abstract</h5>
+            <div style="text-align: justify;">
+            {{ review.abstract }}
+            </div>
+            <br>
+            <br>
+        {% endif %}
+
+
+        <!-- Info -->
+        {% if review.doi or review.topic.all %}
+        <h5>Info</h5>
+            <!-- Topic(s) -->
+            {% if review.topic.all %}
+                {% with review.topic.all|length as topic_count %}
+                    {% if topic_count == 1 %}
+                        Topic: 
+                    {% else %}
+                        Topics: 
+                    {% endif %}
+                    {% for topic in review.topic.all %}
+                        <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+                    {% endfor %}
+                    <br>
+                {% endwith %}
+            {% endif %}
+
+            <!-- DOI -->
+            {% if review.doi %}
+                <a href="{{ review.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ review.doi }}">DOI</a>
+                <br>
+            {% endif %}
+        {% endif %}
+        <br>
+        <br>
+
+    </div>
+</div>
+
+{% endblock %}
