@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, MaterialProperty
 
 
@@ -57,6 +59,10 @@ class ArticleAdmin(admin.ModelAdmin):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
 		form.base_fields['topic'].widget.can_add_related = False
 		form.base_fields['method'].widget.can_add_related = False
+		form.base_fields['doi'].help_text = mark_safe(
+            "<a href='#' id='doilookup'>Check DOI for autocomplete information</a>"
+            "<script src='/static/doi-lookup.js'></script>"
+        )
 		return form
 
 

@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.converters import register_converter
 
 from fungalmaterials import views
+from fungalmaterials.converters import FullPathConverter
+
+register_converter(FullPathConverter, 'fullpath')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,4 +35,6 @@ urlpatterns = [
     path("species/", views.species, name="species"),
     path("species/search", views.species_search, name="species_search"),
     path("about/", views.about, name="about"),
+
+    path("doi/<fullpath:doi>", views.doi_lookup, name="doi_lookup"),
 ]

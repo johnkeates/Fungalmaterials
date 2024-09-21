@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q, F
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from habanero import Crossref
+
 from fungalmaterials.models import Article, Review, MaterialProperty
 
 
@@ -47,7 +49,7 @@ def articles_search(request):
 
 	# Filter and sort articles
 	article_query = Article.objects.filter(approved=True)
-	
+
 	if search_query:
 		article_query = article_query.filter(
 			Q(title__icontains=search_query) |
@@ -189,7 +191,7 @@ def reviews_search(request):
 
 	# Filter and sort reviews
 	review_query = Review.objects.filter(approved=True)
-	
+
 	if search_query:
 		review_query = review_query.filter(
 			Q(title__icontains=search_query) |
@@ -257,7 +259,7 @@ def species(request):
 def species_search(request):
 	# Query the MaterialProperty model for all data
 	material_properties = MaterialProperty.objects.select_related('species', 'substrate', 'material_property', 'article')
-	
+
 	# Prepare data to send as JSON
 	data = []
 	property_names = set()  # To track unique material properties
@@ -303,7 +305,41 @@ def species_search(request):
 		'data': data,
 		'property_names': list(property_names)  # Include unique material property names
 	})
-	
+
+
+############ DOI Lookup ###########
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.contrib.auth.decorators import login_required
+
+@login_required
+@require_GET
+def doi_lookup(request, doi):
+	# Check if the doi string is provided (this will always be true due to URL config)
+	if not doi:
+		return JsonResponse(
+			{'error': 'DOI not found.'},
+			status=404
+		)
+
+	# Check if the doi string is shorter than 3 characters
+	if len(doi) < 3:
+		return JsonResponse(
+			{'error': 'DOI is invalid. Must be at least 3 characters long.'},
+			status=400  # 400 Bad Request for invalid input
+		)
+
+	# If all validations pass,
+	cr = Crossref(mailto="j.g.vandenbrandhof@uu.nl")
+	print(f"Looking for {doi}")
+	works_found = cr.works(ids=[doi])
+
+	# #then return a success response
+	return JsonResponse(
+		{'message': f'DOI "{doi}" is valid and accepted.', 'works': works_found},
+		status=200
+	)
 
 ############ ABOUT ###########
 
