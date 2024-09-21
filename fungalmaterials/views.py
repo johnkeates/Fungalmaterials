@@ -1,7 +1,9 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from django.db.models import Q, F
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q, F
+from django.http import HttpResponseNotFound, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_GET
 from habanero import Crossref
 
 from fungalmaterials.models import Article, Review, MaterialProperty
@@ -309,9 +311,6 @@ def species_search(request):
 
 ############ DOI Lookup ###########
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-from django.contrib.auth.decorators import login_required
 
 @login_required
 @require_GET
