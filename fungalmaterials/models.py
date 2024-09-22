@@ -25,8 +25,16 @@ class Date(models.Model):
 
 # Author
 class Author(models.Model):
-	name = models.CharField(max_length=50, unique=True, 
-		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
+	name = models.CharField(max_length=50)
+	family = models.CharField(max_length=100, null=True)
+	sequence_choice = (
+		('first','first'),
+		('additional','additional'))
+	sequence = models.CharField(max_length=20, choices=sequence_choice, blank=True)
+	affiliation = models.CharField(max_length=100, blank=True)
+
+	class Meta:
+		unique_together = ['name', 'family']
 
 	def __str__(self):
 		return self.name
@@ -78,8 +86,7 @@ class Method(models.Model):
 # Article
 class Article(Date):
 	title = models.CharField(max_length=300)
-	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)", 
-		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
+	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
@@ -100,8 +107,7 @@ class Article(Date):
 # Review
 class Review(Date):
 	title = models.CharField(max_length=300)
-	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)", 
-		help_text="Please enter author names as: last name, first name (e.g. Smith, Jane)")
+	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
