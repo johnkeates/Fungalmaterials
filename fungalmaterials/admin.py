@@ -47,7 +47,7 @@ class MethodAdmin(admin.ModelAdmin):
 # Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-	fields = ('title', 'year', 'month', 'day', 'authors', 'journal', 'doi', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
+	fields = ('doi', 'title', 'year', 'month', 'day', 'authors', 'journal', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title', 'authors')
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
@@ -69,7 +69,7 @@ class ArticleAdmin(admin.ModelAdmin):
 # Review
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-	fields = ('title', 'year', 'month', 'day', 'authors', 'journal', 'doi', 'topic', 'abstract', 'approved')
+	fields = ('doi', 'title', 'year', 'month', 'day', 'authors', 'journal', 'topic', 'abstract', 'approved')
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title', 'authors')
 	ordering = ('-year', 'title')
