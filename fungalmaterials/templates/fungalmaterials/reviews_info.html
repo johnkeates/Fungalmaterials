@@ -45,8 +45,12 @@
 
         <!-- Authors -->
         {% if review.authors.all %}
-            {% for author in review.authors.all %}
-                {{ author.name }}{% if not forloop.last %}; {% endif %}
+            {% if first_author %}
+                {{ first_author.name }} {{ first_author.family }}{% if not forloop.last %}; {% endif %}
+            {% endif %}
+
+            {% for author in other_authors %}
+                {{ author.name }} {{ author.family }}{% if not forloop.last %}; {% endif %}
             {% endfor %}
             <br>
             <br>

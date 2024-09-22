@@ -234,10 +234,13 @@ def reviews_search(request):
 	# Prepare the data payload
 	payload = []
 	for review in reviews_page:
-		first_author = review.authors.values_list('name', flat=True).first()
+		first_author_authorship = ReviewAuthorship.objects.filter(review=review, sequence='first').values_list('author__name', flat=True).first()
+		# If no 'first' author exists, fall back to the first author added
+		if not first_author_authorship:
+			first_author_authorship = ReviewAuthorship.objects.filter(review=review).values_list('author__name', flat=True).first()
 		payload.append({
 			"title": review.title,
-			"authors": first_author,
+			"authors": first_author_authorship,
 			"year": review.year,
 			"topic": list(review.topic.values_list('name', flat=True)),
 			"pk": review.pk,
@@ -255,9 +258,20 @@ def reviews_search(request):
 
 def reviews_info(request, pk):
 	review = Review.objects.get(id=pk)
+	# Separate the author with sequence 'first'
+	first_author_authorship = ReviewAuthorship.objects.filter(review=review, sequence='first').first()
+
+	# If there is a first author, get the Author instance
+	first_author = first_author_authorship.author if first_author_authorship else None
+
+	# Get all other authors (those who are not 'first') and keep the original order
+	other_authors_authorships = ReviewAuthorship.objects.filter(review=review).exclude(sequence='first')
+	other_authors = [authorship.author for authorship in other_authors_authorships]
 
 	context = {
 		'review': review,
+		'first_author': first_author,
+		'other_authors': other_authors,
 	}
 
 	if review.approved:
