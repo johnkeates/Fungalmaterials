@@ -78,7 +78,10 @@ def articles_search(request):
 	# Prepare the data payload
 	payload = []
 	for article in articles_page:
-		first_author = article.authors.values_list('name', flat=True).first()
+		first_author = article.authors.filter(sequence='first').values_list('name', flat=True).first()
+		# If no author with sequence='first', fall back to the first one added
+		if not first_author:
+			first_author = article.authors.values_list('name', flat=True).first()
 		payload.append({
 			"title": article.title,
 			"authors": first_author,
@@ -101,6 +104,12 @@ def articles_search(request):
 def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
+
+	# Separate authors with sequence 'first'
+	first_author = article.authors.filter(sequence='first').first()
+	
+	# Get all authors except those with sequence 'first', keeping the original order
+	other_authors = article.authors.exclude(sequence='first')
 
 	# For species & substrate list
 	sorted_species = article.species.all().order_by('name')
@@ -143,6 +152,8 @@ def articles_info(request, pk):
 	# Pass the data and sorted material properties to the template
 	context = {
 		'article': article,
+		'first_author': first_author,
+		'other_authors': other_authors,
 		'data': data,
 		'sorted_species': sorted_species,
 		'sorted_substrate': sorted_substrate,
