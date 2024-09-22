@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, MaterialProperty
+from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, MaterialProperty, ArticleAuthorship, ReviewAuthorship
 
 
 # Author
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-	list_display = ('name',)  # Fields to display in the list view
-	search_fields = ('name',)  # Searchable fields
+	list_display = ('name', 'family')  # Fields to display in the list view
+	search_fields = ('name', 'family')  # Searchable fields
 	ordering = ('name',)  # Order by the 'name' field
 
 
@@ -44,15 +44,22 @@ class MethodAdmin(admin.ModelAdmin):
 	ordering = ('name',)
 
 
+# Article-Author relationship
+class ArticleAuthorshipInline(admin.TabularInline):
+    model = ArticleAuthorship
+    extra = 2
+
+
 # Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-	fields = ('doi', 'title', 'year', 'month', 'day', 'authors', 'journal', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
+	inlines = [ArticleAuthorshipInline]
+	fields = ('doi', 'title', 'year', 'month', 'day', 'journal', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
 	list_display = ('title', 'year', 'approved')
-	search_fields = ('title', 'authors')
+	search_fields = ('title',)
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
 	filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
-	autocomplete_fields = ('authors', 'species', 'substrate', 'topic', 'method')
+	autocomplete_fields = ('species', 'substrate', 'topic', 'method')
 
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):
@@ -66,15 +73,22 @@ class ArticleAdmin(admin.ModelAdmin):
 		return form
 
 
+# Review-Author relationship
+class ReviewAuthorshipInline(admin.TabularInline):
+    model = ReviewAuthorship
+    extra = 2
+
+
 # Review
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-	fields = ('doi', 'title', 'year', 'month', 'day', 'authors', 'journal', 'topic', 'abstract', 'approved')
+	inlines = [ReviewAuthorshipInline]
+	fields = ('doi', 'title', 'year', 'month', 'day', 'journal', 'topic', 'abstract', 'approved')
 	list_display = ('title', 'year', 'approved')
-	search_fields = ('title', 'authors')
+	search_fields = ('title',)
 	ordering = ('-year', 'title')
 	filter_horizontal = ('topic',)
-	autocomplete_fields = ('authors', 'topic')
+	autocomplete_fields = ('topic',)
 
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):

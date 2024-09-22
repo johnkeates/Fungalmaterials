@@ -51,7 +51,7 @@
         <!-- Authors -->
         {% if article.authors.all %}
             {% if first_author %}
-                {{ first_author.name }} {{ first_author.family }}{% if other_authors.exists %}; {% endif %}
+                {{ first_author.name }} {{ first_author.family }}{% if not forloop.last %}; {% endif %}
             {% endif %}
 
             {% for author in other_authors %}

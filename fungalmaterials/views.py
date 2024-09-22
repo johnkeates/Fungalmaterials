@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_GET
 from habanero import Crossref
 
-from fungalmaterials.models import Article, Review, MaterialProperty
+from fungalmaterials.models import Article, Review, MaterialProperty, ArticleAuthorship, ReviewAuthorship
 
 
 ############ ARTICLES ###########
@@ -78,13 +78,13 @@ def articles_search(request):
 	# Prepare the data payload
 	payload = []
 	for article in articles_page:
-		first_author = article.authors.filter(sequence='first').values_list('name', flat=True).first()
-		# If no author with sequence='first', fall back to the first one added
-		if not first_author:
-			first_author = article.authors.values_list('name', flat=True).first()
+		first_author_authorship = ArticleAuthorship.objects.filter(article=article, sequence='first').values_list('author__name', flat=True).first()
+		# If no 'first' author exists, fall back to the first author added
+		if not first_author_authorship:
+			first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__name', flat=True).first()
 		payload.append({
 			"title": article.title,
-			"authors": first_author,
+			"authors": first_author_authorship,
 			"year": article.year,
 			"topic": list(article.topic.values_list('name', flat=True)),
 			"method": list(article.method.values_list('name', flat=True)),
@@ -105,11 +105,15 @@ def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
 
-	# Separate authors with sequence 'first'
-	first_author = article.authors.filter(sequence='first').first()
-	
-	# Get all authors except those with sequence 'first', keeping the original order
-	other_authors = article.authors.exclude(sequence='first')
+	# Separate the author with sequence 'first'
+	first_author_authorship = ArticleAuthorship.objects.filter(article=article, sequence='first').first()
+
+	# If there is a first author, get the Author instance
+	first_author = first_author_authorship.author if first_author_authorship else None
+
+	# Get all other authors (those who are not 'first') and keep the original order
+	other_authors_authorships = ArticleAuthorship.objects.filter(article=article).exclude(sequence='first')
+	other_authors = [authorship.author for authorship in other_authors_authorships]
 
 	# For species & substrate list
 	sorted_species = article.species.all().order_by('name')

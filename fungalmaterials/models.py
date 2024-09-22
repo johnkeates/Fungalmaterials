@@ -27,17 +27,13 @@ class Date(models.Model):
 class Author(models.Model):
 	name = models.CharField(max_length=50)
 	family = models.CharField(max_length=100, null=True)
-	sequence_choice = (
-		('first','first'),
-		('additional','additional'))
-	sequence = models.CharField(max_length=20, choices=sequence_choice, blank=True)
 	affiliation = models.CharField(max_length=100, blank=True)
 
 	class Meta:
 		unique_together = ['name', 'family']
 
 	def __str__(self):
-		return self.name
+		return f"{self.name} {self.family}"
 
 
 # Species
@@ -86,7 +82,7 @@ class Method(models.Model):
 # Article
 class Article(Date):
 	title = models.CharField(max_length=300)
-	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)")
+	authors = models.ManyToManyField('Author', through='ArticleAuthorship', verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
@@ -107,7 +103,7 @@ class Article(Date):
 # Review
 class Review(Date):
 	title = models.CharField(max_length=300)
-	authors = models.ManyToManyField(Author, blank=True, verbose_name="Author(s)")
+	authors = models.ManyToManyField('Author', through='ReviewAuthorship', verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
@@ -120,6 +116,41 @@ class Review(Date):
 
 	def __str__(self):
 		return self.title
+
+
+# Article-Author relationship
+class ArticleAuthorship(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    sequence_choice = (
+        ('first', 'first'),
+        ('additional', 'additional')
+    )
+    sequence = models.CharField(max_length=20, choices=sequence_choice, blank=True)
+
+    class Meta:
+        unique_together = ['author', 'article', 'sequence']
+
+    def __str__(self):
+        return self.author.name
+
+
+# Review-Author relationship
+class ReviewAuthorship(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    sequence_choice = (
+        ('first', 'first'),
+        ('additional', 'additional')
+    )
+    sequence = models.CharField(max_length=20, choices=sequence_choice, blank=True)
+    affiliation = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        unique_together = ['author', 'review', 'sequence']
+
+    def __str__(self):
+        return self.author.name
 
 
 # Property
