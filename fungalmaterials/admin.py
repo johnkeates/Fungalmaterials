@@ -46,14 +46,34 @@ class MethodAdmin(admin.ModelAdmin):
 
 # Article-Author relationship
 class ArticleAuthorshipInline(admin.TabularInline):
-    model = ArticleAuthorship
-    extra = 2
+	model = ArticleAuthorship
+	extra = 2
+
+# Custom widget for the Article form to enable the 'prefill this article' feature
+from django import forms
+from django.contrib import admin
+
+
+class ArticleDoiImportWidget(forms.CheckboxInput):
+	template_name = 'admin/widgets/article_doi_import_widget.html'
+
+class ArticleAdminForm(forms.ModelForm):
+	class Meta:
+		model = Article
+		fields = '__all__'
+		widgets = {
+			'doi_import': ArticleDoiImportWidget(),
+		}
+
+# End Custom Widget
+
 
 
 # Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
 	inlines = [ArticleAuthorshipInline]
+	form = ArticleAdminForm
 	fields = ('doi', 'title', 'year', 'month', 'day', 'journal', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title',)
@@ -66,17 +86,17 @@ class ArticleAdmin(admin.ModelAdmin):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
 		form.base_fields['topic'].widget.can_add_related = False
 		form.base_fields['method'].widget.can_add_related = False
-		form.base_fields['doi'].help_text = mark_safe(
-            "<a href='#' id='doilookup'>Check DOI for autocomplete information</a>"
-            "<script src='/static/doi-lookup.js'></script>"
-        )
+		# form.base_fields['doi'].help_text = mark_safe(
+		# 	"<a href='#' id='doilookup'>Check DOI for autocomplete information</a>"
+		# 	"<script src='/static/doi-lookup.js'></script>"
+		# )
 		return form
 
 
 # Review-Author relationship
 class ReviewAuthorshipInline(admin.TabularInline):
-    model = ReviewAuthorship
-    extra = 2
+	model = ReviewAuthorship
+	extra = 2
 
 
 # Review
