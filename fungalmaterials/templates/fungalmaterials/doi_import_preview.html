@@ -1,0 +1,52 @@
+{% extends 'fungalmaterials/base.html' %}
+{% block content %}
+{% load static %}
+    <form action="{% url 'doi_import' %}" method="post">
+        {% csrf_token %}
+        {{ form.doi.as_hidden }}
+        <button type="submit">Confirm Import</button>
+    </form>
+
+    {% if form.errors %}
+        <div style="color: red;">
+            <p>There was an error with your submission:</p>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ errors }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <br />
+    <br />
+<hr />
+        <br />
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Field</th>
+          <th scope="col">Value</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Title</th>
+          <td>{{ doi_preview.message.title }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Date</th>
+          <td>{{ doi_preview.message.published }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Authors</th>
+          <td>{{ doi_preview.message.author }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Abstract</th>
+          <td>{{ doi_preview.message.abstract }}</td>
+        </tr>
+      </tbody>
+    </table>
+{% endblock %}

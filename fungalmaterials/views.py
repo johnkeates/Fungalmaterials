@@ -3,9 +3,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_GET
-from habanero import Crossref
+from django.views.decorators.http import require_POST
 
+from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
+from fungalmaterials.forms import DOIImportForm, DOILookupForm
 from fungalmaterials.models import Article, Review, MaterialProperty, ArticleAuthorship, ReviewAuthorship
 
 
@@ -339,35 +340,82 @@ def species_search(request):
 
 
 ############ DOI Lookup ###########
+# The correct text to compare against
+CORRECT_TEXT = "correct"
 
-
+# This view presents a form to ask for a DOI. If the entry can be resolved to a valid article, it will show that.
+# If it could not be resolved, it will show an error.
 @login_required
-@require_GET
-def doi_lookup(request, doi):
-	# Check if the doi string is provided (this will always be true due to URL config)
-	if not doi:
-		return JsonResponse(
-			{'error': 'DOI not found.'},
-			status=404
-		)
+def doi_lookup(request):
+	# If this was a POST, someone has used the submit button, check the input
+	if request.method == 'POST':
+		form = DOILookupForm(request.POST)
+		if form.is_valid():
+			# We know that the value is not empty, so we can take this DOI and ask the API about it
+			possible_work = get_work_by_doi(form.cleaned_data['doi'])
+			if possible_work:
+				# If the API finds something, present this to the user
+				import_form = DOIImportForm(initial={'doi': form.cleaned_data['doi']})
+				# import_form.fields['doi']
+#				import_form.doi = form.cleaned_data['doi']
+				return render(request, 'fungalmaterials/doi_import_preview.html', {'form': import_form, 'doi_preview': possible_work })
+			else:
+				# If the API finds nothing, let the user know this DOI didn't get us anything.
+				form.add_error('doi', 'The DOI you entered is incorrect.')
+	else:
+		form = DOILookupForm()
 
-	# Check if the doi string is shorter than 3 characters
-	if len(doi) < 3:
-		return JsonResponse(
-			{'error': 'DOI is invalid. Must be at least 3 characters long.'},
-			status=400  # 400 Bad Request for invalid input
-		)
+	return render(request, 'fungalmaterials/doi_input_form.html', {'form': form})
 
-	# If all validations pass,
-	cr = Crossref(mailto="j.g.vandenbrandhof@uu.nl")
-	print(f"Looking for {doi}")
-	works_found = cr.works(ids=[doi])
+# View for handling success
+@login_required
+@require_POST
+def doi_import(request):
 
-	# #then return a success response
-	return JsonResponse(
-		{'message': f'DOI "{doi}" is valid and accepted.', 'works': works_found},
-		status=200
-	)
+	form = DOIImportForm(request.POST)
+
+	if form.is_valid():
+		import_status = import_new_article_by_doi(form.cleaned_data['doi'])
+		if import_status:
+			# TODO: Fix placeholder data
+			return render(request, 'fungalmaterials/doi_import_done.html',
+						  {'article_id': "2345asdf2345", 'doi_id': form.cleaned_data['doi']})
+		else:
+			form.add_error('doi', f"The DOI {form.cleaned_data['doi']} could not be imported.")
+
+	else:
+		form.add_error('doi', 'The DOI you entered is incorrect.')
+
+	return render(request, 'fungalmaterials/doi_import_preview.html', {'form': form})
+
+
+# @login_required
+# @require_GET
+# def doi_lookup(request, doi):
+# 	# Check if the doi string is provided (this will always be true due to URL config)
+# 	if not doi:
+# 		return JsonResponse(
+# 			{'error': 'DOI not found.'},
+# 			status=404
+# 		)
+#
+# 	# Check if the doi string is shorter than 3 characters
+# 	if len(doi) < 3:
+# 		return JsonResponse(
+# 			{'error': 'DOI is invalid. Must be at least 3 characters long.'},
+# 			status=400  # 400 Bad Request for invalid input
+# 		)
+#
+# 	# If all validations pass,
+# 	cr = Crossref(mailto="j.g.vandenbrandhof@uu.nl")
+# 	print(f"Looking for {doi}")
+# 	works_found = cr.works(ids=[doi])
+#
+# 	# #then return a success response
+# 	return JsonResponse(
+# 		{'message': f'DOI "{doi}" is valid and accepted.', 'works': works_found},
+# 		status=200
+# 	)
 
 ############ ABOUT ###########
 
