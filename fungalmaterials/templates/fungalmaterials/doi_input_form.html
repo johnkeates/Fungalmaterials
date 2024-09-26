@@ -1,0 +1,21 @@
+{% extends 'fungalmaterials/base.html' %}
+{% block content %}
+{% load static %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Lookup & Preview</button>
+    </form>
+
+    {% if form.errors %}
+        <div style="color: red;">
+            <p>There was an error with your submission:</p>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ errors }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}
