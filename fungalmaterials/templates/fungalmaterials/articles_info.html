@@ -176,7 +176,7 @@
 
             <!-- DOI -->
             {% if article.doi %}
-                <a href="{{ article.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ article.doi }}">DOI</a>
+                <a href="{{ article.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ article.doi }}">{{ article.doi }}</a>
                 <br>
             {% endif %}
         {% endif %}

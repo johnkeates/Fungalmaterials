@@ -94,7 +94,7 @@
 
             <!-- DOI -->
             {% if review.doi %}
-                <a href="{{ review.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ review.doi }}">DOI</a>
+                <a href="{{ review.doi }}" data-bs-toggle="tooltip" data-bs-title="{{ review.doi }}">{{ review.doi }}</a>
                 <br>
             {% endif %}
         {% endif %}
