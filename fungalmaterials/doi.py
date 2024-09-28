@@ -21,16 +21,15 @@ def import_new_article_by_doi(doi):
 
 	article = Article()
 
-	article.title = work['title'][0]
+	# Check title
+	if 'title' in work:
+		article.title = work['title'][0]
 	
 	# Check if exists in work dictionary
 	if 'abstract' in work:
 		article.abstract = work['abstract']
 
-	#article.year = work['published']['date-parts'][0][0]
-	#article.month = work['published']['date-parts'][0][1]
-	#article.day = work['published']['date-parts'][0][2]
-
+	# Check year, month and day
 	if 'published' in work and 'date-parts' in work['published']:
 		date_parts = work['published']['date-parts'][0]
 
@@ -41,32 +40,37 @@ def import_new_article_by_doi(doi):
 		if len(date_parts) > 2:  # Ensure the day exists
 			article.day = date_parts[2]
 
-	article.journal = work['container-title'][0]
+	# Check journal name
+	if 'container-title' in work:
+		article.journal = work['container-title'][0]
 
 	# Check DOI
 	doi_value = work['DOI']
 	if not doi_value.startswith("https://doi.org/"):
 		doi_value = f"https://doi.org/{doi_value}"
-
 	article.doi = doi_value
 
+	# Save model entries
 	article.save()
 
-	for author_entry in work['author']:
-		author, created = Author.objects.get_or_create(
-			name=author_entry['given'], family=author_entry['family']
-		)
+	# Check author(s)
+	if 'author' in work:
+		# Process authors
+		for author_entry in work['author']:
+			author, created = Author.objects.get_or_create(
+				name=author_entry['given'], family=author_entry['family']
+			)
 
-		authorship = ArticleAuthorship()
-		authorship.article = article
-		authorship.author = author
+			authorship = ArticleAuthorship()
+			authorship.article = article
+			authorship.author = author
 
-		if author_entry['sequence'] == "additional":
-			authorship.sequence = "additional"
+			if author_entry['sequence'] == "additional":
+				authorship.sequence = "additional"
 
-		if author_entry['sequence'] == "first":
-			authorship.sequence = "first"
+			if author_entry['sequence'] == "first":
+				authorship.sequence = "first"
 
-		authorship.save()
+			authorship.save()
 
 	return True
