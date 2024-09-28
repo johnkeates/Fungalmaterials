@@ -4,6 +4,7 @@ from django.db.models import Q, F
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from bs4 import BeautifulSoup
 
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
@@ -339,9 +340,7 @@ def species_search(request):
 	})
 
 
-############ DOI Search ###########
-# The correct text to compare against
-CORRECT_TEXT = "correct"
+############ DOI ###########
 
 # This view presents a form to ask for a DOI. If the entry can be resolved to a valid article, it will show that.
 # If it could not be resolved, it will show an error.
@@ -353,12 +352,33 @@ def doi_search(request):
 		if form.is_valid():
 			# We know that the value is not empty, so we can take this DOI and ask the API about it
 			possible_work = get_work_by_doi(form.cleaned_data['doi'])
-			if possible_work:
+			#print(possible_work)
+
+			if possible_work and 'message' in possible_work:
+				# Access the abstract from the nested 'message' dictionary
+				message = possible_work['message']
+
+				# Check if 'abstract' exists in the message dictionary
+				if 'abstract' in message:
+					abstract_raw = message['abstract']  # Access the abstract directly
+
+					# Use BeautifulSoup to parse the abstract
+					soup = BeautifulSoup(abstract_raw, 'lxml')
+
+					# Find all <jats:p> tags and extract their text
+					paragraphs = soup.find_all('jats:p')
+					abstract_text = ' '.join(p.get_text() for p in paragraphs)
+				else:
+					abstract_text = ''  # Set to empty if no abstract found
+
 				# If the API finds something, present this to the user
 				import_form = DOIImportForm(initial={'doi': form.cleaned_data['doi']})
-				# import_form.fields['doi']
-#				import_form.doi = form.cleaned_data['doi']
-				return render(request, 'fungalmaterials/doi_import_preview.html', {'form': import_form, 'doi_preview': possible_work })
+				
+				return render(request, 'fungalmaterials/doi_import_preview.html', {
+					'form': import_form,
+					'doi_preview': possible_work,
+					'abstract_text': abstract_text,  # Pass the cleaned abstract text to the template
+				})
 			else:
 				# If the API finds nothing, let the user know this DOI didn't get us anything.
 				form.add_error('doi', 'The DOI you entered is incorrect.')
@@ -366,6 +386,7 @@ def doi_search(request):
 		form = DOISearchForm()
 
 	return render(request, 'fungalmaterials/doi_input_form.html', {'form': form})
+
 
 # View for handling success
 @login_required
@@ -416,6 +437,7 @@ def doi_import(request):
 # 		{'message': f'DOI "{doi}" is valid and accepted.', 'works': works_found},
 # 		status=200
 # 	)
+
 
 ############ ABOUT ###########
 
