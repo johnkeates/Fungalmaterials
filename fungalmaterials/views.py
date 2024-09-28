@@ -79,10 +79,10 @@ def articles_search(request):
 	# Prepare the data payload
 	payload = []
 	for article in articles_page:
-		first_author_authorship = ArticleAuthorship.objects.filter(article=article, sequence='first').values_list('author__name', flat=True).first()
+		first_author_authorship = ArticleAuthorship.objects.filter(article=article, sequence='first').values_list('author__family', flat=True).first()
 		# If no 'first' author exists, fall back to the first author added
 		if not first_author_authorship:
-			first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__name', flat=True).first()
+			first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__family', flat=True).first()
 		payload.append({
 			"title": article.title,
 			"authors": first_author_authorship,
