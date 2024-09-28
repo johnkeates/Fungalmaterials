@@ -44,16 +44,20 @@
 }
 
 /* Custom colors for pill badges*/
+.bg-secondary {
+    background-color: #e2e3e5 !important;
+    color: #212529 !important;
+}
 .bg-LSF, .bg-dLSF, .bg-sLSF {
-    background-color: #0d6efd;
-    color: #fff;
+    background-color: #cfe2ff;
+    color: #031633;
 }
 .bg-SSF {
-    background-color: #dc3545; 
-    color: #fff;
+    background-color: #f8d7da; 
+    color: #2c0b0e;
 }
 .bg-FB {
-    background-color: #198754; 
-    color: #fff;
+    background-color: #d1e7dd; 
+    color: #051b11;
 }
 
