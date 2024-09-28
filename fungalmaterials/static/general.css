@@ -44,7 +44,7 @@
 }
 
 /* Custom colors for pill badges*/
-.bg-LSF {
+.bg-LSF, .bg-dLSF, .bg-sLSF {
     background-color: #0d6efd;
     color: #fff;
 }
