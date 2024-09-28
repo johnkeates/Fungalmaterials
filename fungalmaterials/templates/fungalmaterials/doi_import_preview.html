@@ -1,53 +1,85 @@
 {% extends 'fungalmaterials/base.html' %}
 {% block content %}
 {% load static %}
-    <form action="{% url 'doi_import' %}" method="post">
-        {% csrf_token %}
-        {{ form.doi.as_hidden }}
-        <button type="submit">Confirm Import</button>
-    </form>
 
-    {% if form.errors %}
-        <div style="color: red;">
-            <p>There was an error with your submission:</p>
-            <ul>
-                {% for field, errors in form.errors.items %}
-                    <li>{{ errors }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-    <br />
-    <br />
-<hr />
-        <br />
+<br />
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Field</th>
-          <th scope="col">Value</th>
+<!-- DOI DATA -->
+  <table class="table">
+    <tbody>
+      <tr>
+        <th></th>
+        <td></td>
+      </tr>
 
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Title</th>
-          <td>{{ doi_preview.message.title }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Date</th>
-          <td>{{ doi_preview.message.published }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Authors</th>
-          <td>{{ doi_preview.message.author }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Abstract</th>
-          <td>{{ doi_preview.message.abstract }}</td>
-        </tr>
-      </tbody>
-    </table>
+      <!-- TITLE -->
+      {% if doi_preview.message.title %}
+      <tr>
+        <th scope="row">Title</th>
+        <td>{{ doi_preview.message.title.0 }}</td>
+      </tr>
+      {% endif %}
+
+      <!-- DATE -->
+      {% if doi_preview.message.published %}
+      <tr>
+        <th scope="row">Date</th>
+        <td>
+        {% for key, value in doi_preview.message.published.items %}   
+          {% for item in value %}
+            {% if item.2 %}{{ item.2 }}-{% endif %}{% if item.1 %}{{ item.1 }}-{% endif %}{% if item.0 %}{{ item.0 }}{% endif %}
+          {% endfor %}
+        {% endfor %}
+        </td>
+      </tr>
+      {% endif %}
+
+      <!-- AUTHOR(S) -->
+      {% if doi_preview.message.author %}
+      <tr>
+        <th scope="row">
+          {% if doi_preview.message.author|length == 1 %}
+            Author
+          {% else %}
+            Authors
+          {% endif %}
+        </th>
+        <td>
+          <!-- {{ doi_preview.message.author }} -->
+          {% for author in doi_preview.message.author %}
+              {{ author.given }} {{ author.family }}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endif %}
+
+      <!-- ABSTRACT -->
+      {% if abstract_text %}
+      <tr>
+        <th scope="row">Abstract</th>
+        <td style="text-align: justify;">{{ abstract_text }}</td>
+      </tr>
+      {% endif %}
+
+    </tbody>
+  </table>
+
+<!-- FORM -->
+  <form action="{% url 'doi_import' %}" method="post">
+      {% csrf_token %}
+      {{ form.doi.as_hidden }}
+      <button type="submit" class="btn btn-primary">Confirm Import</button>
+  </form>
+
+  {% if form.errors %}
+      <div style="color: red;">
+          <p>There was an error with your submission:</p>
+          <ul>
+              {% for field, errors in form.errors.items %}
+                  <li>{{ errors }}</li>
+              {% endfor %}
+          </ul>
+      </div>
+  {% endif %}
 
 {% endblock %}
