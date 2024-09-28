@@ -1,4 +1,5 @@
 from habanero import Crossref
+from bs4 import BeautifulSoup
 from fungalmaterials.models import Article, Author, ArticleAuthorship
 
 
@@ -27,7 +28,18 @@ def import_new_article_by_doi(doi):
 	
 	# Check if exists in work dictionary
 	if 'abstract' in work:
-		article.abstract = work['abstract']
+		# Extract the raw abstract
+		abstract_raw = work['abstract']
+		
+		# Use BeautifulSoup to parse the abstract
+		soup = BeautifulSoup(abstract_raw, 'lxml')
+
+		# Find all <jats:p> tags and extract their text
+		paragraphs = soup.find_all('jats:p')
+		abstract_text = ' '.join(p.get_text() for p in paragraphs)
+
+		# Assign the cleaned abstract text to the article
+		article.abstract = abstract_text
 
 	# Check year, month and day
 	if 'published' in work and 'date-parts' in work['published']:
