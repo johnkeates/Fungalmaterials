@@ -385,7 +385,7 @@ def doi_search(request):
 	else:
 		form = DOISearchForm()
 
-	return render(request, 'fungalmaterials/doi_input_form.html', {'form': form})
+	return render(request, 'fungalmaterials/doi_search_form.html', {'form': form})
 
 
 # View for handling success
