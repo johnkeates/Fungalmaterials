@@ -57,7 +57,7 @@ def articles_search(request):
 	if search_query:
 		article_query = article_query.filter(
 			Q(title__icontains=search_query) |
-			Q(authors__name__icontains=search_query) |
+			Q(authors__family__icontains=search_query) |
 			Q(year__icontains=search_query) |
 			Q(topic__name__icontains=search_query) |
 			Q(method__name__icontains=search_query)
@@ -214,7 +214,7 @@ def reviews_search(request):
 	if search_query:
 		review_query = review_query.filter(
 			Q(title__icontains=search_query) |
-			Q(authors__name__icontains=search_query) |
+			Q(authors__family__icontains=search_query) |
 			Q(year__icontains=search_query) |
 			Q(topic__name__icontains=search_query)
 		).distinct()
