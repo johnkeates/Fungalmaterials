@@ -99,7 +99,11 @@
 				<ul class="navbar-nav ms-auto">
 					<!-- Right-hand user navigation element -->
 					<li>
+						{% if not user.is_authenticated %}
 						<a class="dropdown-item nav-link" href="/admin">Login</a>
+						{% else %}
+						<a class="dropdown-item nav-link" href="/admin">Admin</a>
+						{% endif %}
 					</li>
 				</ul>
 
