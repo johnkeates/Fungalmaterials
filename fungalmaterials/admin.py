@@ -84,6 +84,7 @@ class ArticleAdmin(admin.ModelAdmin):
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
+		form.base_fields['title'].widget.attrs['style'] = 'width: 40em;' # Change width of specific field
 		form.base_fields['topic'].widget.can_add_related = False
 		form.base_fields['method'].widget.can_add_related = False
 		# form.base_fields['doi'].help_text = mark_safe(
