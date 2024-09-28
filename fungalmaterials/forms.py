@@ -2,12 +2,15 @@ from django import forms
 from fungalmaterials.models import MaterialProperty, Species, Substrate
 
 
-class DOILookupForm(forms.Form):
-    doi = forms.CharField(label='Enter DOI', max_length=100)
+class DOISearchForm(forms.Form):
+    doi = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter DOI'})
+    )
 
 
 class DOIImportForm(forms.Form):
     doi = forms.CharField(label='Enter DOI', max_length=100)
+
 
 class MaterialPropertyForm(forms.ModelForm):
     class Meta:

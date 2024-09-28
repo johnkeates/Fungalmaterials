@@ -1,10 +1,17 @@
 {% extends 'fungalmaterials/base.html' %}
 {% block content %}
 {% load static %}
+    
+    <br>
+
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Lookup & Preview</button>
+        <div class="mb-3" style="width: 500px;">
+            <div class="input-group">
+                {{ form.doi }}
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
     </form>
 
     {% if form.errors %}

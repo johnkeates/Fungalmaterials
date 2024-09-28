@@ -36,7 +36,7 @@ urlpatterns = ([
                   path("species/", views.species, name="species"),
                   path("species/search", views.species_search, name="species_search"),
                   path("about/", views.about, name="about"),
-                  path("doi/lookup", views.doi_lookup, name="doi_lookup"),
+                  path("doi/search", views.doi_search, name="doi_search"),
                   path("doi/import", views.doi_import, name="doi_import"),
                   # path("doi/<fullpath:doi>", views.doi_lookup, name="doi_lookup"),
               ])

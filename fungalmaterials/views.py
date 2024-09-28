@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
-from fungalmaterials.forms import DOIImportForm, DOILookupForm
+from fungalmaterials.forms import DOIImportForm, DOISearchForm
 from fungalmaterials.models import Article, Review, MaterialProperty, ArticleAuthorship, ReviewAuthorship
 
 
@@ -339,17 +339,17 @@ def species_search(request):
 	})
 
 
-############ DOI Lookup ###########
+############ DOI Search ###########
 # The correct text to compare against
 CORRECT_TEXT = "correct"
 
 # This view presents a form to ask for a DOI. If the entry can be resolved to a valid article, it will show that.
 # If it could not be resolved, it will show an error.
 @login_required
-def doi_lookup(request):
+def doi_search(request):
 	# If this was a POST, someone has used the submit button, check the input
 	if request.method == 'POST':
-		form = DOILookupForm(request.POST)
+		form = DOISearchForm(request.POST)
 		if form.is_valid():
 			# We know that the value is not empty, so we can take this DOI and ask the API about it
 			possible_work = get_work_by_doi(form.cleaned_data['doi'])
@@ -363,7 +363,7 @@ def doi_lookup(request):
 				# If the API finds nothing, let the user know this DOI didn't get us anything.
 				form.add_error('doi', 'The DOI you entered is incorrect.')
 	else:
-		form = DOILookupForm()
+		form = DOISearchForm()
 
 	return render(request, 'fungalmaterials/doi_input_form.html', {'form': form})
 
