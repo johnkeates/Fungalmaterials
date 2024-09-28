@@ -400,7 +400,7 @@ def doi_import(request):
 		if import_status:
 			# TODO: Fix placeholder data
 			return render(request, 'fungalmaterials/doi_import_done.html',
-						  {'article_id': "2345asdf2345", 'doi_id': form.cleaned_data['doi']})
+						  {'doi_id': form.cleaned_data['doi']})
 		else:
 			form.add_error('doi', f"The DOI {form.cleaned_data['doi']} could not be imported.")
 

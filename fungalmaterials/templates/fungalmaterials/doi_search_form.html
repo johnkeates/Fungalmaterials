@@ -1,12 +1,59 @@
 {% extends 'fungalmaterials/base.html' %}
 {% block content %}
 {% load static %}
-    
+
+<style>
+    #about-container {
+        text-align: justify;
+        margin: auto;
+    }
+    /* For screens below 540px */
+    @media screen and (max-width: 540px) {
+        #about-container {
+            max-width: 650px;
+        }
+        .column-container span {
+            width: 100%;
+        }
+        #search-form {
+            margin: 0 auto; 
+            width: 100%;
+        }
+    }
+    /* For screens between 541px and 992px */
+    @media screen and (min-width: 541px) and (max-width: 992px) {
+        #about-container {
+            max-width: 650px;
+        }
+        .column-container span {
+            width: 50%;
+        }
+        #search-form {
+            margin: 0 auto; 
+            width: 500px;
+        }
+    }
+    /* For screens above 992px */
+    @media screen and (min-width: 992px) {
+        #about-container {
+            max-width: 800px;
+        }
+        .column-container span {
+            width: 33.33%;
+        }
+        #search-form {
+            margin: 0 auto; 
+            width: 500px;
+        }
+    }
+</style>
+
+<div id="about-container">
     <br>
 
     <form method="post">
         {% csrf_token %}
-        <div class="mb-3" style="width: 500px;">
+        <div id="search-form" class="mb-3 mt-3">
             <div class="input-group">
                 {{ form.doi }}
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -24,5 +71,6 @@
             </ul>
         </div>
     {% endif %}
+</div>
 
 {% endblock %}
