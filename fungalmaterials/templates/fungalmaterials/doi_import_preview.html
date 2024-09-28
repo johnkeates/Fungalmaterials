@@ -1,6 +1,7 @@
 {% extends 'fungalmaterials/base.html' %}
 {% block content %}
 {% load static %}
+{% load month_name %}
 
 <style>
 	#about-container {
@@ -65,7 +66,9 @@
 		  <td>
 		  {% for key, value in doi_preview.message.published.items %}   
 			{% for item in value %}
-			  {% if item.2 %}{{ item.2 }}-{% endif %}{% if item.1 %}{{ item.1 }}-{% endif %}{% if item.0 %}{{ item.0 }}{% endif %}
+			  {% if item.2 %}{{ item.2 }}{% endif %}
+			  {% if item.1 %}{{ item.1|month_name }}{% endif %}
+			  {% if item.0 %}{{ item.0 }}{% endif %}
 			{% endfor %}
 		  {% endfor %}
 		  </td>
