@@ -74,7 +74,7 @@ class ArticleAdminForm(forms.ModelForm):
 class ArticleAdmin(admin.ModelAdmin):
 	inlines = [ArticleAuthorshipInline]
 	form = ArticleAdminForm
-	fields = ('doi', 'title', 'year', 'month', 'day', 'journal', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
+	fields = ('title', 'year', 'month', 'day', 'journal', 'doi', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title',)
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
