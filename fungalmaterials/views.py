@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from bs4 import BeautifulSoup
 
+from fungalmaterials.functions import AuthorSeparation
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
 from fungalmaterials.models import Article, Review, MaterialProperty, ArticleAuthorship, ReviewAuthorship
@@ -107,15 +108,11 @@ def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
 
-	# Separate the author with sequence 'first'
-	first_author_authorship = ArticleAuthorship.objects.filter(article=article, sequence='first').first()
+	# Get all article authors
+	authors_list = article.authors.all()
 
-	# If there is a first author, get the Author instance
-	first_author = first_author_authorship.author if first_author_authorship else None
-
-	# Get all other authors (those who are not 'first') and keep the original order
-	other_authors_authorships = ArticleAuthorship.objects.filter(article=article).exclude(sequence='first')
-	other_authors = [authorship.author for authorship in other_authors_authorships]
+	# Apply function to separate authors with "," or "&"
+	authors_list = AuthorSeparation(authors_list)
 
 	# For species & substrate list
 	sorted_species = article.species.all().order_by('name')
@@ -158,8 +155,7 @@ def articles_info(request, pk):
 	# Pass the data and sorted material properties to the template
 	context = {
 		'article': article,
-		'first_author': first_author,
-		'other_authors': other_authors,
+		'authors_list': authors_list,
 		'data': data,
 		'sorted_species': sorted_species,
 		'sorted_substrate': sorted_substrate,
@@ -260,20 +256,16 @@ def reviews_search(request):
 
 def reviews_info(request, pk):
 	review = Review.objects.get(id=pk)
-	# Separate the author with sequence 'first'
-	first_author_authorship = ReviewAuthorship.objects.filter(review=review, sequence='first').first()
+	
+	# Get all article authors
+	authors_list = review.authors.all()
 
-	# If there is a first author, get the Author instance
-	first_author = first_author_authorship.author if first_author_authorship else None
-
-	# Get all other authors (those who are not 'first') and keep the original order
-	other_authors_authorships = ReviewAuthorship.objects.filter(review=review).exclude(sequence='first')
-	other_authors = [authorship.author for authorship in other_authors_authorships]
+	# Apply function to separate authors with "," or "&"
+	authors_list = AuthorSeparation(authors_list)
 
 	context = {
 		'review': review,
-		'first_author': first_author,
-		'other_authors': other_authors,
+		'authors_list': authors_list,
 	}
 
 	if review.approved:

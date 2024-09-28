@@ -49,15 +49,8 @@
         <br>
 
         <!-- Authors -->
-        {% if article.authors.all %}
-            {% if first_author %}
-                {{ first_author.name }} {{ first_author.family }}{% if not forloop.last %}, {% endif %}
-            {% endif %}
-
-            {% for author in other_authors %}
-                {{ author.name }} {{ author.family }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-            
+        {% if authors_list %}
+            {{authors_list}}
             <br>
             <br>
             <br>
@@ -67,7 +60,7 @@
             <br>
             <br>
         {% endif %}
-        
+
         
         <!-- Abstract -->
         {% if article.abstract %}
