@@ -22,12 +22,34 @@ def import_new_article_by_doi(doi):
 	article = Article()
 
 	article.title = work['title'][0]
-	article.abstract = work['abstract']
-	article.year = work['published']['date-parts'][0][0]
-	article.month = work['published']['date-parts'][0][1]
-	article.day = work['published']['date-parts'][0][2]
+	
+	# Check if exists in work dictionary
+	if 'abstract' in work:
+		article.abstract = work['abstract']
+
+	#article.year = work['published']['date-parts'][0][0]
+	#article.month = work['published']['date-parts'][0][1]
+	#article.day = work['published']['date-parts'][0][2]
+
+	if 'published' in work and 'date-parts' in work['published']:
+		date_parts = work['published']['date-parts'][0]
+
+		if len(date_parts) > 0:  # Ensure the year exists
+			article.year = date_parts[0]
+		if len(date_parts) > 1:  # Ensure the month exists
+			article.month = date_parts[1]
+		if len(date_parts) > 2:  # Ensure the day exists
+			article.day = date_parts[2]
+
 	article.journal = work['container-title'][0]
-	article.doi = work['DOI']
+
+	# Check DOI
+	doi_value = work['DOI']
+	if not doi_value.startswith("https://doi.org/"):
+		doi_value = f"https://doi.org/{doi_value}"
+
+	article.doi = doi_value
+
 	article.save()
 
 	for author_entry in work['author']:
