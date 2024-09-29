@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q, F
+from django.db.models import Q, F, Value
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -30,10 +31,7 @@ def articles_search(request):
 
 	field_to_column = {
 		"0": "title",
-		# "1": "authors", # off because manytomany field
-		"2": "year",
-		# "3": "topic", # off because manytomany field
-		# "4": "method", # off because manytomany field
+		"2": "year",  # This will now include year, month, and day sorting
 	}
 
 	# Process sorting parameters
@@ -47,10 +45,7 @@ def articles_search(request):
 		order_field = "title"
 
 	# Determine sorting direction
-	if order_direction == 'desc':
-		order_field = F(order_field).desc(nulls_last=True)
-	else:
-		order_field = F(order_field).asc(nulls_last=True)
+	sort_asc = order_direction == 'asc'
 
 	# Filter and sort articles
 	article_query = Article.objects.filter(approved=True)
@@ -65,7 +60,25 @@ def articles_search(request):
 		).distinct()
 
 	# Apply ordering
-	article_query = article_query.order_by(order_field)
+	if order_field == "year":
+		# Sort by year, then by month (default to 0 if None), and then by day (default to 0 if None)
+		if sort_asc:
+			article_query = article_query.order_by(
+				F('year').asc(nulls_last=True),
+				Coalesce('month', Value(0)).asc(),
+				Coalesce('day', Value(0)).asc()
+			)
+		else:
+			article_query = article_query.order_by(
+				F('year').desc(nulls_last=True),
+				Coalesce('month', Value(0)).desc(),
+				Coalesce('day', Value(0)).desc()
+			)
+	else:
+		if sort_asc:
+			article_query = article_query.order_by(F(order_field).asc(nulls_last=True))
+		else:
+			article_query = article_query.order_by(F(order_field).desc(nulls_last=True))
 
 	# Pagination
 	paginator = Paginator(article_query, 125)
