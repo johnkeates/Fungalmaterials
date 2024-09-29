@@ -81,10 +81,10 @@ class Method(models.Model):
 
 # Article
 class Article(Date):
-	title = models.CharField(max_length=300)
+	title = models.CharField(max_length=300, unique=True)
 	authors = models.ManyToManyField('Author', through='ArticleAuthorship', verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
-	doi = models.URLField(max_length=100, unique=True, blank=True)
+	doi = models.URLField(max_length=100, unique=True, null=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
 	abstract = models.TextField(max_length=2000, blank=True)
 	species = models.ManyToManyField(Species, blank=True)
@@ -102,10 +102,10 @@ class Article(Date):
 
 # Review
 class Review(Date):
-	title = models.CharField(max_length=300)
+	title = models.CharField(max_length=300, unique=True)
 	authors = models.ManyToManyField('Author', through='ReviewAuthorship', verbose_name="Author(s)")
 	journal = models.CharField(max_length=100, blank=True)
-	doi = models.URLField(max_length=100, unique=True, blank=True)
+	doi = models.URLField(max_length=100, unique=True, null=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
 	abstract = models.TextField(max_length=2000, blank=True)
 	topic = models.ManyToManyField(Topic, blank=True)
