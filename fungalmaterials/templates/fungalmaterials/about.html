@@ -95,19 +95,30 @@ Fungalmaterials is a collaborative database for fungal material references. This
 	<span class="badge rounded-pill bg-secondary">Living</span>
 	<span class="badge rounded-pill bg-secondary">Electrical</span>
 	</p>
+
+	<br>
+	<br>
+
+	{% if sankey_fig %}
+		<!-- Render the Sankey diagram here -->
+		<div style="text-align: center;">
+		    {{ sankey_fig|safe }}  <!-- Use safe to prevent auto-escaping -->
+		    <span class="small text-muted" style="font-size:12px"><i class="bi bi-info-circle"></i> Excluding articles without method or topic selected</span>
+		</div>
+		
+	{% endif %}
 </section>
 
 <br>
 <br>
 
-{% if sankey_fig %}
-	<!-- Render the Sankey diagram here -->
-	<div style="text-align: center;">
-	    {{ sankey_fig|safe }}  <!-- Use safe to prevent auto-escaping -->
-	    <span class="small text-muted" style="font-size:12px"><i class="bi bi-info-circle"></i> Excluding articles without method or topic selected</span>
-	</div>
-	
-{% endif %}
+<!-- <section id="material">
+	<h4>Dashboard</h4>
+
+	<br>
+	<br>
+
+</section> -->
 
 <br>
 <br>
