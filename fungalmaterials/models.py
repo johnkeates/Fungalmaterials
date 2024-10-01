@@ -173,8 +173,8 @@ class Unit(models.Model):
 		return self.symbol
 
 
-# Material property
-class MaterialProperty(models.Model):
+# Material
+class Material(models.Model):
 	article = models.ForeignKey(Article, on_delete=models.CASCADE)
 	species = models.ForeignKey(Species, on_delete=models.CASCADE)
 	substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
@@ -184,5 +184,5 @@ class MaterialProperty(models.Model):
 	unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
 
 	class Meta:
-		verbose_name_plural = "Material properties" 
+		verbose_name_plural = "Materials" 
 

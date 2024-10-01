@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, MaterialProperty, ArticleAuthorship, ReviewAuthorship
+from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, Material, ArticleAuthorship, ReviewAuthorship
 
 
 # Author
@@ -132,9 +132,9 @@ class UnitAdmin(admin.ModelAdmin):
 	search_fields = ('symbol', 'name')
 
 
-# MaterialProperty
-@admin.register(MaterialProperty)
-class MaterialPropertyAdmin(admin.ModelAdmin):
+# Material
+@admin.register(Material)
+class MaterialAdmin(admin.ModelAdmin):
 	list_display = ('get_first_author_and_year', 'species', 'substrate', 'treatment', 'material_property', 'value', 'unit')
 	search_fields = ('article__name', 'species__name', 'substrate__name', 'material_property__name')
 	autocomplete_fields = ('article', 'species', 'substrate')

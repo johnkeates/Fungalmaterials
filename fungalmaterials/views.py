@@ -12,7 +12,7 @@ from fungalmaterials.functions import AuthorSeparation
 from fungalmaterials.combinations import generate_sankey
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
-from fungalmaterials.models import Article, Review, MaterialProperty, ArticleAuthorship, ReviewAuthorship
+from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship
 
 
 ############ ARTICLES ###########
@@ -133,8 +133,8 @@ def articles_info(request, pk):
 	sorted_species = article.species.all().order_by('name')
 	sorted_substrate = article.substrate.all().order_by('name')
 
-	# Query the MaterialProperty model for the specified article, ordered by species name
-	material_properties = MaterialProperty.objects.filter(article=article).order_by('species__name')
+	# Query the Material model for the specified article, ordered by species name
+	material_properties = Material.objects.filter(article=article).order_by('species__name')
 
 	# Organize the data by species, treatment, and substrate
 	data = {}
@@ -297,8 +297,8 @@ def species(request):
 
 
 def species_search(request):
-	# Query the MaterialProperty model for all data
-	material_properties = MaterialProperty.objects.select_related('species', 'substrate', 'material_property', 'article')
+	# Query the Material model for all data
+	material_properties = Material.objects.select_related('species', 'substrate', 'material_property', 'article')
 
 	# Prepare data to send as JSON
 	data = []

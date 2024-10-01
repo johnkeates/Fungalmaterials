@@ -1,5 +1,5 @@
 from django import forms
-from fungalmaterials.models import MaterialProperty, Species, Substrate
+from fungalmaterials.models import Material, Species, Substrate
 
 
 class DOISearchForm(forms.Form):
@@ -12,13 +12,13 @@ class DOIImportForm(forms.Form):
     doi = forms.CharField(label='Enter DOI', max_length=100)
 
 
-class MaterialPropertyForm(forms.ModelForm):
+class MaterialForm(forms.ModelForm):
     class Meta:
-        model = MaterialProperty
+        model = Material
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
-        super(MaterialPropertyForm, self).__init__(*args, **kwargs)
+        super(MaterialForm, self).__init__(*args, **kwargs)
         
         # If an article is selected, filter the species and substrate querysets
         if 'article' in self.data:
