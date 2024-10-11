@@ -1,3 +1,5 @@
+from email.policy import default
+
 from django import forms
 from fungalmaterials.models import Material, Species, Substrate
 
@@ -9,8 +11,9 @@ class DOISearchForm(forms.Form):
 
 
 class DOIImportForm(forms.Form):
-    doi = forms.CharField(label='Enter DOI', max_length=100)
-
+    doi = forms.CharField(widget=forms.HiddenInput, label='Enter DOI', max_length=100)
+    CHOICES = [("article", "Article"), ("review", "Review")]
+    import_type = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, required=True, initial="article")
 
 class MaterialForm(forms.ModelForm):
     class Meta:

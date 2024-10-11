@@ -7,10 +7,11 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
+from habanero.filterhandler import switch
 
-from fungalmaterials.functions import AuthorSeparation
+from fungalmaterials.functions import author_separation
 from fungalmaterials.combinations import generate_sankey
-from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi
+from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi, import_new_review_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
 from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship
 
@@ -57,8 +58,8 @@ def articles_search(request):
 			Q(title__icontains=search_query) |
 			Q(authors__family__icontains=search_query) |
 			Q(year__icontains=search_query) |
-			Q(topic__name__icontains=search_query) |
-			Q(method__name__icontains=search_query)
+			Q(topic__name__icontains=search_query)
+			# Q(method__name__icontains=search_query)
 		).distinct()
 
 	# Apply ordering
@@ -105,7 +106,8 @@ def articles_search(request):
 			"authors": first_author_authorship,
 			"year": article.year,
 			"topic": list(article.topic.values_list('name', flat=True)),
-			"method": list(article.method.values_list('name', flat=True)),
+			"method": ["na"],
+			# "method": list(article.method.values_list('name', flat=True)),
 			"pk": article.pk,
 		})
 
@@ -127,45 +129,56 @@ def articles_info(request, pk):
 	authors_list = article.authors.all()
 
 	# Apply function to separate authors with "," or "&"
-	authors_list = AuthorSeparation(authors_list)
+	authors_list = author_separation(authors_list)
 
 	# For species & substrate list
-	sorted_species = article.species.all().order_by('name')
-	sorted_substrate = article.substrate.all().order_by('name')
+	sorted_species = []
+	sorted_substrate = []
+
+	for material in article.material_set.all():
+		for species in material.species.all().order_by('name'):
+			sorted_species.append(species)
+
+		for substrate in material.substrates.all().order_by('name'):
+			sorted_substrate.append(substrate)
+
+		print(material.property_set.all())
+
 
 	# Query the Material model for the specified article, ordered by species name
 	material_properties = Material.objects.filter(article=article).order_by('species__name')
 
 	# Organize the data by species, treatment, and substrate
 	data = {}
-	unique_material_properties = {}
-
-	for mp in material_properties:
-		species = mp.species.name
-		treatment = mp.treatment
-		substrate = mp.substrate.name
-		property_name = mp.material_property.name
-		value = mp.value
-		unit = mp.unit.symbol
-
-		# Keep track of the unique material properties with units for column headers
-		unique_material_properties[property_name] = unit
-
-		# Ensure that species, treatment, and substrate exist in the dictionary
-		if species not in data:
-			data[species] = {}
-
-		if treatment not in data[species]:
-			data[species][treatment] = {}
-
-		if substrate not in data[species][treatment]:
-			data[species][treatment][substrate] = {}
-
-		# Add the material property value to the correct species-treatment-substrate entry
-		data[species][treatment][substrate][property_name] = value
-
-	# Sort material properties for column headers
-	sorted_material_properties = sorted(unique_material_properties.items())
+	# unique_material_properties = {}
+	#
+	# for mp in material_properties:
+	# 	species = mp.species.name
+	# 	treatment = mp.treatment
+	# 	substrate = mp.substrate.name
+	# 	property_name = mp.material_property.name
+	# 	value = mp.value
+	# 	unit = mp.unit.symbol
+	#
+	# 	# Keep track of the unique material properties with units for column headers
+	# 	unique_material_properties[property_name] = unit
+	#
+	# 	# Ensure that species, treatment, and substrate exist in the dictionary
+	# 	if species not in data:
+	# 		data[species] = {}
+	#
+	# 	if treatment not in data[species]:
+	# 		data[species][treatment] = {}
+	#
+	# 	if substrate not in data[species][treatment]:
+	# 		data[species][treatment][substrate] = {}
+	#
+	# 	# Add the material property value to the correct species-treatment-substrate entry
+	# 	data[species][treatment][substrate][property_name] = value
+	#
+	# # Sort material properties for column headers
+	# sorted_material_properties = sorted(unique_material_properties.items())
+	sorted_material_properties=[]
 
 	# Pass the data and sorted material properties to the template
 	context = {
@@ -276,7 +289,7 @@ def reviews_info(request, pk):
 	authors_list = review.authors.all()
 
 	# Apply function to separate authors with "," or "&"
-	authors_list = AuthorSeparation(authors_list)
+	authors_list = author_separation(authors_list)
 
 	context = {
 		'review': review,
@@ -379,6 +392,7 @@ def doi_search(request):
 					abstract_text = ''  # Set to empty if no abstract found
 
 				# If the API finds something, present this to the user
+				# TODO: set the type of article/review to be imported so the Radio Button in the ChoiceField is pre-set.
 				import_form = DOIImportForm(initial={'doi': form.cleaned_data['doi']})
 				
 				return render(request, 'fungalmaterials/doi_import_preview.html', {
@@ -403,7 +417,19 @@ def doi_import(request):
 	form = DOIImportForm(request.POST)
 
 	if form.is_valid():
-		import_status = import_new_article_by_doi(form.cleaned_data['doi'])
+		# Either the import is going to be OK and we set this to True, or something bad happened
+		import_status = False
+
+		# Check if we are going to treat this as an article, a review or something else
+		if form.cleaned_data['import_type'] == "article":
+			print("An article is going to be imported")
+			import_status = import_new_article_by_doi(form.cleaned_data['doi'])
+		elif form.cleaned_data['import_type'] == "review":
+			print("An review is going to be imported")
+			import_status = import_new_review_by_doi(form.cleaned_data['doi'])
+		else:
+			form.add_error('import_type', f"The import type [{form.cleaned_data['import_type']}] is not supported.")
+
 		if import_status:
 			# TODO: Fix placeholder data
 			return render(request, 'fungalmaterials/doi_import_done.html',
@@ -412,7 +438,7 @@ def doi_import(request):
 			form.add_error('doi', f"The DOI {form.cleaned_data['doi']} could not be imported.")
 
 	else:
-		form.add_error('doi', 'The DOI you entered is incorrect.')
+		form.add_error('doi', 'The DOI or Type you entered is incorrect.')
 
 	return render(request, 'fungalmaterials/doi_import_preview.html', {'form': form})
 
@@ -451,13 +477,12 @@ def doi_import(request):
 def about(request):
 	combination_list = [
 		{
-			'method': article['method__name'],
 			'topic': article['topic__name']
 		}
-		for article in Article.objects.select_related('method', 'topic')
+		for article in Article.objects.select_related('topic')
 		# This filters out articles with method or topic is None
-		.filter(method__isnull=False, topic__isnull=False)  
-		.values('method__name', 'topic__name')
+		.filter(topic__isnull=False)
+		.values('topic__name')
 	]
 
 	# Use function to generate sankey figure

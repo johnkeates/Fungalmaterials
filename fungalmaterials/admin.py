@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, Material, ArticleAuthorship, ReviewAuthorship
+from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, Material, \
+	ArticleAuthorship, ReviewAuthorship
 
 
 # Author
@@ -49,44 +50,28 @@ class ArticleAuthorshipInline(admin.TabularInline):
 	model = ArticleAuthorship
 	extra = 2
 
-# Custom widget for the Article form to enable the 'prefill this article' feature
-from django import forms
-from django.contrib import admin
-
-
-class ArticleDoiImportWidget(forms.CheckboxInput):
-	template_name = 'admin/widgets/article_doi_import_widget.html'
-
-class ArticleAdminForm(forms.ModelForm):
-	class Meta:
-		model = Article
-		fields = '__all__'
-		widgets = {
-			'doi_import': ArticleDoiImportWidget(),
-		}
-
-# End Custom Widget
-
-
+# Article-Author relationship
+class ArticleMaterialInline(admin.TabularInline):
+	model = Material
+	extra = 2
 
 # Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-	inlines = [ArticleAuthorshipInline]
-	form = ArticleAdminForm
-	fields = ('title', 'year', 'month', 'day', 'journal', 'doi', 'species', 'substrate', 'topic', 'method', 'abstract', 'approved')  # Define the order of the fields   
+	inlines = [ArticleAuthorshipInline, ArticleMaterialInline]
+	fields = ('title', 'year', 'month', 'day', 'journal', 'doi', 'topic', 'abstract', 'approved')  # Define the order of the fields
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title',)
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
-	filter_horizontal = ('species', 'substrate', 'topic', 'method')  # Horizontal filter for many-to-many fields
-	autocomplete_fields = ('species', 'substrate', 'topic', 'method')
+	filter_horizontal = ('topic',)  # Horizontal filter for many-to-many fields
+	autocomplete_fields = ('topic',)
 
 	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
 		form.base_fields['title'].widget.attrs['style'] = 'width: 40em;' # Change width of specific field
 		form.base_fields['topic'].widget.can_add_related = False
-		form.base_fields['method'].widget.can_add_related = False
+		# form.base_fields['method'].widget.can_add_related = False
 		# form.base_fields['doi'].help_text = mark_safe(
 		# 	"<a href='#' id='doilookup'>Check DOI for autocomplete information</a>"
 		# 	"<script src='/static/doi-lookup.js'></script>"
@@ -121,8 +106,8 @@ class ReviewAdmin(admin.ModelAdmin):
 # Property
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-	list_display = ('name',)
-	search_fields = ('name',)
+	list_display = ('value',)
+	search_fields = ('value',)
 
 
 # Unit
@@ -132,12 +117,19 @@ class UnitAdmin(admin.ModelAdmin):
 	search_fields = ('symbol', 'name')
 
 
+
+# Review-Author relationship
+class MaterialPropertyInline(admin.TabularInline):
+	model = Property
+	extra = 2
+
 # Material
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
-	list_display = ('get_first_author_and_year', 'species', 'substrate', 'treatment', 'material_property', 'value', 'unit')
-	search_fields = ('article__name', 'species__name', 'substrate__name', 'material_property__name')
-	autocomplete_fields = ('article', 'species', 'substrate')
+	inlines = [MaterialPropertyInline]
+	list_display = ('get_first_author_and_year', 'treatment')
+	search_fields = ('article__name', 'species__name')
+	autocomplete_fields = ('article', 'species')
 
 	# Custom method to get the first author and year of the article
 	def get_first_author_and_year(self, obj):
