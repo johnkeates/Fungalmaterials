@@ -1,4 +1,4 @@
-def AuthorSeparation(authors):
+def author_separation(authors):
 	# Convert the QuerySet to a list
 	authors = list(authors)
 
