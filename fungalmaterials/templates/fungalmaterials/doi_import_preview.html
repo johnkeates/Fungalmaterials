@@ -109,7 +109,7 @@
   <div id="confirm-form">
 	<form action="{% url 'doi_import' %}" method="post">
 		{% csrf_token %}
-		{{ form.doi.as_hidden }}
+        {{ form.as_p }}
 		<button type="submit" class="btn btn-primary">Confirm Import</button>
 	</form>
 
