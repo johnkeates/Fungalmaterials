@@ -493,12 +493,13 @@ def doi_import(request):
 def about(request):
 	combination_list = [
 		{
+			'method': article['method__name'],
 			'topic': article['topic__name']
 		}
-		for article in Article.objects.select_related('topic')
+		for article in Article.objects.select_related('method', 'topic')
 		# This filters out articles with method or topic is None
-		.filter(topic__isnull=False)
-		.values('topic__name')
+		.filter(method__isnull=False, topic__isnull=False)  
+		.values('method__name', 'topic__name')
 	]
 
 	# Use function to generate sankey figure
