@@ -87,6 +87,7 @@ class Article(Date):
 	doi = models.URLField(max_length=100, unique=True, null=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
 	abstract = models.TextField(max_length=2000, blank=True)
+	method = models.ManyToManyField(Method, blank=True)
 	topic = models.ManyToManyField(Topic, blank=True)
 	approved = models.BooleanField('Approved',default=False)
 

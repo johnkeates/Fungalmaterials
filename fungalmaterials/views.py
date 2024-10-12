@@ -101,13 +101,22 @@ def articles_search(request):
 		# If no 'first' author exists, fall back to the first author added
 		if not first_author_authorship:
 			first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__family', flat=True).first()
+		
+		# Get the method(s) from the Article model
+		article_methods = article.method.values_list('name', flat=True)
+		
+		# Get the method(s) from the Material model
+		material_methods = Material.objects.filter(article=article).values_list('method__name', flat=True)
+		
+		# Combine method(s) from both sources and ensure uniqueness
+		all_methods = set(article_methods).union(set(material_methods))
+		
 		payload.append({
 			"title": article.title,
 			"authors": first_author_authorship,
 			"year": article.year,
 			"topic": list(article.topic.values_list('name', flat=True)),
-			"method": ["na"],
-			# "method": list(article.method.values_list('name', flat=True)),
+			"method": list(all_methods),
 			"pk": article.pk,
 		})
 
