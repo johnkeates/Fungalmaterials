@@ -98,7 +98,7 @@
         <h5>Species</h5>
             <ul class="list-group" style="font-size: 14px; max-width: 250px;">
                 {% for species in sorted_species %}
-                    <li class="list-group-item"><i>{{ species.name }}</i></li>
+                    <li class="list-group-item list-group-item-action"><i>{{ species.name }}</i></li>
                 {% endfor %}
             </ul>
         <br>
@@ -111,7 +111,7 @@
         <h5>Substrate</h5>
             <ul class="list-group" style="font-size: 14px; max-width: 250px;">
                 {% for substrate in sorted_substrate %}
-                    <li class="list-group-item"><i>{{ substrate.name }}</i></li>
+                    <li class="list-group-item list-group-item-action"><i>{{ substrate.name }}</i></li>
                 {% endfor %}
             </ul>
         <br>
