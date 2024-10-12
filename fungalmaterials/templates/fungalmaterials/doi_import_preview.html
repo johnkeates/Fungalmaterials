@@ -106,24 +106,43 @@
 	</table>
 
   <!-- FORM -->
-  <div id="confirm-form">
-	<form action="{% url 'doi_import' %}" method="post">
-		{% csrf_token %}
-        {{ form.as_p }}
-		<button type="submit" class="btn btn-primary">Confirm Import</button>
-	</form>
+  <div id="confirm-form" >
+		<form action="{% url 'doi_import' %}" method="post">
+			{% csrf_token %}
+	  		<!-- Render DOI input field (hidden) -->
+	    	{{ form.doi }}
+	    	<div class="d-flex justify-content-center">
+	    		{% for radio in form.import_type %}
+	        <div>
+	        	<div class="p-2 flex-fill">
+		          {{ radio.tag }} <!-- This renders the input element -->
+		          <label class="form-check-label" for="{{ radio.id_for_label }}">
+		            {{ radio.choice_label }}  <!-- This renders the label for each radio option -->
+		          </label>
+	        	</div>
+	        </div>
+	        {% endfor %}
+	      </div>  
+				<br>
+			<button type="submit" class="btn btn-primary">Confirm Import</button>
+		</form>
 
-	{% if form.errors %}
-		<div style="color: red;">
-			<p>There was an error with your submission:</p>
-			<ul>
-				{% for field, errors in form.errors.items %}
-					<li>{{ errors }}</li>
-				{% endfor %}
-			</ul>
-		</div>
-	{% endif %}
+		{% if form.errors %}
+			<div style="color: red;">
+				<p>There was an error with your submission:</p>
+				<ul>
+					{% for field, errors in form.errors.items %}
+						<li>{{ errors }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
   </div>
 </div>
+
+<br>
+<br>
+<br>
+<br>
 
 {% endblock %}

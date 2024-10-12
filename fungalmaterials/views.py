@@ -366,6 +366,9 @@ def species_search(request):
 # If it could not be resolved, it will show an error.
 @login_required
 def doi_search(request):
+	# Get the 'type' parameter from the URL (default to 'article' if not provided)
+	content_type = request.GET.get('type', 'article')
+
 	# If this was a POST, someone has used the submit button, check the input
 	if request.method == 'POST':
 		form = DOISearchForm(request.POST)
@@ -393,7 +396,11 @@ def doi_search(request):
 
 				# If the API finds something, present this to the user
 				# TODO: set the type of article/review to be imported so the Radio Button in the ChoiceField is pre-set.
-				import_form = DOIImportForm(initial={'doi': form.cleaned_data['doi']})
+				# Set the initial value for the type (article/review) in the DOIImportForm
+				import_form = DOIImportForm(initial={
+					'doi': form.cleaned_data['doi'],
+					'import_type': content_type  # Pre-set the type field based on the content_type
+				})
 				
 				return render(request, 'fungalmaterials/doi_import_preview.html', {
 					'form': import_form,

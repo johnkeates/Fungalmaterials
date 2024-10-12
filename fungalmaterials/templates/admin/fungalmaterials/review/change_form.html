@@ -3,8 +3,9 @@
 {% block object-tools %}
 {% if not change and not is_popup %}
    <ul class="object-tools">
-        <li>
-        <a href="/doi/search" class="addlink">Import via DOI</a>
+    <li>
+      <!-- Add the query parameter 'type' with the value 'review' -->
+      <a href="/doi/search?type=review" class="addlink">Import via DOI</a>
     </li>
   </ul>
 {% endif %}
