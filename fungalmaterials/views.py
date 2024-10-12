@@ -153,50 +153,15 @@ def articles_info(request, pk):
 
 		print(material.property_set.all())
 
+	# Material properties list, ordered by species name
+	material_properties = []
 
-	# Query the Material model for the specified article, ordered by species name
-	material_properties = Material.objects.filter(article=article).order_by('species__name')
-
-	# Organize the data by species, treatment, and substrate
-	data = {}
-	# unique_material_properties = {}
-	#
-	# for mp in material_properties:
-	# 	species = mp.species.name
-	# 	treatment = mp.treatment
-	# 	substrate = mp.substrate.name
-	# 	property_name = mp.material_property.name
-	# 	value = mp.value
-	# 	unit = mp.unit.symbol
-	#
-	# 	# Keep track of the unique material properties with units for column headers
-	# 	unique_material_properties[property_name] = unit
-	#
-	# 	# Ensure that species, treatment, and substrate exist in the dictionary
-	# 	if species not in data:
-	# 		data[species] = {}
-	#
-	# 	if treatment not in data[species]:
-	# 		data[species][treatment] = {}
-	#
-	# 	if substrate not in data[species][treatment]:
-	# 		data[species][treatment][substrate] = {}
-	#
-	# 	# Add the material property value to the correct species-treatment-substrate entry
-	# 	data[species][treatment][substrate][property_name] = value
-	#
-	# # Sort material properties for column headers
-	# sorted_material_properties = sorted(unique_material_properties.items())
-	sorted_material_properties=[]
-
-	# Pass the data and sorted material properties to the template
 	context = {
 		'article': article,
 		'authors_list': authors_list,
-		'data': data,
 		'sorted_species': sorted_species,
 		'sorted_substrate': sorted_substrate,
-		'sorted_material_properties': sorted_material_properties,
+		'material_properties': material_properties,
 	}
 
 	return render(request, 'fungalmaterials/articles_info.html', context)
@@ -457,35 +422,6 @@ def doi_import(request):
 		form.add_error('doi', 'The DOI or Type you entered is incorrect.')
 
 	return render(request, 'fungalmaterials/doi_import_preview.html', {'form': form})
-
-
-# @login_required
-# @require_GET
-# def doi_lookup(request, doi):
-# 	# Check if the doi string is provided (this will always be true due to URL config)
-# 	if not doi:
-# 		return JsonResponse(
-# 			{'error': 'DOI not found.'},
-# 			status=404
-# 		)
-#
-# 	# Check if the doi string is shorter than 3 characters
-# 	if len(doi) < 3:
-# 		return JsonResponse(
-# 			{'error': 'DOI is invalid. Must be at least 3 characters long.'},
-# 			status=400  # 400 Bad Request for invalid input
-# 		)
-#
-# 	# If all validations pass,
-# 	cr = Crossref(mailto="j.g.vandenbrandhof@uu.nl")
-# 	print(f"Looking for {doi}")
-# 	works_found = cr.works(ids=[doi])
-#
-# 	# #then return a success response
-# 	return JsonResponse(
-# 		{'message': f'DOI "{doi}" is valid and accepted.', 'works': works_found},
-# 		status=200
-# 	)
 
 
 ############ ABOUT ###########

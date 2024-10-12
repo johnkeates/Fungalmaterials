@@ -74,63 +74,48 @@
         
 
         <!-- Material properties -->
-        {% if sorted_material_properties %}
+        {% if material_properties %}
         <h5>Material properties</h5>
             <table id="table_id" style="font-size: 14px; width: 100%;">
                 <thead>
                     <tr>
                         <th>Species</th>
-                        <th>Substrate</th>
+                        <th>Substrate/Medium</th>
                         <th>Treatment</th>
-                        {% for property, unit in sorted_material_properties %}
-                            <th>{{ property }} ({{ unit }})</th>
-                        {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for species, treatments in data.items %}
-                        {% for treatment, substrates in treatments.items %}
-                            {% for substrate, properties in substrates.items %}
-                                <tr>
-                                    <td><i>{{ species }}</i></td>
-                                    <td>{{ substrate }}</td>
-                                    <td>{{ treatment|default:"-" }}</td>
-                                    {% for property, unit in sorted_material_properties %}
-                                        <td>{{ properties|get_item:property|default:"-" }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    {% endfor %}
+                   
                 </tbody>
             </table>
         <br>
         <br>
-        {% else %}
-            <!-- Species -->
-            {% if sorted_species %}
-            <h5>Species</h5>
-                <ul class="list-group" style="font-size: 14px; max-width: 250px;">
-                    {% for species in sorted_species %}
-                        <li class="list-group-item"><i>{{ species.name }}</i></li>
-                    {% endfor %}
-                </ul>
-            <br>
-            <br>
-            {% endif %}
+        {% endif %}
 
 
-            <!-- Substrate -->
-            {% if sorted_substrate %}
-            <h5>Substrate</h5>
-                <ul class="list-group" style="font-size: 14px; max-width: 250px;">
-                    {% for substrate in sorted_substrate %}
-                        <li class="list-group-item"><i>{{ substrate.name }}</i></li>
-                    {% endfor %}
-                </ul>
-            <br>
-            <br>
-            {% endif %}
+        <!-- Species -->
+        {% if sorted_species %}
+        <h5>Species</h5>
+            <ul class="list-group" style="font-size: 14px; max-width: 250px;">
+                {% for species in sorted_species %}
+                    <li class="list-group-item"><i>{{ species.name }}</i></li>
+                {% endfor %}
+            </ul>
+        <br>
+        <br>
+        {% endif %}
+
+
+        <!-- Substrate -->
+        {% if sorted_substrate %}
+        <h5>Substrate</h5>
+            <ul class="list-group" style="font-size: 14px; max-width: 250px;">
+                {% for substrate in sorted_substrate %}
+                    <li class="list-group-item"><i>{{ substrate.name }}</i></li>
+                {% endfor %}
+            </ul>
+        <br>
+        <br>
         {% endif %}
 
 
