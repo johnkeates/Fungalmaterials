@@ -160,9 +160,9 @@ class Unit(models.Model):
 
 
 # Material
-# A material is connected to exactly one article, but multiple articles might describe identical materials
-# The treatment of the material is generally described in the article
-# The species as well, but there might be multiple, same goes for substrates and methods
+	# A material is connected to exactly one article, but multiple articles might describe identical materials
+	# The treatment of the material is generally described in the article
+	# The species as well, but there might be multiple, same goes for substrates and methods
 class Material(models.Model):
 	article = models.ForeignKey(Article, on_delete=models.CASCADE)
 	treatment = models.CharField(max_length=50, blank=True)
@@ -170,14 +170,12 @@ class Material(models.Model):
 	substrates = models.ManyToManyField(Substrate, blank=True, verbose_name="Substrate/Medium")
 	method = models.ManyToManyField(Method, blank=True)
 
-
-
 	class Meta:
 		verbose_name_plural = "Materials"
 		unique_together = ['article', 'treatment']
 
 
-
+# Property
 class Property(models.Model):
 	value = models.FloatField(help_text="Measured value of the property")
 	name = models.CharField(max_length=50, unique=True)
