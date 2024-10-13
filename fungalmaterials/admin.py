@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 
 from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, Material, \
 	ArticleAuthorship, ReviewAuthorship
@@ -50,6 +49,7 @@ class ArticleAuthorshipInline(admin.TabularInline):
 	model = ArticleAuthorship
 	extra = 2
 
+
 # Article-Author relationship
 class ArticleMaterialInline(admin.TabularInline):
 	model = Material
@@ -66,16 +66,11 @@ class ArticleAdmin(admin.ModelAdmin):
 	filter_horizontal = ('method', 'topic')  # Horizontal filter for many-to-many fields
 	autocomplete_fields = ('method', 'topic')
 
-	# disable green "+" buttons to add new objects
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
-		form.base_fields['title'].widget.attrs['style'] = 'width: 40em;' # Change width of specific field
-		form.base_fields['topic'].widget.can_add_related = False
-		form.base_fields['method'].widget.can_add_related = False
-		# form.base_fields['doi'].help_text = mark_safe(
-		# 	"<a href='#' id='doilookup'>Check DOI for autocomplete information</a>"
-		# 	"<script src='/static/doi-lookup.js'></script>"
-		# )
+		form.base_fields['title'].widget.attrs['style'] = 'width: 40em;' 	# Change width of specific field
+		form.base_fields['topic'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
+		form.base_fields['method'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
 		return form
 
 
@@ -117,11 +112,11 @@ class UnitAdmin(admin.ModelAdmin):
 	search_fields = ('symbol', 'name')
 
 
-
 # Review-Author relationship
 class MaterialPropertyInline(admin.TabularInline):
 	model = Property
 	extra = 2
+
 
 # Material
 @admin.register(Material)
