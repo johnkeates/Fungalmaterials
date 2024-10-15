@@ -25,6 +25,10 @@
 <div class="row" style="margin-bottom: 10px;">
 	<div class="col-12">
 
+        <div class="d-none d-xl-block" id="buttons">
+            <form action="/articles"><input id="back-button" type="submit" value="Back" class="Back" style="float: right;"></form>
+        </div>
+
         <p class="text-secondary">
         Article 
         &nbsp;|&nbsp; 
@@ -42,6 +46,7 @@
         {% if article.journal %}
              &nbsp;|&nbsp; {{ article.journal|capfirst }}
         {% endif %}
+
         </p>
 
         <h3>{{ article.title }} </h3>
@@ -61,7 +66,7 @@
             <br>
         {% endif %}
 
-        
+
         <!-- Abstract -->
         {% if article.abstract %}
             <h5>Abstract</h5>
