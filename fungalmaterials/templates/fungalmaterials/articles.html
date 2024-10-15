@@ -109,7 +109,7 @@
       columns: [
         { "data": "title",
           "render": function ( data, type, row ) {
-            let max_name_length = 40;
+            let max_name_length = 45;
             if(data && data.length > max_name_length){
             return data.slice(0, max_name_length) + "..."}
           return data; }
@@ -118,9 +118,15 @@
         { "data": "year" },
         { "data": "topic", 
           "render": function ( data, type, row ) {
-            return data.map(function(topic) {
+            let maxTopics = 2;
+            let displayedTopics = data.slice(0, maxTopics).map(function(topic) {
               return '<span class="badge rounded-pill bg-secondary">' + topic + '</span>';
-            }).join(' '); }
+            }).join(' ');
+            if (data.length > maxTopics) {
+              displayedTopics += ' ...';
+            }
+            return displayedTopics;
+          }
         },
         { "data": "method" ,
           "render": function ( data, type, row ) {
@@ -139,7 +145,7 @@
       columnDefs: [
         { "width": "auto", "targets": [0] },
         { "width": "175px", "targets": [1] },
-        { "width": "80px", "targets": [2] },
+        { "width": "75px", "targets": [2] },
         { "width": "150px", "targets": [3], "searchable": false, "orderable": false },
         { "width": "120px", "targets": [4], "searchable": false, "orderable": false },
         { "width": "80px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false }
