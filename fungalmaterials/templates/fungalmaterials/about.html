@@ -57,12 +57,14 @@
 
 <div id="about-container">
 
+
 <!-- Text -->
 <h4>Description</h4>
 <p>
 Fungalmaterials is a collaborative database for fungal material references. This database is an extension of the review <i><a href="https://doi.org/10.1186/s40694-022-00134-x">Risk assessment of fungal materials</a></i>, published in 2022.
 </p>
 
+{% if user.is_superuser or user.is_authenticated %}
 <div id="contact-box" class="shadow-sm">
     <i class="bi bi-envelope" style="font-size: 1.15rem;"> </i> j.g.vandenbrandhof@uu.nl
 </div>
@@ -70,6 +72,7 @@ Fungalmaterials is a collaborative database for fungal material references. This
 <div id="contact-box" class="shadow-sm">
     <i class="bi bi-github" style="font-size: 1rem;"> </i><a href="https://github.com/Realitijd/Fungalmaterials">Fungalmaterials</a>
 </div>
+{% endif %}
 
 <br>
 <br>
@@ -124,5 +127,7 @@ Fungalmaterials is a collaborative database for fungal material references. This
 <br>
 
 </div>
+
+
 
 {% endblock %}
