@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from fungalmaterials.models import Author, Species, Substrate, Topic, Method, Article, Review, Property, Unit, Material, \
-	ArticleAuthorship, ReviewAuthorship
+	ArticleAuthorship, ReviewAuthorship, PropertyName
 
 
 # Author
@@ -98,11 +98,20 @@ class ReviewAdmin(admin.ModelAdmin):
 		return form
 
 
+#PropertyName
+@admin.register(PropertyName)
+class PropertyAdmin(admin.ModelAdmin):
+	list_display = ('name',)
+	search_fields = ('name',)
+
+
 # Property
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-	list_display = ('value',)
+	list_display = ('value', 'unit', 'name', 'material_id')
 	search_fields = ('value',)
+
+
 
 
 # Unit
