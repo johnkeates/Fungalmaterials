@@ -175,17 +175,28 @@ class Material(models.Model):
 		verbose_name_plural = "Materials"
 		unique_together = ['article', 'treatment']
 
+# PropertyMeasurement
+class PropertyName(models.Model):
+	name = models.CharField(max_length=50, unique=True)
+
+	def __str__(self):
+		return self.name
+
+	class Meta:
+		verbose_name_plural = "Property Names"
+
 
 # Property
 class Property(models.Model):
 	value = models.FloatField(help_text="Measured value of the property")
-	name = models.CharField(max_length=50, unique=True)
+	name = models.ForeignKey(PropertyName, on_delete=models.CASCADE)
 	unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
 	material = models.ForeignKey(Material, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.value
+		return self.value.__str__()
 
 	class Meta:
 		verbose_name_plural = "Properties"
+
 

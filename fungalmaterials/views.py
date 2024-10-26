@@ -2,12 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F, Value
 from django.db.models.functions import Coalesce
+from django.forms import model_to_dict
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 from habanero.filterhandler import switch
+from django.core import serializers
 
 from fungalmaterials.functions import author_separation
 from fungalmaterials.combinations import generate_sankey
@@ -284,53 +286,46 @@ def species(request):
 
 
 def species_search(request):
+
+
 	# Query the Material model for all data
-	material_properties = Material.objects.select_related('species', 'substrate', 'material_property', 'article')
+	materials = Material.objects.prefetch_related(
+		'article',
+		'species',
+		'substrates',
+		'method',
+		"property_set")
 
-	# Prepare data to send as JSON
-	data = []
-	property_names = set()  # To track unique material properties
-	property_values = {}  # To store values for each unique species, treatment, and substrate
 
-	for mp in material_properties:
-		species = mp.species.name
-		treatment = mp.treatment or "-"
-		substrate = mp.substrate.name
-		property_name = mp.material_property.name
-		value = mp.value
-		unit = mp.unit.symbol
-		topic = mp.article.topic
-		method = mp.article.method
-		first_author = mp.article.authors.values_list('name', flat=True).first()
-		article_reference = f"{first_author} ({mp.article.year})"
+	payload_data = []
 
-		# Track unique material property names
-		property_names.add(property_name)
 
-		# Create a unique key for each combination of species, treatment, and substrate
-		key = (species, treatment, substrate)
-		if key not in property_values:
-			property_values[key] = {
-				'species': species,
-				'treatment': treatment,
-				'substrate': substrate,
-				'topic': list(topic.values_list('name', flat=True)),
-				'method': list(method.values_list('name', flat=True)),
-				'article': article_reference,
-				# Initialize all properties with a placeholder
-				**{prop: '-' for prop in property_names}
-			}
+	for material in materials:
+		payload_data.append({
+			"id": material.id,
+			"treatment": material.treatment,
+			"species": list(material.species.values()),
+			"substrates":  list(material.substrates.values()),
+			"method":  list(material.method.values()),
+			"properties": [
+				{
+					"value": prop.value,
+					"name": prop.name.name,  # Assuming `PropertyName` model has a `name` field
+					"unit": prop.unit.symbol  # Assuming `Unit` model has a `symbol` field
+				}
+				for prop in material.property_set.all()
+        	],
+			"first_author": material.article.authors.values_list('name', flat=True).first(),
+			"article_reference": f"{ material.article.authors.values_list('name', flat=True).first()} ({material.article.year})"
+		})
 
-		# Update the value for the material property
-		property_values[key][property_name] = f"{value} {unit}"
 
-	# Convert dictionary to list
-	data = list(property_values.values())
+	print(payload_data)
 
 	# Return the data as JSON for DataTable consumption
 	return JsonResponse({
-		'data': data,
-		'property_names': list(property_names)  # Include unique material property names
+		'data': payload_data
+		# 'property_names': serializers.serialize('json', payload_data)  # Include unique material property names
 	})
 
 
