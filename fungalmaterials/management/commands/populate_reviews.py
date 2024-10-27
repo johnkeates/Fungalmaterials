@@ -16,8 +16,7 @@ class Command(BaseCommand):
                 "https://doi.org/10.3389/fbioe.2018.00137",
                 "https://doi.org/10.3389/fbioe.2022.1067869",
                 "https://doi.org/10.1080/13511610.2022.2110453",
-                "https://doi.org/10.1007/978-981-19-1000-5",
-                "https://doi.org/10.1007/s10853-023-08214-y"
+                "https://doi.org/10.1007/s10853-023-08214-y",
                 "https://doi.org/10.1128/msphere.00681-22",
                 "https://doi.org/10.3390/jof8080842",
                 "https://doi.org/10.1021/acs.jafc.2c08828",
@@ -32,7 +31,6 @@ class Command(BaseCommand):
                 "https://doi.org/10.1002/gch2.202300140",
                 "https://doi.org/10.1016/j.biteb.2023.101456",
                 "https://dx.doi.org/10.7841/ksbbj.2023.38.3.153",
-                "https://doi.org/10.1007/s10853-023-08214-y",
                 "https://doi.org/10.18848/2325-1379/CGP/v18i02/37-62",
                 "https://doi.org/10.3390/jof10030183",
                 "https://doi.org/10.1116/6.0003441",
@@ -47,7 +45,12 @@ class Command(BaseCommand):
                 "https://doi.org/10.1007/s44174-024-00206-z",
                 "https://doi.org/10.1007/s43939-024-00084-8",
                 "https://doi.org/10.1155/2023/1629174",
-                "https://doi.org/10.3389/ffunb.2023.1135263"
+                "https://doi.org/10.3389/ffunb.2023.1135263",
+                "https://doi.org/10.1016/j.tibtech.2021.03.002",
+                "https://doi.org/10.1038/s41893-020-00606-1",
+                "https://doi.org/10.1016/j.matdes.2019.108397",
+                "https://doi.org/10.3390/md18010064",
+                "https://doi.org/10.1021/acs.biomac.9b01141",
                 ]
 
         for doi in dois:

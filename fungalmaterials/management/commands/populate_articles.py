@@ -131,8 +131,20 @@ class Command(BaseCommand):
                 "https://doi.org/10.1101/2024.09.28.615565",
                 "https://doi.org/10.1021/acsabm.4c00586",
                 "https://doi.org/10.1017/btd.2024.15",
-                "https://doi.org/10.15575/biodjati.v9i1.30021"
-                "https://doi.org/10.1038/s41598-019-40442-8"
+                "https://doi.org/10.15575/biodjati.v9i1.30021",
+                "https://doi.org/10.1038/s41598-019-40442-8",
+                "https://doi.org/10.1016/j.matdes.2018.11.027",
+                "https://doi.org/10.1038/s41598-018-23171-2",
+                "https://doi.org/10.1038/s42003-020-1064-4",
+                "https://doi.org/10.1038/srep41292",
+                "https://doi.org/10.1038/s41598-018-36032-9",
+                "https://doi.org/10.1002/fam.2637",
+                "https://doi.org/10.1021/acs.biomac.9b01141",
+                "https://doi.org/10.5185/amlett.2018.1977",
+                "https://doi.org/10.1021/acs.biomac.9b00791",
+                "https://doi.org/10.1016/j.carbpol.2020.117273",
+                "https://doi.org/10.1016/j.reactfunctpolym.2019.104428",
+                "https://doi.org/10.1016/j.compscitech.2020.108327",
                 ]
 
         for doi in dois:
