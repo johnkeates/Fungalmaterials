@@ -175,6 +175,7 @@ class Material(models.Model):
 		verbose_name_plural = "Materials"
 		unique_together = ['article', 'treatment']
 
+
 # PropertyMeasurement
 class PropertyName(models.Model):
 	name = models.CharField(max_length=50, unique=True)
