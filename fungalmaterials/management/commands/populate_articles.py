@@ -130,7 +130,6 @@ class Command(BaseCommand):
                 "https://doi.org/10.1021/acsabm.4c00586",
                 "https://doi.org/10.1017/btd.2024.15",
                 "https://doi.org/10.15575/biodjati.v9i1.30021",
-                "https://doi.org/10.1038/s41598-019-40442-8",
                 "https://doi.org/10.1016/j.matdes.2018.11.027",
                 "https://doi.org/10.1038/s41598-018-23171-2",
                 "https://doi.org/10.1038/s42003-020-1064-4",
