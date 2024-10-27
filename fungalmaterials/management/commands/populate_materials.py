@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 "properties": [
                     {
                         "value": "587",
-                        "name": "density",
+                        "name": "Density",
                         "unit": "kg/m3"
                     },
                     {
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 "properties": [
                     {
                         "value": "1262",
-                        "name": "density",
+                        "name": "Density",
                         "unit": "kg/m3"
                     },
                     {
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                 "properties": [
                     {
                         "value": "1000",
-                        "name": "density",
+                        "name": "Density",
                         "unit": "kg/m3"
                     },
                     {
@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 "properties": [
                     {
                         "value": "543",
-                        "name": "density",
+                        "name": "Density",
                         "unit": "kg/m3"
                     },
                     {
@@ -101,7 +101,7 @@ class Command(BaseCommand):
                 "properties": [
                     {
                         "value": "1200",
-                        "name": "density",
+                        "name": "Density",
                         "unit": "kg/m3"
                     },
                     {
