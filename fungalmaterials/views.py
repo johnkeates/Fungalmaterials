@@ -458,3 +458,12 @@ def about(request):
 	}
 	return render(request, "fungalmaterials/about.html", context)
 
+
+############ TEST PAGE ###########
+
+@login_required
+def test(request):
+
+	context = {
+	}
+	return render(request, "fungalmaterials/test.html", context)
