@@ -60,8 +60,8 @@ def articles_search(request):
 			Q(title__icontains=search_query) |
 			Q(authors__family__icontains=search_query) |
 			Q(year__icontains=search_query) |
-			Q(topic__name__icontains=search_query)
-			# Q(method__name__icontains=search_query)
+			Q(topic__name__icontains=search_query) |
+			Q(method__name__icontains=search_query)
 		).distinct()
 
 	# Apply ordering
