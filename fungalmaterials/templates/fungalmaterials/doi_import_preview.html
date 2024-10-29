@@ -111,7 +111,7 @@
 			<th scope="row">Species<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Fungi mentioned in article title or abstract" style="float: right;"><i class="bi bi-info-circle"></i></span></th>
 			<td>
 				{% for species in found_species %}
-					{{ species }}<br>
+					<i>{{ species }}</i><br>
 				{% endfor %}
 
 			</td>
