@@ -26,7 +26,7 @@
 
 <!-- Select topic(s) -->
 <label for="multiple-select-field">Select topic(s):</label>
-<select class="form-select" id="multiple-select-field" data-placeholder="Select or search for keyword.." multiple>
+<select class="form-select" id="multiple-select-field" data-placeholder="Select or search for topic.." multiple>
     {% for topic in topics %}
         <option>{{ topic }}</option>
     {% endfor %}
@@ -36,10 +36,10 @@
 
 <!-- Select method(s) -->
 <label for="multiple-select-field2">Select method(s):</label>
-<select class="form-select" id="multiple-select-field2" data-placeholder="Select or search for keyword.." multiple>
+<select class="form-select" id="multiple-select-field2" data-placeholder="Select or search for method.." multiple>
     {% for method in methods %}
         <option>{{ method }}</option>
-    {% endfor %}
+    {% endfor %}r
 </select>
 
 <!-- Select2 Bootstrap 5 Theme -->
