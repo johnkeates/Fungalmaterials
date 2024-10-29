@@ -1,4 +1,5 @@
 from habanero import Crossref
+import re
 from bs4 import BeautifulSoup
 from fungalmaterials.models import Article, Author, ArticleAuthorship, Review, ReviewAuthorship, Species, Material
 
@@ -11,6 +12,26 @@ def get_work_by_doi(doi):
 
 	cr = Crossref(mailto="j.g.vandenbrandhof@uu.nl")
 	return cr.works(ids=[doi])
+
+
+# Clean abstract from
+def clean_abstract(abstract_raw):
+    # Parse with BeautifulSoup
+    soup = BeautifulSoup(abstract_raw, 'lxml')
+    paragraphs = soup.find_all('jats:p')
+    abstract_text = ' '.join(p.get_text() for p in paragraphs)
+
+    # Remove LaTeX artifacts and convert scientific notations
+    abstract_text = re.sub(r'\\hspace\{[^}]+\}', ' ', abstract_text)     # Remove \hspace commands
+    abstract_text = re.sub(r'\\text\{([^}]+)\}', r'\1', abstract_text)    # Extract content in \text{}
+    abstract_text = re.sub(r'\{([^}]+)\^\{-2\}\}', r'\1 per m²', abstract_text)  # Convert {m^{-2}} to "per m²"
+    abstract_text = re.sub(r'\s+', ' ', abstract_text)  # Collapse multiple spaces
+
+    # Handle remaining {} by removing them
+    abstract_text = re.sub(r'[{}]', '', abstract_text)
+
+    return abstract_text.strip()
+
 
 # This tries to get a work and then create an Article, Authors and their Authorship for the article.
 # Currently hard-crashes if the article already exists and doesn't really check pre-existing authorship either.
@@ -28,18 +49,8 @@ def import_new_article_by_doi(doi):
 	
 	# Check if exists in work dictionary
 	if 'abstract' in work:
-		# Extract the raw abstract
 		abstract_raw = work['abstract']
-		
-		# Use BeautifulSoup to parse the abstract
-		soup = BeautifulSoup(abstract_raw, 'lxml')
-
-		# Find all <jats:p> tags and extract their text
-		paragraphs = soup.find_all('jats:p')
-		abstract_text = ' '.join(p.get_text() for p in paragraphs)
-
-		# Assign the cleaned abstract text to the article
-		article.abstract = abstract_text
+		article.abstract = clean_abstract(abstract_raw)
 
 	# Check year, month and day
 	if 'published' in work and 'date-parts' in work['published']:
@@ -92,7 +103,7 @@ def import_new_article_by_doi(doi):
 	# If so, add the species to the material object linked to the article
 	species_list = Species.objects.all()
 	for species in species_list:
-		if species.name.lower() in article.title.lower() or species.name.lower() in abstract_text.lower():
+		if species.name.lower() in article.title.lower() or species.name.lower() in article.abstract.lower():
 			material, created = Material.objects.get_or_create(article=article)
 			material.species.add(species)
 			material.save()
@@ -116,18 +127,8 @@ def import_new_review_by_doi(doi):
 
 	# Check if exists in work dictionary
 	if 'abstract' in work:
-		# Extract the raw abstract
 		abstract_raw = work['abstract']
-
-		# Use BeautifulSoup to parse the abstract
-		soup = BeautifulSoup(abstract_raw, 'lxml')
-
-		# Find all <jats:p> tags and extract their text
-		paragraphs = soup.find_all('jats:p')
-		abstract_text = ' '.join(p.get_text() for p in paragraphs)
-
-		# Assign the cleaned abstract text to the article
-		review.abstract = abstract_text
+		review.abstract = clean_abstract(abstract_raw)
 
 	# Check year, month and day
 	if 'published' in work and 'date-parts' in work['published']:
