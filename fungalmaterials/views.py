@@ -131,10 +131,12 @@ def articles_search(request):
 
 	return JsonResponse(response_data)
 
-
+from django.utils.safestring import mark_safe
 def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
+	article.title = mark_safe(article.title)
+	article.abstract = mark_safe(article.abstract)
 
 	# Get all article authors
 	authors_list = article.authors.all()
@@ -260,6 +262,8 @@ def reviews_search(request):
 
 def reviews_info(request, pk):
 	review = Review.objects.get(id=pk)
+	review.title = mark_safe(review.title)
+	review.abstract = mark_safe(review.abstract)
 	
 	# Get all article authors
 	authors_list = review.authors.all()
