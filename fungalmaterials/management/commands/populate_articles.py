@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from fungalmaterials.doi import import_new_article_by_doi
-from fungalmaterials.models import Method, Topic, Article
+from fungalmaterials.models import Method, Topic, Article, Species, Material
 
 
 class Command(BaseCommand):
@@ -175,11 +175,19 @@ class Command(BaseCommand):
                                 method, _ = Method.objects.get_or_create(name=method_name)
                                 article.method.add(method)
                         
-                        # Check if species name is mentioned in the title or asbtract
-                            # Get all species names using Species model
+                        # Check if species name is mentioned in the title or abstract
+                        # Get all species names using Species model
+                        species_list = Species.objects.all()
+                        for species in species_list:
                             # Check if any of the species names are mentioned in the title or abstract
-                            # If so add a Material with this article and the species name
-
+                            if species.name.lower() in article.title.lower() or species.name.lower() in article.abstract.lower():
+                                # print species name(s) found in the title or abstract
+                                print(f"Species {species.name} found in the title or abstract")
+                                # If so add a Material with this article and the species name
+                                material, created = Material.objects.get_or_create(article=article)
+                                material.species.add(species)
+                                material.save()                       
+        
                         article.save()
                         self.stdout.write(self.style.SUCCESS(f'Successfully imported and updated topics and methods for: {doi}'))
                     else:
