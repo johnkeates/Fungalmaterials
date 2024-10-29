@@ -105,10 +105,10 @@ def articles_search(request):
 			first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__family', flat=True).first()
 		
 		# Get the method(s) from the Article model
-		article_methods = article.method.values_list('name', flat=True)
+		article_methods = article.method.exclude(name__isnull=True).values_list('name', flat=True)
 		
 		# Get the method(s) from the Material model
-		material_methods = Material.objects.filter(article=article).values_list('method__name', flat=True)
+		material_methods = Material.objects.filter(article=article).exclude(method__name__isnull=True).values_list('method__name', flat=True)
 		
 		# Combine method(s) from both sources and ensure uniqueness
 		all_methods = set(article_methods).union(set(material_methods))
