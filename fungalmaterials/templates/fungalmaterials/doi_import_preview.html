@@ -39,6 +39,9 @@
 		margin: 0 auto; 
 		text-align: center;
 	}
+	th {
+		width: 100px;
+	}
 </style>
 
 <div id="about-container">
@@ -99,6 +102,19 @@
 		<tr>
 		  <th scope="row">Abstract</th>
 		  <td style="text-align: justify;">{{ abstract_text }}</td>
+		</tr>
+		{% endif %}
+
+		<!-- SPECIES FOUND -->
+		{% if found_species %}
+		<tr>
+			<th scope="row">Species<span data-bs-toggle="tooltip" data-bs-placement="bottom" title="Fungi mentioned in article title or abstract" style="float: right;"><i class="bi bi-info-circle"></i></span></th>
+			<td>
+				{% for species in found_species %}
+					{{ species }}<br>
+				{% endfor %}
+
+			</td>
 		</tr>
 		{% endif %}
 

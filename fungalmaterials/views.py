@@ -15,7 +15,7 @@ from fungalmaterials.functions import author_separation
 from fungalmaterials.combinations import generate_sankey
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi, import_new_review_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
-from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship
+from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship, Species
 
 
 ############ ARTICLES ###########
@@ -314,7 +314,7 @@ def species_search(request):
 					"unit": prop.unit.symbol  # Assuming `Unit` model has a `symbol` field
 				}
 				for prop in material.property_set.all()
-        	],
+			],
 			"first_author": material.article.authors.values_list('name', flat=True).first(),
 			"article_reference": f"{ material.article.authors.values_list('name', flat=True).first()} ({material.article.year})"
 		})
@@ -363,6 +363,17 @@ def doi_search(request):
 				else:
 					abstract_text = ''  # Set to empty if no abstract found
 
+				# Check if 'title' exists in the message dictionary
+				if 'title' in message:
+					article_title = message['title'][0]
+
+				# Check if species name is mentioned in the abstract or title
+				species_list = Species.objects.all()
+				found_species = []
+				for species in species_list:
+					if species.name.lower() in abstract_text.lower() or species.name.lower() in article_title.lower():
+						found_species.append(species.name)
+
 				# If the API finds something, present this to the user
 				# TODO: set the type of article/review to be imported so the Radio Button in the ChoiceField is pre-set.
 				# Set the initial value for the type (article/review) in the DOIImportForm
@@ -374,7 +385,8 @@ def doi_search(request):
 				return render(request, 'fungalmaterials/doi_import_preview.html', {
 					'form': import_form,
 					'doi_preview': possible_work,
-					'abstract_text': abstract_text,  # Pass the cleaned abstract text to the template
+					'abstract_text': abstract_text,  	# Pass the cleaned abstract text to the template
+					'found_species': found_species, 	# Pass the found species to the template
 				})
 			else:
 				# If the API finds nothing, let the user know this DOI didn't get us anything.
