@@ -4,7 +4,7 @@ from fungalmaterials.models import Topic
 class Command(BaseCommand):
 	help = 'Populate the Topic model with default data if not already present'
 	
-    # Topics: Pure, Composite, Nanopaper, 3D, Amadou, Living, Electrical
+    # Topics: Pure, Composite, Nanopaper, 3D, Amadou, Living, Electrical, adhesive
 
 	def handle(self, *args, **kwargs):
 		# List of topics to add
@@ -16,6 +16,7 @@ class Command(BaseCommand):
             {"name": "Amadou"},
 			{"name": "Living"},
 			{"name": "Electrical"},
+			{"name": "Adhesion"},
 		]
 
 		# Iterate over topic data and check if it exists by name
