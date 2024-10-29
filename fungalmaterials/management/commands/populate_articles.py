@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # List of DOIs to add
-        # Topics: Pure, Composite, Nanopaper, 3D, Amadou, Living, Electrical
+        # Topics: Pure, Composite, Nanopaper, 3D, Amadou, Living, Electrical, Adhesion
         # Methods: FB, LSF, SSF 
         dois = {
             "https://doi.org/10.1016/j.mtcomm.2024.109784": (["Pure", "Living"], ["LSF"]),
@@ -97,7 +97,7 @@ class Command(BaseCommand):
             "https://doi.org/10.1080/12298093.2024.2341492": ([""], [""]),
             "https://doi.org/10.1016/j.mtcomm.2024.109100": ([""], [""]),
             "https://doi.org/10.1017/btd.2024.6": ([""], [""]),
-            "https://doi.org/10.1039/d4lf00061g": ([""], [""]),
+            "https://doi.org/10.1039/d4lf00061g": (["Adhesion"], [""]),
             "https://doi.org/10.3390/biomimetics9060333": ([""], [""]),
             "https://doi.org/10.1038/s41598-024-62561-7": ([""], [""]),
             "https://doi.org/10.1002/gch2.202300315": ([""], [""]),
@@ -142,8 +142,8 @@ class Command(BaseCommand):
             "https://doi.org/10.1002/fam.2637": ([""], [""]),
             "https://doi.org/10.1021/acs.biomac.9b01141": ([""], [""]),
             "https://doi.org/10.5185/amlett.2018.1977": ([""], [""]),
-            "https://doi.org/10.1021/acs.biomac.9b00791": (["Nanopaper"], [""]),
-            "https://doi.org/10.1016/j.carbpol.2020.117273": (["Nanopaper"], [""]),
+            "https://doi.org/10.1021/acs.biomac.9b00791": (["Nanopaper"], ["FB"]),
+            "https://doi.org/10.1016/j.carbpol.2020.117273": (["Nanopaper"], ["FB"]),
             "https://doi.org/10.1016/j.reactfunctpolym.2019.104428": (["Nanopaper"], ["FB"]),
             "https://doi.org/10.1016/j.compscitech.2020.108327": (["Nanopaper"], ["FB"])
         }
@@ -158,11 +158,6 @@ class Command(BaseCommand):
                     if import_success:
                         article = Article.objects.get(doi=doi)
 
-                        # Check if "composite" is in the title and add the topic "Composite"
-                        if "composite" in article.title.lower():
-                            composite_topic, _ = Topic.objects.get_or_create(name="Composite")
-                            article.topic.add(composite_topic)
-
                         # Assign topics to the article
                         for topic_name in topics:
                             if topic_name:  # Ensure topic_name is not empty
@@ -175,6 +170,38 @@ class Command(BaseCommand):
                                 method, _ = Method.objects.get_or_create(name=method_name)
                                 article.method.add(method)
                         
+                        # Check if "3D" in title or abstract and add the topic "3D"
+                        if "3D" in article.title.lower() or "3D" in article.abstract.lower():
+                            three_d_topic, _ = Topic.objects.get_or_create(name="3D")
+                            article.topic.add(three_d_topic)
+
+                        # Check if "Adhesion" in title or abstract and add the topic "Adhesion"
+                        if "Adhesion" in article.title.lower() or "Adhesion" in article.abstract.lower():
+                            three_d_topic, _ = Topic.objects.get_or_create(name="Adhesion")
+                            article.topic.add(three_d_topic)
+
+                        # Check if "composite" is in the title or "mbc" in abstract and add the topic "Composite"
+                        if "composite" in article.title.lower() or "mbc" in article.abstract.lower():
+                            composite_topic, _ = Topic.objects.get_or_create(name="Composite")
+                            article.topic.add(composite_topic)
+                            # Also add "SSF" as method
+                            ssf_method, _ = Method.objects.get_or_create(name="SSF")
+                            article.method.add(ssf_method)
+
+                        # Check if "substrate" and "cellulosic" are in abstract add the method "SSF"
+                        if "substrate" in article.abstract.lower() and "cellulosic" in article.abstract.lower():
+                            ssf_method, _ = Method.objects.get_or_create(name="SSF")
+                            article.method.add(ssf_method)
+                        # or "substrate" and "solid" are in abstract add the method "SSF"
+                        elif "substrate" in article.abstract.lower() and "solid" in article.abstract.lower():
+                            ssf_method, _ = Method.objects.get_or_create(name="SSF")
+                            article.method.add(ssf_method)
+
+                        # Check if "liquid" in abstract and add the method "LSF"
+                        if "liquid" in article.abstract.lower():
+                            lsf_method, _ = Method.objects.get_or_create(name="LSF")
+                            article.method.add(lsf_method)
+
                         # Check if species name is mentioned in the title or abstract
                         # Get all species names using Species model
                         species_list = Species.objects.all()
