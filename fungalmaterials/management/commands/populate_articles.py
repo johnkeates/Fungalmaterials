@@ -181,7 +181,7 @@ class Command(BaseCommand):
                             article.topic.add(three_d_topic)
 
                         # Check if "composite" is in the title or "mbc" in abstract and add the topic "Composite"
-                        if "composite" in article.title.lower() or "mbc" in article.abstract.lower():
+                        if ("composite" in article.title.lower() or "mbc" in article.abstract.lower()) and "nanopaper" not in article.title.lower() and "nanopaper" not in article.abstract.lower():
                             composite_topic, _ = Topic.objects.get_or_create(name="Composite")
                             article.topic.add(composite_topic)
                             # Also add "SSF" as method
