@@ -15,7 +15,7 @@ from fungalmaterials.functions import author_separation
 from fungalmaterials.combinations import generate_sankey
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi, import_new_review_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
-from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship, Species
+from fungalmaterials.models import Article, Review, Material, ArticleAuthorship, ReviewAuthorship, Species, Topic, Method
 
 
 ############ ARTICLES ###########
@@ -463,7 +463,11 @@ def about(request):
 
 @login_required
 def test(request):
+	topics = Topic.objects.all()
+	methods = Method.objects.all()
 
 	context = {
+		'topics': topics,
+		'methods': methods,
 	}
 	return render(request, "fungalmaterials/test.html", context)
