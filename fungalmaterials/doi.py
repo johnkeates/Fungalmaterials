@@ -97,8 +97,6 @@ def import_new_article_by_doi(doi):
 			material.species.add(species)
 			material.save()
 	
-
-
 	return True
 
 
