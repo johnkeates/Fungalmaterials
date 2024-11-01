@@ -290,44 +290,44 @@ def species(request):
 
 
 def species_search(request):
-
-
-	# Query the Material model for all data
-	materials = Material.objects.prefetch_related(
-		'article',
-		'species',
-		'substrates',
-		'method',
-		"property_set")
-
+	species_query = Species.objects.prefetch_related(
+		'material_set__substrates',
+		'material_set__method',
+		'material_set__article__authors',
+		'material_set__article__topic',
+		'material_set__article__method',
+		'material_set__property_set'
+	)
 
 	payload_data = []
 
-
-	for material in materials:
-		payload_data.append({
-			"id": material.id,
-			"treatment": material.treatment,
-			"species": list(material.species.values()),
-			"substrates":  list(material.substrates.values()),
-			"method":  list(material.method.values()),
-			"properties": [
-				{
-					"value": prop.value,
-					"name": prop.name.name,  # Assuming `PropertyName` model has a `name` field
-					"unit": prop.unit.symbol  # Assuming `Unit` model has a `symbol` field
-				}
-				for prop in material.property_set.all()
-			],
-			"first_author": material.article.authors.values_list('name', flat=True).first(),
-			"article_reference": f"{ material.article.authors.values_list('name', flat=True).first()} ({material.article.year})"
-		})
-
-
-	print(payload_data)
+	for s in species_query:
+		for material in s.material_set.all():
+			payload_data.append({
+				"pk": f"{material.id}{s.id}", # OK
+				"material_id": material.id,  # OK
+				"treatment": material.treatment,  # OK
+				"species": s.name,  # OK
+				"substrates": list(material.substrates.values()), # OK
+				"method": list(material.method.values()), # OK
+				"topic": [individual_topic.name for individual_topic in material.article.topic.all()], # OK
+				"properties": [
+					{
+						"value": prop.value,
+						"name": prop.name.name,  # Assuming `PropertyName` model has a `name` field
+						"unit": prop.unit.symbol  # Assuming `Unit` model has a `symbol` field
+					}
+					for prop in material.property_set.all()
+				],
+				"phylum": s.phylum,
+				"first_author": material.article.authors.values_list('name', flat=True).first(),
+				"article_reference": f"{material.article.authors.values_list('name', flat=True).first()} ({material.article.year})"
+			})
 
 	# Return the data as JSON for DataTable consumption
 	return JsonResponse({
+		"recordsTotal": len(payload_data),
+		"recordsFiltered": len(payload_data),
 		'data': payload_data
 		# 'property_names': serializers.serialize('json', payload_data)  # Include unique material property names
 	})
