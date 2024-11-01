@@ -45,7 +45,8 @@ def import_new_article_by_doi(doi):
 
 	# Check title
 	if 'title' in work:
-		article.title = work['title'][0]
+		if len(work['title']) > 0:
+			article.title = work['title'][0]
 	
 	# Check if exists in work dictionary
 	if 'abstract' in work:
@@ -65,7 +66,8 @@ def import_new_article_by_doi(doi):
 
 	# Check journal name
 	if 'container-title' in work:
-		article.journal = work['container-title'][0]
+		if len(work['container-title']) > 0:
+			article.journal = work['container-title'][0]
 
 	# Check DOI
 	doi_value = work['DOI']
