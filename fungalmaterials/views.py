@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 from habanero.filterhandler import switch
 from django.core import serializers
+from django.utils.safestring import mark_safe
 
 from fungalmaterials.functions import author_separation
 from fungalmaterials.combinations import generate_sankey
@@ -131,7 +132,7 @@ def articles_search(request):
 
 	return JsonResponse(response_data)
 
-from django.utils.safestring import mark_safe
+
 def articles_info(request, pk):
 	# Get the article instance by the primary key (pk)
 	article = get_object_or_404(Article, pk=pk)
@@ -307,27 +308,34 @@ def species_search(request):
 	for s in species_query:
 		# Loop through each material associated with the species
 		for material in s.material_set.all():
+			# Get the first author based on sequence
+			first_author_authorship = ArticleAuthorship.objects.filter(article=material.article, sequence='first').values_list('author__family', flat=True).first()
+			
+			# If no 'first' author exists, fall back to the first author added
+			if not first_author_authorship:
+				first_author_authorship = ArticleAuthorship.objects.filter(article=material.article).values_list('author__family', flat=True).first()
+
 			# Append a dictionary of selected fields to payload_data for each material
 			payload_data.append({
-				"pk": f"{material.id}{s.id}", # OK
-				"material_id": material.id,  # OK
+				"pk": f"{material.id}{s.id}",  # OK
+				"article_id": material.article.id,  # OK
 				"treatment": material.treatment,  # OK
 				"species": s.name,  # OK
-				"substrates": list(material.substrates.values()), # OK
-				"method": list(material.method.values()), # OK
-				"topic": [individual_topic.name for individual_topic in material.article.topic.all()], # OK
+				"substrates": list(material.substrates.values()),  # OK
+				"method": list(material.method.values()),  # OK
+				"topic": [individual_topic.name for individual_topic in material.article.topic.all()],  # OK
 				"properties": [
 					{
-						"value": prop.value,		# Property value
-						"name": prop.name.name,  	# Property name (from the related PropertyName model)
-						"unit": prop.unit.symbol  	# Unit of the property (from the related Unit model)
+						"value": prop.value,        # Property value
+						"name": prop.name.name,     # Property name (from the related PropertyName model)
+						"unit": prop.unit.symbol    # Unit of the property (from the related Unit model)
 					}
 					# Loop over each property associated with the material
 					for prop in material.property_set.all()
 				],
 				"phylum": s.phylum,
-				"first_author": material.article.authors.values_list('name', flat=True).first(),
-				"article_reference": f"{material.article.authors.values_list('name', flat=True).first()} ({material.article.year})"
+				"first_author": first_author_authorship,  # Use the first author (either by sequence or fallback)
+				"article_reference": f"{first_author_authorship} ({material.article.year})"  # Reference with first author
 			})
 
 	# Return the data as JSON for DataTable consumption
