@@ -18,6 +18,7 @@ class Command(BaseCommand):
 			{"name": "Albatrellus ovinus", "phylum": "Basidiomycota"},
 			{"name": "Allomyces arbusculus", "phylum": "Blastocladiomycota"},
 			{"name": "Amylosporus campbellii", "phylum": "Basidiomycota"},
+			{"name": "Aspergillus nidulans", "phylum": "Ascomycota"},
 			{"name": "Aspergillus oryzae", "phylum": "Ascomycota"},
 			{"name": "Bjerkandera adusta", "phylum": "Basidiomycota"},
 			{"name": "Bjerkandera fumosa", "phylum": "Basidiomycota"},
