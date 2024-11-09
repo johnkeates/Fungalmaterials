@@ -38,7 +38,24 @@
 */
 
 
+/* Pagination button */
+.page-link {
+    color: black;
+}
 
+/* Pagination button on hover */
+.page-link:hover {
+    color: black;
+    background-color: #DCDCDC !important;
+    border: 1px solid #DCDCDC;
+}
+
+/* Pagination button when active */
+.page-item.active .page-link {
+    color: white;
+    background-color: black !important;
+    border: 1px solid black;
+}
 
 
 /* Mytable CSS */
