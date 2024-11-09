@@ -290,6 +290,7 @@ def species(request):
 
 
 def species_search(request):
+	# Start a query for Species objects, prefetching related data for efficient access
 	species_query = Species.objects.prefetch_related(
 		'material_set__substrates',
 		'material_set__method',
@@ -299,10 +300,14 @@ def species_search(request):
 		'material_set__property_set'
 	)
 
+	# Prepare an empty list to hold data for JSON response
 	payload_data = []
 
+	# Loop through each species in the query result
 	for s in species_query:
+		# Loop through each material associated with the species
 		for material in s.material_set.all():
+			# Append a dictionary of selected fields to payload_data for each material
 			payload_data.append({
 				"pk": f"{material.id}{s.id}", # OK
 				"material_id": material.id,  # OK
@@ -313,10 +318,11 @@ def species_search(request):
 				"topic": [individual_topic.name for individual_topic in material.article.topic.all()], # OK
 				"properties": [
 					{
-						"value": prop.value,
-						"name": prop.name.name,  # Assuming `PropertyName` model has a `name` field
-						"unit": prop.unit.symbol  # Assuming `Unit` model has a `symbol` field
+						"value": prop.value,		# Property value
+						"name": prop.name.name,  	# Property name (from the related PropertyName model)
+						"unit": prop.unit.symbol  	# Unit of the property (from the related Unit model)
 					}
+					# Loop over each property associated with the material
 					for prop in material.property_set.all()
 				],
 				"phylum": s.phylum,
@@ -326,9 +332,9 @@ def species_search(request):
 
 	# Return the data as JSON for DataTable consumption
 	return JsonResponse({
-		"recordsTotal": len(payload_data),
-		"recordsFiltered": len(payload_data),
-		'data': payload_data
+		"recordsTotal": len(payload_data),		# Total record count
+		"recordsFiltered": len(payload_data),	# Filtered record count (same as total if no filtering)
+		'data': payload_data					# Main payload data containing species and material details
 		# 'property_names': serializers.serialize('json', payload_data)  # Include unique material property names
 	})
 
