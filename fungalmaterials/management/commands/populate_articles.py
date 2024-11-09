@@ -131,7 +131,7 @@ class Command(BaseCommand):
             "https://doi.org/10.1371/journal.pone.0304614": ([""], ["FB"]),
             "https://doi.org/10.1017/btd.2024.10": (["Living"], [""]),
             "https://doi.org/10.1101/2024.09.28.615565": ([""], [""]),
-            "https://doi.org/10.1021/acsabm.4c00586": ([""], [""]),
+            "https://doi.org/10.1021/acsabm.4c00586": (["Pure"], [""]),
             "https://doi.org/10.1017/btd.2024.15": ([""], [""]),
             "https://doi.org/10.15575/biodjati.v9i1.30021": ([""], [""]),
             "https://doi.org/10.1016/j.matdes.2018.11.027": ([""], [""]),
