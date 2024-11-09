@@ -1,17 +1,6 @@
 /* DataTable CSS */
 
-.dataTables_filter input {
-    min-width: 335px !important;
-    padding: 10px 0px 10px 15px !important;
-    border: 1px solid #ddd !important;
-    border-radius: 5px !important;
-    margin-bottom: 10px !important;
-}
-
-.dataTables_filter {
-    float: left !important;
-}
-
+/* DataTable styling header */
 #table_id thead tr th {
     background-color: #DCDCDC;
     padding: 8px;
@@ -24,14 +13,12 @@
     display: none;
 }
 
+/* DataTable change color of row on hover */
 #table_id tbody tr:not(.child-table-row):hover {
     background-color: #f1f1f1;
 }
 
-#table_id > tbody > tr.child-table-row > td {
-    padding: 0;
-}
-
+/* DataTable styling cells in row */
 #table_id tbody tr td {
     border-bottom: 1px solid #dddddd !important;
     padding: 5.5px;
@@ -40,44 +27,19 @@
     font-size: 15px;
 }
 
-table.dataTable.no-footer {
-    border-bottom: none;
-}
-
+/* DataTable styling of url link: no underline */
 #table_id a {
     text-decoration: none;
 }
 
-#table_id_previous, #table_id_next {
-    background-color: #D3D3D3 !important;
-    width: 95px;
-    padding: 9px 0px 9px 0px;
-    border: none !important;
-    border-radius: 5px;
-    color: #000000;
-}
+/* DataTable pagination is by default Bootstrap 5 styling */
+/* Center it like: 
+<ul class="pagination justify-content-center">  
+*/
 
-.paginate_button.current {
-    background-color: #C0C0C0 !important;
-}
 
-/* .dt-paging-button button */
-.paginate_button {
-    background-color: #D3D3D3;
-    padding: 10px 0px 10px 0px;
-    border-radius: 5px !important;
-}
 
-.dataTables_filter {
-    display: none;
-}
 
-.dataTables_wrapper .dataTables_paginate {
-    float: none;
-    text-align: center;
-    padding-top: .25em;
-    margin-top: 15px;
-}
 
 /* Mytable CSS */
 
