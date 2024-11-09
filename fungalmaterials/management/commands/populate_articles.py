@@ -147,6 +147,10 @@ class Command(BaseCommand):
             "https://doi.org/10.1016/j.reactfunctpolym.2019.104428": (["Nanopaper"], ["FB"]),
             "https://doi.org/10.1016/j.compscitech.2020.108327": (["Nanopaper"], ["FB"]),
             "https://doi.org/10.3390/jcs8100412": (["3D", "Composite"], ["SSF"]),
+            "https://doi.org/10.1101/2024.05.03.592484": (["Living"], [""]),
+            "https://doi.org/10.1017/btd.2024.9": (["3D", "Composite"], ["SSF"]),
+            "https://doi.org/10.3390/jcs8100412": (["3D", "Composite"], ["SSF"]),
+            "https://doi.org/10.1016/j.carbpol.2024.122800": (["Nanopaper", "Pure"], ["FB"]),
         }
 
         for doi, (topics, methods) in dois.items():
