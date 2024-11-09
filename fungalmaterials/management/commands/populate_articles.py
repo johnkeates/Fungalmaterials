@@ -84,7 +84,7 @@ class Command(BaseCommand):
             "https://doi.org/10.3390/ma17020404": ([""], [""]),
             "https://doi.org/10.1007/s42114-021-00271-8": (["Electrical"], [""]),
             "https://doi.org/10.1515/npprj-2019-0045": ([""], [""]),
-            "https://doi.org/10.1016/j.carbpol.2017.03.010": ([""], [""]),
+            "https://doi.org/10.1016/j.carbpol.2017.03.010": ([""], ["FB"]),
             "https://doi.org/10.3390/ma14010136": ([""], [""]),
             "https://doi.org/10.1016/j.btre.2023.e00807": ([""], [""]),
             "https://doi.org/10.1021/acssusresmgt.3c00021": ([""], [""]),
