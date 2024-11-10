@@ -1,175 +1,192 @@
 {% extends 'fungalmaterials/base.html' %}
 {% block content %}
-{% load static %}
+    {% load static %}
 
-<style>
-  .switch-button {
-    text-align: center;
-    color: black;
-    background-color: #D3D3D3;
-    width: 90px;
-    padding: 10px 0px 10px 0px;
-    border: 0px solid #ddd;
-    margin-bottom: 10px;
-  }
-  .switch-button:hover, .switch-button.active {
-    background-color: black;
-    color: white;
-  }
-  #list-articles {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-  }
-  #list-species {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-  }
-</style>
+    <style>
+        .switch-button {
+            text-align: center;
+            color: black;
+            background-color: #D3D3D3;
+            width: 90px;
+            padding: 10px 0px 10px 0px;
+            border: 0px solid #ddd;
+            margin-bottom: 10px;
+        }
 
-<title>Articles | Fungalmaterials</title>
+        .switch-button:hover, .switch-button.active {
+            background-color: black;
+            color: white;
+        }
 
-<meta name="description" content="Database of fungal material references">
+        #list-articles {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
 
-<div class="row" style="margin-bottom: 10px;">
-	<div class="col-12">
-        <h4>A list of fungal material articles</h4>
+        #list-species {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    </style>
+
+    <title>Articles | Fungalmaterials</title>
+
+    <meta name="description" content="Database of fungal material references">
+
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-12">
+            <h4>A list of fungal material articles</h4>
+        </div>
     </div>
-</div>
 
 
-<div class="row">
-  <!-- SEARCH -->
-  <div class="col-12 col-sm-5 col-md-6 col-lg-7 col-xl-8">
-    <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="">
-  </div>
+    <div class="row">
+        <!-- SEARCH -->
+        <div class="col-12 col-sm-5 col-md-6 col-lg-7 col-xl-8">
+            <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="">
+        </div>
 
-  <!-- BUTTONS -->
-  <div class="col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4">
-    <div class="btn-group" role="group" style="float: right;">
-      <button type="button" class="switch-button active" id="list-articles" disabled>Articles</button>
-      <button type="button" class="switch-button" id="list-species" disabled>Species</button>
+        <!-- BUTTONS -->
+        <div class="col-12 col-sm-7 col-md-6 col-lg-5 col-xl-4">
+            <div class="btn-group" role="group" style="float: right;">
+                <button type="button" class="switch-button active" id="list-articles" disabled>Articles</button>
+                <button type="button" class="switch-button" id="list-species" disabled>Species</button>
+            </div>
+        </div>
+
+
     </div>
-  </div>
 
+    <!-- GREY BAR -->
+    <div id=grey-bar></div>
 
+    <!-- DATATABLE -->
+    <table id="table_id" class="responsive" style="width:100%">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th class="desktop large-only">First author</th>
+            <th class="desktop large-only">Year</th>
+            <th class="desktop tablet-l">Topic</th>
+            <th class="desktop tablet-l">Method</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
-</div>
+    <script>
+        const dataSourceUrl = "/articles/search";
+        const searchTableHandler = function (e) {
+            $('#table_id').DataTable().search($('#searchbar').val() || "").draw();
+        };
 
-<!-- GREY BAR -->
-<div id=grey-bar></div>
+        $(document).ready(function () {
+            $('#table_id').DataTable({
+                ajax: dataSourceUrl,
+                serverSide: true,
+                responsive: {
+                    details: false
+                },
+                layout: {
+                    topStart: null,
+                    topEnd: null,
+                    bottomStart: null,
+                    bottomEnd: null,
+                    bottom: 'paging'
+                },
+                autoWidth: false,               // Disable automatic column width calculation
+                info: false,                    // Hide number of entries
+                lengthChange: false,            // Hide length of entries
+                pageLength: 125,                // Number of items per page, requires also changes in views.py
 
-<!-- DATATABLE -->
-<table id="table_id" class="responsive" style="width:100%">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th class="desktop large-only">First author</th>
-      <th class="desktop large-only">Year</th>
-      <th class="desktop tablet-l">Topic</th>
-      <th class="desktop tablet-l">Method</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+                // Hide pagination buttons if there are less than 125 articles
+                drawCallback: function (settings) {
+                    let api = this.api();
+                    let recordsDisplay = api.page.info().recordsDisplay;
+                    let pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
 
-<script>
-  const dataSourceUrl = "/articles/search";
-  const searchTableHandler = function(e) {
-      $('#table_id').DataTable().search($('#searchbar').val() || "").draw();
-  };
+                    // Hide pagination if the number of records is less than or equal to 124
+                    if (recordsDisplay <= 124) {
+                        pagination.hide();
+                    } else {
+                        pagination.show();
+                    }
+                },
 
-  $(document).ready(function() {
-    $('#table_id').DataTable({
-      ajax: dataSourceUrl,
-      serverSide: true,
-      responsive: {
-        details: false
-      },
-      autoWidth: false,               // Disable automatic column width calculation
-      info: false,                    // Hide number of entries
-      lengthChange: false,            // Hide length of entries
-      pageLength: 125,                // Number of items per page, requires also changes in views.py
+                columns: [
+                    {
+                        "data": "title",
+                        "render": function (data, type, row) {
+                            let max_name_length = 45;
+                            if (data && data.length > max_name_length) {
+                                return data.slice(0, max_name_length) + "..."
+                            }
+                            return data;
+                        }
+                    },
+                    {"data": "authors"},
+                    {"data": "year"},
+                    {
+                        "data": "topic",
+                        "render": function (data, type, row) {
+                            let maxTopics = 2;
+                            let displayedTopics = data.slice(0, maxTopics).map(function (topic) {
+                                return '<span class="badge rounded-pill bg-secondary">' + topic + '</span>';
+                            }).join(' ');
+                            if (data.length > maxTopics) {
+                                displayedTopics += ' ...';
+                            }
+                            return displayedTopics;
+                        }
+                    },
+                    {
+                        "data": "method",
+                        "render": function (data, type, row) {
+                            return data.map(function (method) {
+                                return '<span class="badge rounded-pill bg-' + method + '">' + method + '</span>';
+                            }).join(' ');
+                        }
+                    },
+                    {
+                        "data": "pk",
+                        "render": function (data, type, row) {
+                            return '<a href="/articles/' + data + '">More info</a>';
+                        }
+                    },
+                ],
+                createdRow: function (row, data, index) {             // To make row double clickable
+                    $(row).addClass('article-row');
+                },
+                columnDefs: [
+                    {"width": "auto", "targets": [0]},
+                    {"width": "175px", "targets": [1], "orderable": false},
+                    {"width": "75px", "targets": [2]},
+                    {"width": "165px", "targets": [3], "orderable": false},
+                    {"width": "110px", "targets": [4], "orderable": false},
+                    {"width": "90px", "targets": -1, className: "dt-right", "orderable": false}
+                ],
+                language: {
+                    paginate: {"previous": "Previous", "next": "Next"},                     // Change name of button
+                    zeroRecords: 'No results found <i class="bi bi-emoji-neutral"></i>',    // Text when 0 items
+                },
+            });
+        });
 
-      // Hide pagination buttons if there are less than 125 articles
-      drawCallback: function(settings) {
-          let api = this.api();
-          let recordsDisplay = api.page.info().recordsDisplay;
-          let pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
-          
-          // Hide pagination if the number of records is less than or equal to 124
-          if (recordsDisplay <= 124) {
-              pagination.hide();
-          } else {
-              pagination.show();
-          }
-      },
+        $('#searchbar').on("input", $.debounce(250, searchTableHandler)); // Searchbar
 
-      columns: [
-        { "data": "title",
-          "render": function ( data, type, row ) {
-            let max_name_length = 45;
-            if(data && data.length > max_name_length){
-            return data.slice(0, max_name_length) + "..."}
-          return data; }
-        },
-        { "data": "authors" },
-        { "data": "year" },
-        { "data": "topic", 
-          "render": function ( data, type, row ) {
-            let maxTopics = 2;
-            let displayedTopics = data.slice(0, maxTopics).map(function(topic) {
-              return '<span class="badge rounded-pill bg-secondary">' + topic + '</span>';
-            }).join(' ');
-            if (data.length > maxTopics) {
-              displayedTopics += ' ...';
-            }
-            return displayedTopics;
-          }
-        },
-        { "data": "method" ,
-          "render": function ( data, type, row ) {
-              return data.map(function(method) {
-                return '<span class="badge rounded-pill bg-' + method + '">' + method + '</span>';
-              }).join(' '); }
-        },
-        { "data": "pk", 
-          "render": function ( data, type, row ) {
-            return '<a href="/articles/' + data + '">More info</a>'; }
-        },
-      ],
-      createdRow: function (row, data, index) {             // To make row double clickable
-        $(row).addClass('article-row');
-      },
-      columnDefs: [
-        { "width": "auto", "targets": [0] },
-        { "width": "175px", "targets": [1], "orderable": false },
-        { "width": "75px", "targets": [2] },
-        { "width": "165px", "targets": [3], "orderable": false },
-        { "width": "110px", "targets": [4], "orderable": false },
-        { "width": "90px", "targets": -1, className: "dt-right", "orderable": false }
-      ],
-      language: {
-        paginate: {"previous": "Previous", "next": "Next"},                     // Change name of button
-        zeroRecords: 'No results found <i class="bi bi-emoji-neutral"></i>',    // Text when 0 items
-      },
-    });
-  });
+        $('#table_id tbody').on('dblclick', '.article-row', function () { // Doubleclick on row
+            window.location.href = $(this).find('a').attr('href');
+        });
 
-  $('#searchbar').on("input", $.debounce(250, searchTableHandler)); // Searchbar
+        // When the page event gets triggered, scroll back to top
+        $('#table_id').on('page.dt', function () {
+            $('html, body').animate({scrollTop: 0}, 800);
+        });
+    </script>
 
-  $('#table_id tbody').on('dblclick', '.article-row', function () { // Doubleclick on row
-    window.location.href = $(this).find('a').attr('href');
-  });
-
-  // When the page event gets triggered, scroll back to top
-  $('#table_id').on('page.dt', function () {
-      $('html, body').animate({scrollTop: 0}, 800);
-  });
-</script>
-
-<br>
-<br>
+    <br>
+    <br>
 
 {% endblock %}
