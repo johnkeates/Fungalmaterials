@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F, Value
@@ -5,6 +7,7 @@ from django.db.models.functions import Coalesce
 from django.forms import model_to_dict
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
@@ -290,7 +293,18 @@ def species(request):
 	return render(request, "fungalmaterials/species.html", context)
 
 
+@csrf_exempt
 def species_search(request):
+	# Decode query options from the DataTable and SearchPanes
+
+	print("Received POST data:")
+	print(request.POST)
+	# if sSearch:
+	# 	qs = qs.filter(Q(username__istartswith=sSearch) | Q(email__istartswith=sSearch))
+	# return qs
+
+
+
 	# Start a query for Species objects, prefetching related data for efficient access
 	species_query = Species.objects.prefetch_related(
 		'material_set__substrates',
@@ -304,16 +318,31 @@ def species_search(request):
 	# Prepare an empty list to hold data for JSON response
 	payload_data = []
 
+	# Prepare a map to hold the unique count of Phylum, Species etc
+	# Keys we want to track in the dictionaries
+	list_of_search_pane_names = ["species", "phylum", "topic"]
+
+	# Create a defaultdict where each key's counter is also a defaultdict(int)
+	column_name_unique_values = {key: defaultdict(int) for key in list_of_search_pane_names}
+
+
 	# Loop through each species in the query result
 	for s in species_query:
 		# Loop through each material associated with the species
 		for material in s.material_set.all():
 			# Get the first author based on sequence
 			first_author_authorship = ArticleAuthorship.objects.filter(article=material.article, sequence='first').values_list('author__family', flat=True).first()
-			
+
 			# If no 'first' author exists, fall back to the first author added
 			if not first_author_authorship:
 				first_author_authorship = ArticleAuthorship.objects.filter(article=material.article).values_list('author__family', flat=True).first()
+
+			# Add to SearchPane Tracker
+			column_name_unique_values["species"][s.name] += 1
+			column_name_unique_values["phylum"][s.phylum] += 1
+
+			for individual_topic in material.article.topic.all():
+				column_name_unique_values["topic"][individual_topic.name] += 1
 
 			# Append a dictionary of selected fields to payload_data for each material
 			payload_data.append({
@@ -338,11 +367,29 @@ def species_search(request):
 				"article_reference": f"{first_author_authorship} ({material.article.year})"  # Reference with first author
 			})
 
+	# Prepare SearchPane data
+	# Panes: see list_of_search_pane_names above
+	searchpanes_payload = {}
+
+	for search_pane_column_name in list_of_search_pane_names:
+		searchpanes_payload[search_pane_column_name] = []
+
+		for unique_value_name in column_name_unique_values[search_pane_column_name]:
+			# print(f"for {search_pane_column_name} found {unique_value_name} {column_name_unique_values[search_pane_column_name][unique_value_name]}  time(s)")
+			searchpanes_payload[search_pane_column_name].append({
+					"label": unique_value_name,
+					"total": f'{column_name_unique_values[search_pane_column_name][unique_value_name]}',
+					"value": unique_value_name,
+					"count": f'{column_name_unique_values[search_pane_column_name][unique_value_name]}'
+				},)
+
+
 	# Return the data as JSON for DataTable consumption
 	return JsonResponse({
 		"recordsTotal": len(payload_data),		# Total record count
 		"recordsFiltered": len(payload_data),	# Filtered record count (same as total if no filtering)
-		'data': payload_data					# Main payload data containing species and material details
+		'data': payload_data,					# Main payload data containing species and material details
+		'searchPanes': {"options": searchpanes_payload}
 		# 'property_names': serializers.serialize('json', payload_data)  # Include unique material property names
 	})
 
