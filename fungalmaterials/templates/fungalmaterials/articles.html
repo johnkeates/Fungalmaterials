@@ -8,8 +8,8 @@
             color: black;
             background-color: #D3D3D3;
             width: 90px;
-            padding: 10px 0px 10px 0px;
-            border: 0px solid #ddd;
+            padding: 10px 0 10px 0;
+            border: 0 solid #ddd;
             margin-bottom: 10px;
         }
 
@@ -27,6 +27,7 @@
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
         }
+
     </style>
 
     <title>Articles | Fungalmaterials</title>
@@ -43,7 +44,7 @@
     <div class="row">
         <!-- SEARCH -->
         <div class="col-12 col-sm-5 col-md-6 col-lg-7 col-xl-8">
-            <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="">
+            <input id="searchbar" type="text" name="search" placeholder="Search for keyword.." value="" />
         </div>
 
         <!-- BUTTONS -->
@@ -105,7 +106,7 @@
                 drawCallback: function (settings) {
                     let api = this.api();
                     let recordsDisplay = api.page.info().recordsDisplay;
-                    let pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+                    let pagination = $(this).closest('.dt-container').find('.dt-paging');
 
                     // Hide pagination if the number of records is less than or equal to 124
                     if (recordsDisplay <= 124) {
@@ -162,7 +163,7 @@
                 columnDefs: [
                     {"width": "auto", "targets": [0]},
                     {"width": "175px", "targets": [1], "orderable": false},
-                    {"width": "75px", "targets": [2]},
+                    {"width": "75px", "targets": [2], className: 'dt-head-left'},
                     {"width": "165px", "targets": [3], "orderable": false},
                     {"width": "110px", "targets": [4], "orderable": false},
                     {"width": "90px", "targets": -1, className: "dt-right", "orderable": false}
