@@ -28,18 +28,12 @@
         }
 
         div.dtsp-verticalPanes {
-            margin-right: 20px;
+            margin-right: 0px;
         }
 
         div.dtsp-title {
             margin-right: 0px !important;
             margin-top: 13px !important;
-        }
-
-        input.dtsp-search {
-            min-width: 0px !important;
-            padding-left: 0px !important;
-            margin: 0px !important;
         }
 
         div.dtsp-verticalContainer div.dtsp-verticalPanes div.dtsp-searchPanes {
@@ -57,10 +51,23 @@
             flex-basis: 60%;
         }
 
-        div.dtsp-panesContainer {
+        /* Off to have no border around vertical panes */
+        /* div.dtsp-panesContainer {        
             border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 1em !important;
+            border-radius: 5px;
+            padding: 10px !important;
+            background-color: #DCDCDC;
+        }*/
+
+        /* For some reason only this button needs 3px margin-left to be inline with the other buttons (clear all and show all) */
+        .dtsp-collapseAll {
+            margin-left: 3px;
+        }
+
+        /* Hide dtsp-title */
+        /* Showed "Filters Active - 0" */
+        .dtsp-title {
+            display: None;
         }
 
         div.dtsp-titleRow {
@@ -77,7 +84,6 @@
         html.dark div.dtsp-panesContainer {
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
     </style>
 
     <title>Species | Fungalmaterials</title>
@@ -90,7 +96,6 @@
         </div>
     </div>
 
-
     <div class="row">
         <!-- SEARCH -->
         <div class="col-12 col-sm-12 col-md-6 col-lg-7 col-xl-8">
@@ -101,13 +106,13 @@
     <!-- GREY BAR -->
     <div id=grey-bar></div>
     <div class="row">
-        <div class="col-lg-5 order-lg-first" style="margin-bottom: 15px;">
+        <div class="col-lg-3 order-lg-first" style="margin-bottom: 15px;">
             <div class="dtsp-verticalPanes"></div>
         </div>
 
-        <div class="col-lg-7 order-lg-last">
+        <div class="col-lg-9 order-lg-last">
             <!-- DATATABLE -->
-            <table id="table_id" class="responsive">
+            <table id="table_id" class="responsive" style="width:100%;">
                 <thead>
                 <tr>
                     <th>Species</th>
@@ -124,10 +129,6 @@
         </div>
     </div>
 
-
-
-
-
     <script>
         const dataSourceUrl = "/species/search";
         const searchTableHandler = function (e) {
@@ -142,11 +143,17 @@
                     "type": "POST",
                     "dataType": "json"
                 },
-
                 serverSide: true,
                 responsive: {
                     details: false
                 },
+                layout: {
+                    topStart: null,             // Hide default DataTable search bar
+                    topEnd: null,
+                    bottomStart: null,
+                    bottomEnd: null,
+                    bottom: 'paging'            // Pagination centered
+                  },
                 autoWidth: false,               // Disable automatic column width calculation
                 info: false,                    // Hide number of entries
                 lengthChange: false,            // Hide length of entries
@@ -156,7 +163,7 @@
                 drawCallback: function (settings) {
                     let api = this.api();
                     let recordsDisplay = api.page.info().recordsDisplay;
-                    let pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+                    let pagination = $(this).closest('.dt-container').find('.dt-paging');
 
                     // Hide pagination if the number of records is less than or equal to 124
                     if (recordsDisplay <= 124) {
@@ -175,8 +182,7 @@
                         "data": "species",
                         "render": function (data, type, row) {
                             if (data) {
-
-                                return data;
+                                return `<i>${data}</i>`;  // Wrap the species name in <i> tags
                             }
                         }
                     },
@@ -206,7 +212,7 @@
                         "data": "article_reference",
                         "render": function (data, type, row) {
                             // Use article_reference as the link text, and article_id in the URL
-                            return '<a href="/articles/' + row.article_id + '">' + data + '</a>';
+                            return '<a href="/articles/' + row.article_id + '" style="font-size: 13px;">' + data + '</a>';
                         }
                     },
                 ],
@@ -215,9 +221,9 @@
                 },
                 columnDefs: [
                     {"width": "auto", "targets": [0]},
-                    {"width": "auto", "targets": [1]},
-                    {"width": "auto", "targets": [2]},
-                    {"width": "auto", "targets": [3]},
+                    {"width": "auto", "targets": [1], "searchable": false, "orderable": false},
+                    {"width": "auto", "targets": [2], "searchable": false, "orderable": false},
+                    {"width": "auto", "targets": [3], "searchable": false, "orderable": false},
                     {"width": "auto", "targets": [4], "searchable": false, "orderable": false},
                     {"width": "8px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false}
                 ],
