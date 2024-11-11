@@ -91,11 +91,11 @@
                     details: false
                 },
                 layout: {
-                    topStart: null,
+                    topStart: null,             // Hide default DataTable search bar
                     topEnd: null,
                     bottomStart: null,
                     bottomEnd: null,
-                    bottom: 'paging'
+                    bottom: 'paging'            // Pagination centered
                 },
                 autoWidth: false,               // Disable automatic column width calculation
                 info: false,                    // Hide number of entries
@@ -163,7 +163,7 @@
                 columnDefs: [
                     {"width": "auto", "targets": [0]},
                     {"width": "175px", "targets": [1], "orderable": false},
-                    {"width": "75px", "targets": [2], className: 'dt-head-left'},
+                    {"width": "80px", "targets": [2], className: 'dt-head-left'},
                     {"width": "165px", "targets": [3], "orderable": false},
                     {"width": "110px", "targets": [4], "orderable": false},
                     {"width": "90px", "targets": -1, className: "dt-right", "orderable": false}

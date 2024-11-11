@@ -8,11 +8,6 @@
     border: 0px !important;
 }
 
-/* Hide default DataTable search bar */
-.dt-search {
-    display: none;
-}
-
 /* DataTable change color of row on hover */
 #table_id tbody tr:not(.child-table-row):hover {
     background-color: #f1f1f1;

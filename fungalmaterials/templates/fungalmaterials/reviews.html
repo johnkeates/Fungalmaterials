@@ -55,6 +55,13 @@
       responsive: {
         details: false
       },
+      layout: {
+        topStart: null,               // Hide default DataTable search bar
+        topEnd: null,
+        bottomStart: null,
+        bottomEnd: null,
+        bottom: 'paging'              // Pagination centered
+      },
       autoWidth: false,               // Disable automatic column width calculation
       info: false,                    // Hide number of entries
       lengthChange: false,            // Hide length of entries
@@ -107,7 +114,7 @@
       columnDefs: [
         { "width": "auto", "targets": [0] },
         { "width": "175px", "targets": [1], "orderable": false },
-        { "width": "75px", "targets": [2] },
+        {"width": "80px", "targets": [2], className: 'dt-head-left'},
         { "width": "225px", "targets": [3], "orderable": false },
         { "width": "90px", "targets": -1, className: "dt-right", "orderable": false }
       ],
