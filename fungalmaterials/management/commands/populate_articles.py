@@ -140,7 +140,6 @@ class Command(BaseCommand):
             "https://doi.org/10.1038/srep41292": (["Pure"], ["SSF"]),
             "https://doi.org/10.1038/s41598-018-36032-9": ([""], [""]),
             "https://doi.org/10.1002/fam.2637": ([""], [""]),
-            "https://doi.org/10.1021/acs.biomac.9b01141": ([""], [""]),
             "https://doi.org/10.5185/amlett.2018.1977": ([""], [""]),
             "https://doi.org/10.1021/acs.biomac.9b00791": (["Nanopaper"], ["FB"]),
             "https://doi.org/10.1016/j.carbpol.2020.117273": (["Nanopaper"], ["FB"]),
