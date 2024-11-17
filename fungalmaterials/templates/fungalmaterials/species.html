@@ -139,9 +139,19 @@
             let table = $('#table_id').DataTable({
                 ajax: {
                     "url": dataSourceUrl,
+                    // CT for the request, not the response
                     "contentType": "application/json",
+                    // Query type:
                     "type": "POST",
-                    "dataType": "json"
+                    // What type of response we expect:
+                    "dataType": "json",
+                    // pre-process the data passed to ajax before the request is done?
+                    "processData": false,
+                    beforeSend: function(jqXHR, settings) {
+                        // Convert data to JSON string
+                        settings.data = JSON.stringify(settings.data);
+                        jqXHR.setRequestHeader('Content-Type', 'application/json'); // Set Content-Type header
+                    },
                 },
                 serverSide: true,
                 responsive: {
