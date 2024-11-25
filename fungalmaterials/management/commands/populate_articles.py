@@ -150,6 +150,10 @@ class Command(BaseCommand):
             "https://doi.org/10.1017/btd.2024.9": (["3D", "Composite"], ["SSF"]),
             "https://doi.org/10.3390/jcs8100412": (["3D", "Composite"], ["SSF"]),
             "https://doi.org/10.1016/j.carbpol.2024.122800": (["Nanopaper", "Pure"], ["FB"]),
+            "https://doi.org/10.1002/sstr.202400130": ([""], [""]),
+            "https://doi.org/10.1016/j.bcab.2024.103436": (["Composite"], ["SSF"]),
+            "https://doi.org/10.1186/s40694-024-00189-y": (["Composite"], ["SSF"]),
+            "https://doi.org/10.3390/biomimetics9110707": (["Composite"], ["SSF"]),
         }
 
         for doi, (topics, methods) in dois.items():
