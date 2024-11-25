@@ -75,7 +75,7 @@ class Command(BaseCommand):
             "https://doi.org/10.1186/s40694-023-00169-8": ([""], [""]),
             "https://doi.org/10.1016/j.conbuildmat.2023.133346": ([""], [""]),
             "https://doi.org/10.1007/s00339-020-04270-2": ([""], ["FB"]),
-            "https://doi.org/10.1016/j.biosystems.2023.105106": ([""], [""]),
+            "https://doi.org/10.1016/j.biosystems.2023.105106": (["Living", "Electrical"], [""]),
             "https://doi.org/10.3390/jmmp8010002": ([""], [""]),
             "https://doi.org/10.1002/smll.202309171": ([""], [""]),
             "https://doi.org/10.1038/s41598-023-48203-4": ([""], [""]),
