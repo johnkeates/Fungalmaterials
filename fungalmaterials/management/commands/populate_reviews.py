@@ -54,6 +54,8 @@ class Command(BaseCommand):
                             "https://doi.org/10.3390/md18010064": ["Pure", "Nanopaper"],
                             "https://doi.org/10.1021/acs.biomac.9b01141": ["Pure", "Nanopaper"],
                             "https://doi.org/10.1002/gch2.202400315": [],
+                            "https://doi.org/10.1016/j.copbio.2019.02.010": [],
+                            "https://doi.org/10.1007/s00253-018-9226-8": [],
                             }
 
         for doi, topics in dois_with_topics.items():
