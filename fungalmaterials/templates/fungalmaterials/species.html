@@ -120,6 +120,7 @@
                     <th class="desktop large-only">Topic</th>
                     <th class="desktop large-only">Method</th>
                     <th>Article</th>
+                    <th>Phylum</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -147,7 +148,7 @@
                     "dataType": "json",
                     // pre-process the data passed to ajax before the request is done?
                     "processData": false,
-                    beforeSend: function(jqXHR, settings) {
+                    beforeSend: function (jqXHR, settings) {
                         // Convert data to JSON string
                         settings.data = JSON.stringify(settings.data);
                         jqXHR.setRequestHeader('Content-Type', 'application/json'); // Set Content-Type header
@@ -163,7 +164,7 @@
                     bottomStart: null,
                     bottomEnd: null,
                     bottom: 'paging'            // Pagination centered
-                  },
+                },
                 autoWidth: false,               // Disable automatic column width calculation
                 info: false,                    // Hide number of entries
                 lengthChange: false,            // Hide length of entries
@@ -225,6 +226,8 @@
                             return '<a href="/articles/' + row.article_id + '" style="font-size: 13px;">' + data + '</a>';
                         }
                     },
+                    {name: "Phylum", "data": "phylum"},
+
                 ],
                 createdRow: function (row, data, index) {             // To make row double clickable
                     $(row).addClass('species-row');
@@ -235,7 +238,8 @@
                     {"width": "auto", "targets": [2], "searchable": false, "orderable": false},
                     {"width": "auto", "targets": [3], "searchable": false, "orderable": false},
                     {"width": "auto", "targets": [4], "searchable": false, "orderable": false},
-                    {"width": "8px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false}
+                    {"width": "8px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false},
+                    {name: "Phylum", target: 5, visible: false}
                 ],
                 language: {
                     paginate: {"previous": "Previous", "next": "Next"},                     // Change name of button

@@ -1,5 +1,7 @@
 import json
+import operator
 from collections import defaultdict
+from functools import reduce
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -304,6 +306,7 @@ def species(request):
 def species_search(request):
     # We work with POST data here to receive SearchPane, Column and Search inputs:
     if request.method == "POST":
+        # Is the body non-empty (i.e. has JSON)
         if request.body:
             try:
                 # Attempt to decode the JSON body
@@ -312,9 +315,10 @@ def species_search(request):
                 # Return an error response if decoding fails
                 return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-            # Prepare a map to hold the unique count of Phylum, Species etc
+            # Prepare a map to hold the unique count of Phylum, Species etc for SearchPanes
             # Keys we want to track in the dictionaries
             list_of_search_pane_names = ["species", "phylum", "topic"]
+
             # Create a defaultdict where each key's counter is also a defaultdict(int)
             list_of_search_pane_name_filters = {pane: [] for pane in list_of_search_pane_names}
 
@@ -335,6 +339,21 @@ def species_search(request):
             # searchPanes_null {'species': {'0': False}, 'treatment': {}, 'topic': {}, 'method': {}, 'article_reference': {}}
             # searchPanesLast species
             # searchPanes_options {'cascade': False, 'viewCount': True, 'viewTotal': False}
+
+
+            # Check if we had a search query
+            if "search" in json_data:
+                if json_data["search"]:
+                    if json_data["search"]["value"]:
+                        # We have a live search query
+                        print("User searched for:", json_data["search"])
+                        # Topic Name must match
+                        # Method
+                        # Species
+                        # Phylum
+
+
+
 
             # Start decoding the searchPanes, if any
             if "searchPanes" in json_data:
@@ -365,15 +384,29 @@ def species_search(request):
                 # return qs
 
                 # Start a query for Species objects, prefetching related data for efficient access
-            species_query = Species.objects.all()
+
+
+
+            # We get all materials. A material might have a lot of details,
+            # but it has one requirement: connecting an article to a species.
+            material_query = Material.objects.all()
+
+            # Every material entry itself is going to be an output element (a row in the table).
 
             print("Filters:", list_of_search_pane_name_filters)
+
+            filter_clauses = []
+            filter_clauses2 = []
 
             # Check if we need to filter on species:
             if len(list_of_search_pane_name_filters['species']) > 0:
                 # We have species to filter!
                 # print("Filtering species", list_of_search_pane_name_filters['species'])
-                species_query = species_query.filter(name__in=list_of_search_pane_name_filters['species'])
+#                material_query = material_query.filter(species__name__in=list_of_search_pane_name_filters['species'])
+                filter_clauses.append(Q(species__name__in=list_of_search_pane_name_filters['species']))
+
+                filter_clauses2.append(Q(name__in=list_of_search_pane_name_filters['species']))
+
                 # print(species_query.values())
                 # print("Species Query SQL:", species_query.query)
 
@@ -381,7 +414,25 @@ def species_search(request):
             if len(list_of_search_pane_name_filters['topic']) > 0:
                 # We have topics to filter!
                 # print("Filtering topics", list_of_search_pane_name_filters['topic'])
-                species_query = species_query.filter(material__article__topic__name__in=list_of_search_pane_name_filters['topic'])
+#                material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
+
+                filter_clauses.append(Q(article__topic__name__in=list_of_search_pane_name_filters['topic']))
+                # print(species_query.values())
+                # print("topics Query SQL:", species_query.query)
+
+            # Check if we need to filter on phylum:
+            if len(list_of_search_pane_name_filters['phylum']) > 0:
+                # We have topics to filter!
+                # print("Filtering topics", list_of_search_pane_name_filters['topic'])
+                #                material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
+
+                print(Species.objects.filter(phylum__in=list_of_search_pane_name_filters['phylum']))
+
+                filter_clauses.append(Q(species__phylum__in=list_of_search_pane_name_filters['phylum']))
+
+                filter_clauses2.append(Q(phylum__in=list_of_search_pane_name_filters['phylum']))
+
+
                 # print(species_query.values())
                 # print("topics Query SQL:", species_query.query)
 
@@ -391,40 +442,52 @@ def species_search(request):
             # Create a defaultdict where each key's counter is also a defaultdict(int)
             column_name_unique_values = {key: defaultdict(int) for key in list_of_search_pane_names}
 
-            # Loop through each species in the query result
-            for s in species_query:
-                # Loop through each material associated with the species
 
-                for material in s.material_set.all():
-                    # print("query:", s.material_set.get_queryset().query)
+            if filter_clauses:
+                queryset = material_query.filter(reduce(operator.and_, filter_clauses))
+            else:
+                queryset = material_query
+
+            print(queryset.distinct().query)
+
+            # Loop through each species in the query result
+            for m in queryset.distinct():
+                #
+                queryset2 = m.species.all()
+
+                if filter_clauses2:
+                    queryset2 = queryset2.filter(reduce(operator.and_, filter_clauses2))
+
+                print(queryset2.query)
+
+                for s in queryset2:
+
+
                     # Get the first author based on sequence
-                    first_author_authorship = ArticleAuthorship.objects.filter(article=material.article,
-                                                                               sequence='first').values_list(
-                        'author__family',
-                        flat=True).first()
+                    first_author_authorship = m.article.articleauthorship_set.filter(sequence='first').values_list('author__family', flat=True).first()
 
                     # If no 'first' author exists, fall back to the first author added
                     if not first_author_authorship:
-                        first_author_authorship = ArticleAuthorship.objects.filter(
-                            article=material.article).values_list(
+                        first_author_authorship = m.article.articleauthorship_set.first().values_list(
                             'author__family', flat=True).first()
 
                     # Add to SearchPane Tracker
                     column_name_unique_values["species"][s.name] += 1
                     column_name_unique_values["phylum"][s.phylum] += 1
 
-                    for individual_topic in material.article.topic.all():
+
+                    for individual_topic in m.article.topic.all():
                         column_name_unique_values["topic"][individual_topic.name] += 1
 
                     # Append a dictionary of selected fields to payload_data for each material
                     payload_data.append({
-                        "pk": f"{material.id}{s.id}",  # OK
-                        "article_id": material.article.id,  # OK
-                        "treatment": material.treatment,  # OK
+                        "pk": f"{m.id}{s.id}",  # OK
+                        "article_id": m.article.id,  # OK
+                        "treatment": m.treatment,  # OK
                         "species": s.name,  # OK
-                        "substrates": list(material.substrates.values()),  # OK
-                        "method": list(material.method.values()),  # OK
-                        "topic": [individual_topic.name for individual_topic in material.article.topic.all()],  # OK
+                        "substrates": list(m.substrates.values()),  # OK
+                        "method": list(m.method.values()),  # OK
+                        "topic": [individual_topic.name for individual_topic in m.article.topic.all()],  # OK
                         "properties": [
                             {
                                 "value": prop.value,  # Property value
@@ -432,12 +495,12 @@ def species_search(request):
                                 "unit": prop.unit.symbol  # Unit of the property (from the related Unit model)
                             }
                             # Loop over each property associated with the material
-                            for prop in material.property_set.all()
+                            for prop in m.property_set.all()
                         ],
                         "phylum": s.phylum,
                         "first_author": first_author_authorship,
                         # Use the first author (either by sequence or fallback)
-                        "article_reference": f"{first_author_authorship} ({material.article.year})"
+                        "article_reference": f"{first_author_authorship} ({m.article.year})"
                         # Reference with first author
                     })
 
