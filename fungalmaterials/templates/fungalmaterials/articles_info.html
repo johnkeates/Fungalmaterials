@@ -16,6 +16,12 @@
         padding: 8px;
         padding-left: 12px;
     }
+    .tooltip-hover-area {
+        display: inline-block;
+        position: relative;
+        padding: 10px; /* Increases hover area */
+        margin: -10px; /* Prevents visual offset */
+    }
 </style>
 
 <title>Article info | Fungalmaterials</title>
@@ -106,7 +112,7 @@
                 <li class="list-group-item list-group-item-action">
                 <i>{{ species.name }}</i>
                 {% if species.phylum %}
-                <span data-bs-toggle="tooltip" data-bs-placement="right" title="{{ species.phylum }}" style="float: right;">
+                <span class="tooltip-hover-area" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ species.phylum }}" style="float: right;">
                     <i class="bi bi-info-circle"></i>
                 </span>
                 {% endif %}
