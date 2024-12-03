@@ -59,18 +59,16 @@ class ArticleMaterialInline(admin.TabularInline):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
 	inlines = [ArticleAuthorshipInline, ArticleMaterialInline]
-	fields = ('title', 'year', 'month', 'day', 'journal', 'doi', 'method', 'topic', 'abstract', 'approved')  # Define the order of the fields
+	fields = ('title', 'year', 'month', 'day', 'journal', 'doi', 'abstract', 'approved')  # Define the order of the fields
 	list_display = ('title', 'year', 'approved')
 	search_fields = ('title',)
 	ordering = ('-year', 'title')  # Order by 'year' (descending) and 'title'
-	filter_horizontal = ('method', 'topic')  # Horizontal filter for many-to-many fields
-	autocomplete_fields = ('method', 'topic')
 
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
 		form.base_fields['title'].widget.attrs['style'] = 'width: 40em;' 	# Change width of specific field
-		form.base_fields['topic'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
-		form.base_fields['method'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
+		# form.base_fields['topic'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
+		# form.base_fields['method'].widget.can_add_related = False			# Disable green "+" buttons to add new objects
 		return form
 
 

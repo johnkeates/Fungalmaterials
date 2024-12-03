@@ -315,31 +315,12 @@ def species_search(request):
                 # Return an error response if decoding fails
                 return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-            # Prepare a map to hold the unique count of Phylum, Species etc for SearchPanes
+            # Prepare a map to hold the unique count of Phylum, Species etc. for SearchPanes
             # Keys we want to track in the dictionaries
             list_of_search_pane_names = ["species", "phylum", "topic"]
 
             # Create a defaultdict where each key's counter is also a defaultdict(int)
             list_of_search_pane_name_filters = {pane: [] for pane in list_of_search_pane_names}
-
-            # The DataTable will always send us some information about the table state:
-            # draw 1
-            # columns [
-            # 			{'data': 'species', 'name': '', 'searchable': True, 'orderable': True, 'search': {'value': '', 'regex': False, 'fixed': []}},
-            # 			{'data': 'treatment', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
-            # 			{'data': 'topic', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
-            # 			{'data': 'method', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
-            # 			{'data': 'article_reference', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}}
-            #		]
-            # order [{'column': 0, 'dir': 'asc', 'name': ''}]
-            # start 0
-            # length 125
-            # search {'value': '', 'regex': False, 'fixed': []}
-            # searchPanes {'species': {'0': 'Flammulina velutipes'}, 'treatment': {}, 'topic': {}, 'method': {}, 'article_reference': {}}
-            # searchPanes_null {'species': {'0': False}, 'treatment': {}, 'topic': {}, 'method': {}, 'article_reference': {}}
-            # searchPanesLast species
-            # searchPanes_options {'cascade': False, 'viewCount': True, 'viewTotal': False}
-
 
             # Check if we had a search query
             if "search" in json_data:
@@ -351,8 +332,6 @@ def species_search(request):
                         # Method
                         # Species
                         # Phylum
-
-
 
 
             # Start decoding the searchPanes, if any
@@ -369,46 +348,31 @@ def species_search(request):
                         else:
                             print("Searchpane not in known list:", search_pane_name)
 
-
-                # print(json_data)
-
-                # Detect the following:
-                # - Pane state
-                # - Column state
-                # - Search state
-            # for key, value in json_data.items():
-            #     print(key, value)
-
-                # if sSearch:
-                # 	qs = qs.filter(Q(username__istartswith=sSearch) | Q(email__istartswith=sSearch))
-                # return qs
-
-                # Start a query for Species objects, prefetching related data for efficient access
-
-
+            print("Requested filters:", list_of_search_pane_name_filters)
 
             # We get all materials. A material might have a lot of details,
             # but it has one requirement: connecting an article to a species.
-            material_query = Material.objects.all()
+            # This means we only want Material entries that exist at least once in the Species relationship,
+            # or, in other words, Materials that have at least 1 species listed in their Model.
+            material_query = Material.objects.filter(species__isnull=False).distinct()
 
-            # Every material entry itself is going to be an output element (a row in the table).
 
-            print("Filters:", list_of_search_pane_name_filters)
+            # If we have to filter things based on the SearchPanes, we list those filters here to be appended later
+            material_filter_clauses = []
 
-            filter_clauses = []
-            filter_clauses2 = []
+            # The following clauses will be used to filter records when we discover the first pass returned too much
+            # related data, like a material that has two species but we only want to show the first one.
+            post_fetch_filter_clauses = []
 
             # Check if we need to filter on species:
             if len(list_of_search_pane_name_filters['species']) > 0:
-                # We have species to filter!
-                # print("Filtering species", list_of_search_pane_name_filters['species'])
-#                material_query = material_query.filter(species__name__in=list_of_search_pane_name_filters['species'])
-                filter_clauses.append(Q(species__name__in=list_of_search_pane_name_filters['species']))
+                # The filter below will remove any Material that does not have the listed Species as a component,
+                # but if the Material is made using multiple Species, the entire material will still be fetched.
+                material_filter_clauses.append(Q(species__name__in=list_of_search_pane_name_filters['species']))
 
-                filter_clauses2.append(Q(name__in=list_of_search_pane_name_filters['species']))
-
-                # print(species_query.values())
-                # print("Species Query SQL:", species_query.query)
+                # Make sure to post-filter the discovered Materials when rendering the final return data to only include
+                # the individual rows we want.
+                post_fetch_filter_clauses.append(Q(name__in=list_of_search_pane_name_filters['species']))
 
             # Check if we need to filter on species:
             if len(list_of_search_pane_name_filters['topic']) > 0:
@@ -416,7 +380,7 @@ def species_search(request):
                 # print("Filtering topics", list_of_search_pane_name_filters['topic'])
 #                material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
 
-                filter_clauses.append(Q(article__topic__name__in=list_of_search_pane_name_filters['topic']))
+                material_filter_clauses.append(Q(topic__name__in=list_of_search_pane_name_filters['topic']))
                 # print(species_query.values())
                 # print("topics Query SQL:", species_query.query)
 
@@ -428,9 +392,9 @@ def species_search(request):
 
                 print(Species.objects.filter(phylum__in=list_of_search_pane_name_filters['phylum']))
 
-                filter_clauses.append(Q(species__phylum__in=list_of_search_pane_name_filters['phylum']))
+                material_filter_clauses.append(Q(species__phylum__in=list_of_search_pane_name_filters['phylum']))
 
-                filter_clauses2.append(Q(phylum__in=list_of_search_pane_name_filters['phylum']))
+                post_fetch_filter_clauses.append(Q(phylum__in=list_of_search_pane_name_filters['phylum']))
 
 
                 # print(species_query.values())
@@ -443,8 +407,8 @@ def species_search(request):
             column_name_unique_values = {key: defaultdict(int) for key in list_of_search_pane_names}
 
 
-            if filter_clauses:
-                queryset = material_query.filter(reduce(operator.and_, filter_clauses))
+            if material_filter_clauses:
+                queryset = material_query.filter(reduce(operator.and_, material_filter_clauses))
             else:
                 queryset = material_query
 
@@ -455,8 +419,8 @@ def species_search(request):
                 #
                 queryset2 = m.species.all()
 
-                if filter_clauses2:
-                    queryset2 = queryset2.filter(reduce(operator.and_, filter_clauses2))
+                if post_fetch_filter_clauses:
+                    queryset2 = queryset2.filter(reduce(operator.and_, post_fetch_filter_clauses))
 
                 print(queryset2.query)
 
@@ -476,7 +440,7 @@ def species_search(request):
                     column_name_unique_values["phylum"][s.phylum] += 1
 
 
-                    for individual_topic in m.article.topic.all():
+                    for individual_topic in m.topic.all():
                         column_name_unique_values["topic"][individual_topic.name] += 1
 
                     # Append a dictionary of selected fields to payload_data for each material
@@ -487,7 +451,7 @@ def species_search(request):
                         "species": s.name,  # OK
                         "substrates": list(m.substrates.values()),  # OK
                         "method": list(m.method.values()),  # OK
-                        "topic": [individual_topic.name for individual_topic in m.article.topic.all()],  # OK
+                        "topic": [individual_topic.name for individual_topic in m.topic.all()],  # OK
                         "properties": [
                             {
                                 "value": prop.value,  # Property value
@@ -503,6 +467,26 @@ def species_search(request):
                         "article_reference": f"{first_author_authorship} ({m.article.year})"
                         # Reference with first author
                     })
+
+
+            # The DataTable will always send us some information about the table state:
+            # draw 1
+            # columns [
+            # 			{'data': 'species', 'name': '', 'searchable': True, 'orderable': True, 'search': {'value': '', 'regex': False, 'fixed': []}},
+            # 			{'data': 'treatment', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
+            # 			{'data': 'topic', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
+            # 			{'data': 'method', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}},
+            # 			{'data': 'article_reference', 'name': '', 'searchable': False, 'orderable': False, 'search': {'value': '', 'regex': False, 'fixed': []}}
+            #		]
+            # order [{'column': 0, 'dir': 'asc', 'name': ''}]
+            # start 0
+            # length 125
+            # search {'value': '', 'regex': False, 'fixed': []}
+            # searchPanes {'species': {'0': 'Flammulina velutipes'}, 'treatment': {}, 'topic': {}, 'method': {}, 'article_reference': {}}
+            # searchPanes_null {'species': {'0': False}, 'treatment': {}, 'topic': {}, 'method': {}, 'article_reference': {}}
+            # searchPanesLast species
+            # searchPanes_options {'cascade': False, 'viewCount': True, 'viewTotal': False}
+
 
             # Prepare SearchPane data
             # Panes: see list_of_search_pane_names above
