@@ -166,49 +166,55 @@ class Command(BaseCommand):
                     if import_success:
                         article = Article.objects.get(doi=doi)
 
+                        # Make a virtual material to hold all topics and methods
+                        material, created = Material.objects.get_or_create(article=article)
+
+                        # Connect material to Article
+                        material.article = article
+
                         # Assign topics to the article
                         for topic_name in topics:
                             if topic_name:  # Ensure topic_name is not empty
                                 topic, _ = Topic.objects.get_or_create(name=topic_name)
-                                article.topic.add(topic)
+                                material.topic.add(topic)
 
                         # Assign methods to the article
                         for method_name in methods:
                             if method_name:  # Ensure method_name is not empty
                                 method, _ = Method.objects.get_or_create(name=method_name)
-                                article.method.add(method)
+                                material.method.add(method)
                         
                         # Check if "3D" in title or abstract and add the topic "3D"
                         if "3D" in article.title.lower() or "3D" in article.abstract.lower():
                             three_d_topic, _ = Topic.objects.get_or_create(name="3D")
-                            article.topic.add(three_d_topic)
+                            material.topic.add(three_d_topic)
 
                         # Check if "Adhesion" in title or abstract and add the topic "Adhesion"
                         if "Adhesion" in article.title.lower() or "Adhesion" in article.abstract.lower():
                             three_d_topic, _ = Topic.objects.get_or_create(name="Adhesion")
-                            article.topic.add(three_d_topic)
+                            material.topic.add(three_d_topic)
 
                         # Check if "composite" is in the title or "mbc" in abstract and add the topic "Composite"
                         if ("composite" in article.title.lower() or "mbc" in article.abstract.lower()) and "nanopaper" not in article.title.lower() and "nanopaper" not in article.abstract.lower():
                             composite_topic, _ = Topic.objects.get_or_create(name="Composite")
-                            article.topic.add(composite_topic)
+                            material.topic.add(composite_topic)
                             # Also add "SSF" as method
                             ssf_method, _ = Method.objects.get_or_create(name="SSF")
-                            article.method.add(ssf_method)
+                            material.method.add(ssf_method)
 
                         # Check if "substrate" and "cellulosic" are in abstract add the method "SSF"
                         if "substrate" in article.abstract.lower() and "cellulosic" in article.abstract.lower():
                             ssf_method, _ = Method.objects.get_or_create(name="SSF")
-                            article.method.add(ssf_method)
+                            material.method.add(ssf_method)
                         # or "substrate" and "solid" are in abstract add the method "SSF"
                         elif "substrate" in article.abstract.lower() and "solid" in article.abstract.lower():
                             ssf_method, _ = Method.objects.get_or_create(name="SSF")
-                            article.method.add(ssf_method)
+                            material.method.add(ssf_method)
 
                         # Check if "liquid" in abstract and add the method "LSF"
                         if "liquid" in article.abstract.lower():
                             lsf_method, _ = Method.objects.get_or_create(name="LSF")
-                            article.method.add(lsf_method)
+                            material.method.add(lsf_method)
 
                         # Check if species name is mentioned in the title or abstract
                         # Get all species names using Species model
@@ -219,11 +225,11 @@ class Command(BaseCommand):
                                 # print species name(s) found in the title or abstract
                                 print(f"Species {species.name} found in the title or abstract")
                                 # If so add a Material with this article and the species name
-                                material, created = Material.objects.get_or_create(article=article)
                                 material.species.add(species)
-                                material.save()                       
+
         
                         article.save()
+                        material.save()
                         self.stdout.write(self.style.SUCCESS(f'Successfully imported and updated topics and methods for: {doi}'))
                     else:
                         self.stdout.write(self.style.WARNING(f"The DOI {doi} could not be imported. It might already be present."))

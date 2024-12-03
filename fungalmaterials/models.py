@@ -86,9 +86,7 @@ class Article(Date):
 	journal = models.CharField(max_length=100, blank=True)
 	doi = models.URLField(max_length=100, unique=True, null=True, blank=True)
 	# pdf = models.FileField(blank=True, null=True)
-	abstract = models.TextField(max_length=2000, blank=True)
-	method = models.ManyToManyField(Method, blank=True)
-	topic = models.ManyToManyField(Topic, blank=True)
+	abstract = models.TextField(max_length=2300, blank=True)
 	approved = models.BooleanField('Approved',default=False)
 
 	class Meta:
@@ -161,19 +159,24 @@ class Unit(models.Model):
 
 
 # Material
-	# A material is connected to exactly one article, but multiple articles might describe identical materials
-	# The treatment of the material is generally described in the article
-	# The species as well, but there might be multiple, same goes for substrates and methods
+    # A material is used to store information about the aspects of what was written in an article in technical terms.
+	# While a material might also describe a real-world material, it is possible that only some aspects are known
+	# such as a treatment, method or series of topics. If an article were to describe a topic but nothing else,
+	# this material would be nearly empty and only refer to a single article and a set of topics.
+
+	# When looking for something (list of species, list of topics, list of treatments etc.)
+	# this is the entry point to find related data (articles, methods etc.) and link it back to an article.
+	# This is also used to figure out what species an article might be talking about.
 class Material(models.Model):
 	article = models.ForeignKey(Article, on_delete=models.CASCADE)
 	treatment = models.CharField(max_length=50, blank=True)
 	species = models.ManyToManyField(Species, blank=True)
 	substrates = models.ManyToManyField(Substrate, blank=True, verbose_name="Substrate/Medium")
 	method = models.ManyToManyField(Method, blank=True)
+	topic = models.ManyToManyField(Topic, blank=True)
 
 	class Meta:
 		verbose_name_plural = "Materials"
-		unique_together = ['article', 'treatment']
 
 
 # PropertyMeasurement
