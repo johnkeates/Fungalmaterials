@@ -169,6 +169,31 @@ class Command(BaseCommand):
                         # Retrieve all materials associated with the article
                         materials = Material.objects.filter(article=article)
 
+                        # List of hardcoded species
+                        hardcoded_species = []
+                        for species_name in species_names:
+                            hardcoded_species.append(species_name)
+                        # print(F"Hardcoded species: {hardcoded_species}")
+
+                        # List of species in the article
+                        present_species = []
+                        for material in materials:
+                            for species in material.species.all():
+                                present_species.append(species.name)
+                        # print(F"Present species: {present_species}")
+
+                        # Create new material for each hardcoded species not present in the article
+                        for species_name in hardcoded_species:
+                            if species_name and species_name not in present_species:
+                                species, _ = Species.objects.get_or_create(name=species_name)
+                                print(f"Species {species_name} found and added as material")
+                                new_material = Material.objects.create(article=article)
+                                new_material.species.add(species)
+                                new_material.save()
+
+                        # Retrieve all materials associated with the article again after adding new materials
+                        materials = Material.objects.filter(article=article)
+
                         # If no materials exist, create a virtual material to hold all topics and methods
                         if not materials.exists():
                             material = Material.objects.create(article=article)
@@ -187,8 +212,7 @@ class Command(BaseCommand):
                                 if method_name:
                                     method, _ = Method.objects.get_or_create(name=method_name)
                                     material.method.add(method)
-                    
-                        
+
                         # Check if "3D" in title or abstract and add the topic "3D"
                         if "3D" in article.title.lower() or "3D" in article.abstract.lower():
                             three_d_topic, _ = Topic.objects.get_or_create(name="3D")
