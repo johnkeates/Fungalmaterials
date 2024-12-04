@@ -16,21 +16,21 @@ def get_work_by_doi(doi):
 
 # Clean abstract from
 def clean_abstract(abstract_raw):
-    # Parse with BeautifulSoup
-    soup = BeautifulSoup(abstract_raw, 'lxml')
-    paragraphs = soup.find_all('jats:p')
-    abstract_text = ' '.join(p.get_text() for p in paragraphs)
+	# Parse with BeautifulSoup
+	soup = BeautifulSoup(abstract_raw, 'lxml')
+	paragraphs = soup.find_all('jats:p')
+	abstract_text = ' '.join(p.get_text() for p in paragraphs)
 
-    # Remove LaTeX artifacts and convert scientific notations
-    abstract_text = re.sub(r'\\hspace\{[^}]+\}', ' ', abstract_text)     # Remove \hspace commands
-    abstract_text = re.sub(r'\\text\{([^}]+)\}', r'\1', abstract_text)    # Extract content in \text{}
-    abstract_text = re.sub(r'\{([^}]+)\^\{-2\}\}', r'\1 per m²', abstract_text)  # Convert {m^{-2}} to "per m²"
-    abstract_text = re.sub(r'\s+', ' ', abstract_text)  # Collapse multiple spaces
+	# Remove LaTeX artifacts and convert scientific notations
+	abstract_text = re.sub(r'\\hspace\{[^}]+\}', ' ', abstract_text)     # Remove \hspace commands
+	abstract_text = re.sub(r'\\text\{([^}]+)\}', r'\1', abstract_text)    # Extract content in \text{}
+	abstract_text = re.sub(r'\{([^}]+)\^\{-2\}\}', r'\1 per m²', abstract_text)  # Convert {m^{-2}} to "per m²"
+	abstract_text = re.sub(r'\s+', ' ', abstract_text)  # Collapse multiple spaces
 
-    # Handle remaining {} by removing them
-    abstract_text = re.sub(r'[{}]', '', abstract_text)
+	# Handle remaining {} by removing them
+	abstract_text = re.sub(r'[{}]', '', abstract_text)
 
-    return abstract_text.strip()
+	return abstract_text.strip()
 
 
 # This tries to get a work and then create an Article, Authors and their Authorship for the article.
@@ -104,12 +104,20 @@ def import_new_article_by_doi(doi):
 	# Check if species is mentioned in title or abstract
 	# If so, add the species to the material object linked to the article
 	species_list = Species.objects.all()
+	# Empty set to make sure each found species is added indidivually as new material
+	found_species = set()
+
 	for species in species_list:
+		# Check if the species name is found in the article title or abstract
 		if species.name.lower() in article.title.lower() or species.name.lower() in article.abstract.lower():
-			material, created = Material.objects.get_or_create(article=article)
-			material.species.add(species)
-			material.save()
-	
+			if species not in found_species:
+				# Create a new Material for the species
+				material = Material(article=article)
+				material.save() 
+				material.species.add(species)  	# Add the species to the ManyToManyField
+				found_species.add(species) 		# Mark species as added
+				print(f"Species {species} found in the title or abstract and added as material!")
+
 	return True
 
 
