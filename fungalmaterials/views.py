@@ -68,8 +68,8 @@ def articles_search(request):
             Q(title__icontains=search_query) |
             Q(authors__family__icontains=search_query) |
             Q(year__icontains=search_query) |
-            Q(topic__name__icontains=search_query) |
-            Q(method__name__icontains=search_query)
+            Q(material__topic__name__icontains=search_query) |
+            Q(material__method__name__icontains=search_query)
         ).distinct()
 
     # Apply ordering
@@ -114,22 +114,26 @@ def articles_search(request):
             first_author_authorship = ArticleAuthorship.objects.filter(article=article).values_list('author__family',
                                                                                                     flat=True).first()
 
-        # Get the method(s) from the Article model
-        article_methods = article.method.exclude(name__isnull=True).values_list('name', flat=True)
+        # Get all topics and methods from the associated materials, excluding null values
+        material_topics = Material.objects.filter(article=article).exclude(
+            topic__name__isnull=True
+        ).values_list('topic__name', flat=True)
 
-        # Get the method(s) from the Material model
-        material_methods = Material.objects.filter(article=article).exclude(method__name__isnull=True).values_list(
-            'method__name', flat=True)
+        material_methods = Material.objects.filter(article=article).exclude(
+            method__name__isnull=True
+        ).values_list('method__name', flat=True)
 
-        # Combine method(s) from both sources and ensure uniqueness
-        all_methods = set(article_methods).union(set(material_methods))
+        # Ensure uniqueness of topics and methods
+        unique_topics = set(material_topics)
+        unique_methods = set(material_methods)
 
+        # Append to payload
         payload.append({
             "title": article.title,
             "authors": first_author_authorship,
             "year": article.year,
-            "topic": list(article.topic.values_list('name', flat=True)),
-            "method": list(all_methods),
+            "topic": list(unique_topics),
+            "method": list(unique_methods),
             "pk": article.pk,
         })
 
@@ -171,12 +175,18 @@ def articles_info(request, pk):
     # Material properties list, ordered by species name
     material_properties = []
 
+    # For method and topics
+    material_topics = Material.objects.filter(article=article).exclude(topic__name__isnull=True).values_list('topic__name', flat=True)
+    material_methods = Material.objects.filter(article=article).exclude(method__name__isnull=True).values_list('method__name', flat=True)
+
     context = {
         'article': article,
         'authors_list': authors_list,
         'sorted_species': sorted_species,
         'sorted_substrate': sorted_substrate,
         'material_properties': material_properties,
+        'material_topics': material_topics,
+        'material_methods': material_methods,
     }
 
     return render(request, 'fungalmaterials/articles_info.html', context)

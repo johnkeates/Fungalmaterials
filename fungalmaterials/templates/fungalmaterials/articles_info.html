@@ -135,36 +135,36 @@
         <br>
         <br>
         {% endif %}
-
+        
 
         <!-- Info -->
-        {% if article.doi or article.topic.all or article.method.all %}
+        {% if article.doi or material_topics or material_methods %}
         <h5>Info</h5>
             <!-- Topic(s) -->
-            {% if article.topic.all %}
-                {% with article.topic.all|length as topic_count %}
+            {% if material_topics %}
+                {% with material_topics|length as topic_count %}
                     {% if topic_count == 1 %}
                         Topic: 
                     {% else %}
                         Topics: 
                     {% endif %}
-                    {% for topic in article.topic.all %}
-                        <span class="badge rounded-pill bg-secondary">{{ topic.name }}</span>
+                    {% for topic in material_topics %}
+                        <span class="badge rounded-pill bg-secondary">{{ topic }}</span>
                     {% endfor %}
                     <br>
                 {% endwith %}
             {% endif %}
             
             <!-- Method(s) -->
-            {% if article.method.all %}
-                {% with article.method.all|length as method_count %}
+            {% if material_methods %}
+                {% with material_methods|length as method_count %}
                     {% if method_count == 1 %}
                         Method: 
                     {% else %}
                         Methods: 
                     {% endif %}
-                    {% for method in article.method.all %}
-                        <span class="badge rounded-pill bg-{{ method.name }}">{{ method.name }}</span>
+                    {% for method in material_methods %}
+                        <span class="badge rounded-pill bg-{{ method }}">{{ method }}</span>
                     {% endfor %}
                     <br>
                 {% endwith %}
