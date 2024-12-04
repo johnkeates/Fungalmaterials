@@ -11,6 +11,7 @@ class Command(BaseCommand):
         # List of DOIs to add
         # Topics: Pure, Composite, Nanopaper, 3D, Amadou, Living, Electrical
         dois_with_topics = {"https://doi.org/10.1186/s40694-022-00134-x": ["Pure", "Composite"],
+                            "https://doi.org/10.1016/j.aej.2023.10.012": [],
                             "https://doi.org/10.3390/polym14010145": ["Composite"],
                             "https://doi.org/10.1016/j.jclepro.2022.131659": ["Composite"],
                             "https://doi.org/10.3390/ma15186283": ["Composite"],
