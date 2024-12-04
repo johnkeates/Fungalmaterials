@@ -170,8 +170,6 @@ def articles_info(request, pk):
         for substrate in material.substrates.all().order_by('name'):
             sorted_substrate.append(substrate)
 
-        print(material.property_set.all())
-
     # Material properties list, ordered by species name
     material_properties = []
 
