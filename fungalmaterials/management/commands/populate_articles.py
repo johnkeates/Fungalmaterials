@@ -13,10 +13,10 @@ class Command(BaseCommand):
         # Methods: FB, LSF, SSF 
         dois = {
         # DOI: (Topics, Methods, Species)
-        "https://doi.org/10.1016/j.mtcomm.2024.109784": (["Pure", "Living"], ["LSF"], [""]),
-        "https://doi.org/10.3390/jof8030317": (["Pure"], ["SSF"], [""]),
-        "https://doi.org/10.3390/biomimetics7020057": (["Composite"], ["SSF"], [""]),
-        "https://doi.org/10.3390/jof7121008": (["Pure"], [""], [""]),
+        "https://doi.org/10.1016/j.mtcomm.2024.109784": (["Pure", "Living"], ["LSF"], ["Schizophyllum commune"]),
+        "https://doi.org/10.3390/jof8030317": (["Pure"], ["SSF"], ["Fomitella fraxinea", "Ganoderma lucidum", "Ganoderma applanatum", "Bjerkandera adusta", "Microporus affinis", "Trametes versicolor", "Fomitopsis pinicola", "Wolfiporia extensa", "Postia balsamea", "Formitopsis pinicola", "Formitopsis rosea", "Trametes suaveolens", "Trametes hirsuta"]),
+        "https://doi.org/10.3390/biomimetics7020057": (["Composite"], ["SSF"], ["Trametes versicolor"]),
+        "https://doi.org/10.3390/jof7121008": (["Pure"], [""], ["Abortiporus biennis", "Bjerkandera adusta", "Trametes gallica", "Trametes trogii", "Daedaleopsis confragosa", "Daedaleopsis tricolor", "Fomes fomentarius", "Fomitiporia mediterranea", "Fomitopsis iberica", "Fomitopsis pinicola", "Ganoderma carnosum", "Ganoderma lucidum", "Irpex lacteus", "Irpiciporus pachyodon", "Trametes betulina", "Neofavolus alveolaris", "Stereum hirsutum", "Terana caerulea", "Trametes hirsuta", "Trametes suaveolens"]),
         "https://doi.org/10.3390/su132111573": (["Composite"], [""], [""]),
         "https://doi.org/10.3390/biomimetics7020042": (["Composite"], ["SSF"], [""]),
         "https://doi.org/10.3390/biomimetics7030100": ([""], [""], [""]),
@@ -154,6 +154,8 @@ class Command(BaseCommand):
         "https://doi.org/10.1016/j.bcab.2024.103436": (["Composite"], ["SSF"], [""]),
         "https://doi.org/10.1186/s40694-024-00189-y": (["Composite"], ["SSF"], [""]),
         "https://doi.org/10.3390/biomimetics9110707": (["Composite"], ["SSF"], [""]),
+        "https://doi.org/10.1016/j.fbio.2024.105577": ([""], [""], [""]), # OR REVIEW?
+        "https://doi.org/10.1021/acsomega.4c07661": (["Pure"], ["LSF"], ["Fomes fomentarius"]),
     }
 
         for doi, (topics, methods, species_names) in dois.items():

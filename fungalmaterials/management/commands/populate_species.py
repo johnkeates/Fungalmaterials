@@ -32,6 +32,7 @@ class Command(BaseCommand):
 			{"name": "Flammulina velutipes", "phylum": "Basidiomycota"},
 			{"name": "Fomes fomentarius", "phylum": "Basidiomycota"},
 			{"name": "Fomes inzengae", "phylum": "Basidiomycota"},
+			{"name": "Fomitella fraxinea", "phylum": "Basidiomycota"},
 			{"name": "Fomitiporia mediterranea", "phylum": "Basidiomycota"},
 			{"name": "Fomitopsis iberica", "phylum": "Basidiomycota"},
 			{"name": "Fomitopsis pinicola", "phylum": "Basidiomycota"},
@@ -63,6 +64,7 @@ class Command(BaseCommand):
 			{"name": "Lentinus velutinus", "phylum": "Basidiomycota"},
 			{"name": "Lichtheimia corymbifera", "phylum": "Mycoromycota"},
 			{"name": "Megasporoporia minor", "phylum": "Basidiomycota"},
+			{"name": "Microporus affinis", "phylum": "Basidiomycota"},
 			{"name": "Mucor genevensis", "phylum": "Mycoromycota"},
 			{"name": "Mucor mucedo", "phylum": "Mycoromycota"},
 			{"name": "Neofavolus alveolares", "phylum": "Basidiomycota"},
@@ -87,6 +89,7 @@ class Command(BaseCommand):
 			{"name": "Polyporus arcularius", "phylum": "Basidiomycota"},
 			{"name": "Polyporus brumalis", "phylum": "Basidiomycota"},
 			{"name": "Polyporus squamosus", "phylum": "Basidiomycota"},
+			{"name": "Postia balsamea", "phylum": "Basidiomycota"},
 			{"name": "Purpureocillium lilacinum", "phylum": "Ascomycota"},
 			{"name": "Pycnoporus sanguineus", "phylum": "Basidiomycota"},
 			{"name": "Rhizomucor miehei", "phylum": "Mycoromycota"},
@@ -111,6 +114,7 @@ class Command(BaseCommand):
 			{"name": "Trichoderma asperellum", "phylum": "Ascomycota"},
 			{"name": "Tricholoma terreum", "phylum": "Basidiomycota"},
 			{"name": "Tyromyces chioneus", "phylum": "Basidiomycota"},
+			{"name": "Wolfiporia extensa", "phylum": "Basidiomycota"},
 			{"name": "Xylaria hypoxylon", "phylum": "Ascomycota"},
 		]
 
