@@ -14,7 +14,7 @@ class Command(BaseCommand):
         dois = {
         # DOI: (Topics, Methods, Species)
         "https://doi.org/10.1016/j.mtcomm.2024.109784": (["Pure", "Living"], ["LSF"], ["Schizophyllum commune"]),
-        "https://doi.org/10.3390/jof8030317": (["Pure"], ["SSF"], ["Fomitella fraxinea", "Ganoderma lucidum", "Ganoderma applanatum", "Bjerkandera adusta", "Microporus affinis", "Trametes versicolor", "Fomitopsis pinicola", "Wolfiporia extensa", "Postia balsamea", "Formitopsis pinicola", "Formitopsis rosea", "Trametes suaveolens", "Trametes hirsuta"]),
+        "https://doi.org/10.3390/jof8030317": (["Pure"], ["SSF"], ["Fomitella fraxinea", "Ganoderma lucidum", "Ganoderma applanatum", "Bjerkandera adusta", "Microporus affinis", "Trametes versicolor", "Fomitopsis pinicola", "Wolfiporia extensa", "Postia balsamea", "Fomitopsis rosea", "Trametes suaveolens", "Trametes hirsuta"]),
         "https://doi.org/10.3390/biomimetics7020057": (["Composite"], ["SSF"], ["Trametes versicolor"]),
         "https://doi.org/10.3390/jof7121008": (["Pure"], [""], ["Abortiporus biennis", "Bjerkandera adusta", "Trametes gallica", "Trametes trogii", "Daedaleopsis confragosa", "Daedaleopsis tricolor", "Fomes fomentarius", "Fomitiporia mediterranea", "Fomitopsis iberica", "Fomitopsis pinicola", "Ganoderma carnosum", "Ganoderma lucidum", "Irpex lacteus", "Irpiciporus pachyodon", "Trametes betulina", "Neofavolus alveolaris", "Stereum hirsutum", "Terana caerulea", "Trametes hirsuta", "Trametes suaveolens"]),
         "https://doi.org/10.3390/su132111573": (["Composite"], [""], [""]), # LCA
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         "https://doi.org/10.3390/biomimetics7020078": (["Composite"], ["SSF"], ["Ganoderma lucidum", "Pycnoporus sanguineus"]),
         "https://doi.org/10.3390/jcs6080237": (["Composite", "3D"], ["SSF"], [""]), # UNDEFINED SPECIES USED GROWKIT
         "https://doi.org/10.3390/biomimetics7020039": (["Composite"], ["SSF"], ["Ganoderma lucidum"]),
-        "https://doi.org/10.4067/S0718-221X2022000100435": ([""], [""], [""]),
+        "https://doi.org/10.4067/S0718-221X2022000100435": ([""], [""], [""]), # DOI NOT WORKING
         "https://doi.org/10.1021/acssuschemeng.2c01314": (["Composite"], ["SSF"], ["Trametes betulina"]), # LCA
         "https://doi.org/10.1088/1755-1315/1078/1/012070": (["Composite"], ["SSF"], ["Fomes fomentarius"]),
         "https://doi.org/10.3390/biomimetics7030129": ([""], [""], [""]), # STRATEGY ARTICLE
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         "https://doi.org/10.1038/s41563-022-01429-5": (["Living", "3D"], [""], [""]),
         "https://doi.org/10.1186/s12302-022-00689-x": ([""], [""], [""]),
         "https://doi.org/10.3390/biomimetics8060504": (["3D", "Composite"], [""], [""]),
-        "https://doi.org/10.4028/www.scientific.net/AMM.507.415": ([""], [""], [""]),
+        "https://doi.org/10.4028/www.scientific.net/AMM.507.415": ([""], [""], [""]), # DOI NOT WORKING
         "https://doi.org/10.1186/s40694-023-00169-8": ([""], [""], [""]),
         "https://doi.org/10.1016/j.conbuildmat.2023.133346": ([""], [""], [""]),
         "https://doi.org/10.1007/s00339-020-04270-2": ([""], ["FB"], [""]),
