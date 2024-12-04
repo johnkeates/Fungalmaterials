@@ -73,12 +73,12 @@ class Command(BaseCommand):
         "https://doi.org/10.3390/biomimetics8060504": (["3D", "Composite"], [""], ["Pleurotus ostreatus"]),
         "https://doi.org/10.4028/www.scientific.net/AMM.507.415": ([""], [""], [""]), # DOI NOT WORKING
         "https://doi.org/10.1186/s40694-023-00169-8": (["Composite"], ["SSF"], ["Fomes fomentarius"]),
-        "https://doi.org/10.1016/j.conbuildmat.2023.133346": ([""], [""], ["Fomitopsis Pinicola", "Agaricus bisporus"]),
+        "https://doi.org/10.1016/j.conbuildmat.2023.133346": ([""], [""], ["Fomitopsis pinicola", "Agaricus bisporus"]),
         "https://doi.org/10.1007/s00339-020-04270-2": ([""], ["FB"], ["Fomes fomentarius"]),
         "https://doi.org/10.1016/j.biosystems.2023.105106": (["Living", "Electrical"], ["LSF"], ["Ganoderma sessile"]),
         "https://doi.org/10.3390/jmmp8010002": (["3D", "Composite"], ["SSF"], [""]), # UNDEFINED SPECIES USED GROWKIT
         "https://doi.org/10.1002/smll.202309171": ([""], [""], ["Phanerochaete chrysosporium", "Pleurotus ostreatus", "Trametes versicolor", "Fomes fomentarius"]),
-        "https://doi.org/10.1038/s41598-023-48203-4": ([""], [""], ["Ganoderma lucidu", "Ganoderma sessile"]),
+        "https://doi.org/10.1038/s41598-023-48203-4": ([""], [""], ["Ganoderma lucidum", "Ganoderma sessile"]),
         "https://doi.org/10.1021/acsomega.1c05748": ([""], ["FB"], ["Fomes fomentarius"]),
         "https://doi.org/10.1016/j.carbpol.2021.119038": (["Nanopaper"], ["FB"], ["Lentinula edodes", "Pleurotus ostreatus", "Flammulina velutipes"]),
         "https://doi.org/10.3390/ma17020404": (["Composite"], ["SSF"], ["Ganoderma lucidum", "Trametes versicolor"]),

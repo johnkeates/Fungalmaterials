@@ -4,7 +4,7 @@ from fungalmaterials.models import Species
 class Command(BaseCommand):
 	help = 'Populate the Species model with default data if not already present'
 	
-	# Phyla: Basidiomycota, Ascomycota, Blastocladiomycota, Mycoromycota, Opisthosporidia
+	# Phyla: Basidiomycota, Ascomycota, Blastocladiomycota, Mucoromycota, Opisthosporidia
 
 	def handle(self, *args, **kwargs):
 		# List of species to add
@@ -85,7 +85,7 @@ class Command(BaseCommand):
 			{"name": "Phellinus ellipsoideus", "phylum": "Basidiomycota"},
 			{"name": "Phellinus igniarius", "phylum": "Basidiomycota"},
 			{"name": "Phellinus tremulae", "phylum": "Basidiomycota"},
-			{"name": "Phycomyces blakesleeanus", "phylum": "Mycoromycota"},
+			{"name": "Phycomyces blakesleeanus", "phylum": "Mucoromycota"},
 			{"name": "Phytophthora cinnamomi", "phylum": "Opisthosporidia"},
 			{"name": "Piptoporus betulinus", "phylum": "Basidiomycota"},
 			{"name": "Pleurotus albidus", "phylum": "Basidiomycota"},
@@ -103,12 +103,12 @@ class Command(BaseCommand):
 			{"name": "Purpureocillium lilacinum", "phylum": "Ascomycota"},
 			{"name": "Pycnoporus coccineus", "phylum": "Basidiomycota"},
 			{"name": "Pycnoporus sanguineus", "phylum": "Basidiomycota"},
-			{"name": "Rhizomucor miehei", "phylum": "Mycoromycota"},
-			{"name": "Rhizopus delemar", "phylum": "Mycoromycota"},
-			{"name": "Rhizopus oligosporus", "phylum": "Mycoromycota"},
-			{"name": "Rhizopus oryzae", "phylum": "Mycoromycota"},
+			{"name": "Rhizomucor miehei", "phylum": "Mucoromycota"},
+			{"name": "Rhizopus delemar", "phylum": "Mucoromycota"},
+			{"name": "Rhizopus oligosporus", "phylum": "Mucoromycota"},
+			{"name": "Rhizopus oryzae", "phylum": "Mucoromycota"},
 			{"name": "Saccharomyces cerevisiae", "phylum": "Ascomycota"},
-			{"name": "Saksenaea vasiformis", "phylum": "Mycoromycota"},
+			{"name": "Saksenaea vasiformis", "phylum": "Mucoromycota"},
 			{"name": "Schizophyllum commune", "phylum": "Basidiomycota"},
 			{"name": "Stereum hirsutum", "phylum": "Basidiomycota"},
 			{"name": "Stropharia rugosoannulata", "phylum": "Basidiomycota"},
