@@ -69,6 +69,7 @@ class Command(BaseCommand):
 			{"name": "Oxyporus latemarginatus", "phylum": "Basidiomycota"},
 			{"name": "Panus conchatus", "phylum": "Basidiomycota"},
 			{"name": "Phaeolus schweinitzii", "phylum": "Basidiomycota"},
+			{"name": "Phanerochaete chrysosporium", "phylum": "Basidiomycota"},
 			{"name": "Phellinus ellipsoideus", "phylum": "Basidiomycota"},
 			{"name": "Phellinus igniarius", "phylum": "Basidiomycota"},
 			{"name": "Phellinus tremulae", "phylum": "Basidiomycota"},
