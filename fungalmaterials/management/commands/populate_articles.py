@@ -162,34 +162,32 @@ class Command(BaseCommand):
                     # Import the article data for the given DOI
                     import_success = import_new_article_by_doi(doi)
 
-                    # If import was successful, retrieve the review by DOI
+                    # If import was successful, retrieve the article by DOI
                     if import_success:
                         article = Article.objects.get(doi=doi)
 
-                        # Make a virtual material to hold all topics and methods
-                        material, created = Material.objects.get_or_create(article=article)
+                        # Retrieve all materials associated with the article
+                        materials = Material.objects.filter(article=article)
 
-                        # Connect material to Article
-                        material.article = article
+                        # If no materials exist, create a virtual material to hold all topics and methods
+                        if not materials.exists():
+                            material = Material.objects.create(article=article)
+                            materials = [material]
 
-                        # Assign topics to the article
-                        for topic_name in topics:
-                            if topic_name:  # Skip empty names
-                                topic, _ = Topic.objects.get_or_create(name=topic_name)
-                                material.topic.add(topic)
+                        # Assign topics and methods to each material
+                        for material in materials:
+                            # Assign topics to the material
+                            for topic_name in topics:
+                                if topic_name:  # Skip empty names
+                                    topic, _ = Topic.objects.get_or_create(name=topic_name)
+                                    material.topic.add(topic)
 
-                        # Assign methods to the article
-                        for method_name in methods:
-                            if method_name:
-                                method, _ = Method.objects.get_or_create(name=method_name)
-                                material.method.add(method)
-
-                        # Assign predefined species to the material
-                        for species_name in species_names:
-                            if species_name: 
-                                species, _ = Species.objects.get_or_create(name=species_name)
-                                print(f"Species {species.name} found")
-                                material.species.add(species)
+                            # Assign methods to the material
+                            for method_name in methods:
+                                if method_name:
+                                    method, _ = Method.objects.get_or_create(name=method_name)
+                                    material.method.add(method)
+                    
                         
                         # Check if "3D" in title or abstract and add the topic "3D"
                         if "3D" in article.title.lower() or "3D" in article.abstract.lower():
@@ -222,17 +220,6 @@ class Command(BaseCommand):
                         if "liquid" in article.abstract.lower():
                             lsf_method, _ = Method.objects.get_or_create(name="LSF")
                             material.method.add(lsf_method)
-
-                        # Check if species name is mentioned in the title or abstract
-                        # Get all species names using Species model
-                        species_list = Species.objects.all()
-                        for species in species_list:
-                            # Check if any of the species names are mentioned in the title or abstract
-                            if species.name.lower() in article.title.lower() or species.name.lower() in article.abstract.lower():
-                                # print species name(s) found in the title or abstract
-                                print(f"Species {species.name} found in the title or abstract")
-                                # If so add a Material with this article and the species name
-                                material.species.add(species)
 
                         # Save changes to the material and article
                         article.save()
