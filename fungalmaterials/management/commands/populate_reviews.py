@@ -58,6 +58,7 @@ class Command(BaseCommand):
                             "https://doi.org/10.1016/j.copbio.2019.02.010": [],
                             "https://doi.org/10.1007/s00253-018-9226-8": [],
                             "https://doi.org/10.1016/j.tibtech.2024.11.006": [],
+                            "https://doi.org/10.1007/s42398-024-00305-z": [],
                             }
 
         for doi, topics in dois_with_topics.items():
