@@ -164,18 +164,21 @@ def articles_info(request, pk):
     sorted_substrate = []
 
     for material in article.material_set.all():
-        for species in material.species.all().order_by('name'):
+        for species in material.species.all():
             sorted_species.append(species)
 
-        for substrate in material.substrates.all().order_by('name'):
+        for substrate in material.substrates.all():
             sorted_substrate.append(substrate)
+
+    # Order sorted_species from A-Z based on name
+    sorted_species.sort(key=lambda species: species.name)
 
     # Material properties list, ordered by species name
     material_properties = []
 
     # For method and topics
-    material_topics = Material.objects.filter(article=article).exclude(topic__name__isnull=True).values_list('topic__name', flat=True)
-    material_methods = Material.objects.filter(article=article).exclude(method__name__isnull=True).values_list('method__name', flat=True)
+    material_topics = Material.objects.filter(article=article).exclude(topic__name__isnull=True).values_list('topic__name', flat=True).distinct()
+    material_methods = Material.objects.filter(article=article).exclude(method__name__isnull=True).values_list('method__name', flat=True).distinct()
 
     context = {
         'article': article,
