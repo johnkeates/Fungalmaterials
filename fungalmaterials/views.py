@@ -637,23 +637,23 @@ def doi_import(request):
 ############ ABOUT ###########
 
 def about(request):
-    combination_list = [
-        {
-            'method': article['method__name'],
-            'topic': article['topic__name']
-        }
-        for article in Article.objects.select_related('method', 'topic')
-        # This filters out articles with method or topic is None
-        .filter(method__isnull=False, topic__isnull=False)
-        .values('method__name', 'topic__name')
-    ]
+    # combination_list = [
+    #     {
+    #         'method': article['method__name'],
+    #         'topic': article['topic__name']
+    #     }
+    #     for article in Article.objects.select_related('method', 'topic')
+    #     # This filters out articles with method or topic is None
+    #     .filter(method__isnull=False, topic__isnull=False)
+    #     .values('method__name', 'topic__name')
+    # ]
 
-    # Use function to generate sankey figure
-    sankey_fig = generate_sankey(combination_list)
+    # # Use function to generate sankey figure
+    # sankey_fig = generate_sankey(combination_list)
 
     context = {
-        'sankey_fig': sankey_fig,
-        'combination_list': combination_list,
+        # 'sankey_fig': sankey_fig,
+        # 'combination_list': combination_list,
     }
     return render(request, "fungalmaterials/about.html", context)
 
