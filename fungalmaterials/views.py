@@ -5,7 +5,7 @@ from functools import reduce
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q, F, Value
+from django.db.models import Q, F, Value, Count
 from django.db.models.functions import Coalesce
 from django.forms import model_to_dict
 from django.http import HttpResponseNotFound, JsonResponse
@@ -328,7 +328,7 @@ def species_search(request):
 
             # Prepare a map to hold the unique count of Phylum, Species etc. for SearchPanes
             # Keys we want to track in the dictionaries
-            list_of_search_pane_names = ["species", "phylum", "topic"]
+            list_of_search_pane_names = ["species", "phylum", "topic", "method"]
 
             # Create a defaultdict where each key's counter is also a defaultdict(int)
             list_of_search_pane_name_filters = {pane: [] for pane in list_of_search_pane_names}
@@ -365,7 +365,7 @@ def species_search(request):
             # but it has one requirement: connecting an article to a species.
             # This means we only want Material entries that exist at least once in the Species relationship,
             # or, in other words, Materials that have at least 1 species listed in their Model.
-            material_query = Material.objects.filter(species__isnull=False).distinct()
+            material_query = Material.objects.filter(species__isnull=False)
 
 
             # If we have to filter things based on the SearchPanes, we list those filters here to be appended later
@@ -407,6 +407,17 @@ def species_search(request):
 
                 post_fetch_filter_clauses.append(Q(phylum__in=list_of_search_pane_name_filters['phylum']))
 
+            # Check if we need to filter on phylum:
+            if len(list_of_search_pane_name_filters['method']) > 0:
+                # We have topics to filter!
+                # print("Filtering topics", list_of_search_pane_name_filters['topic'])
+                #                material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
+
+                #print(Species.objects.filter(method__in=list_of_search_pane_name_filters['method']))
+
+                material_filter_clauses.append(Q(method__name__in=list_of_search_pane_name_filters['method']))
+
+                # post_fetch_filter_clauses.append(Q(method__in=list_of_search_pane_name_filters['method']))
 
                 # print(species_query.values())
                 # print("topics Query SQL:", species_query.query)
@@ -418,51 +429,83 @@ def species_search(request):
             column_name_unique_values = {key: defaultdict(int) for key in list_of_search_pane_names}
 
 
+            # Create a defaultdict just like the one above, but with complete database counts
+            column_name_total_values = {key: defaultdict(int) for key in list_of_search_pane_names}
+
+            # Generalized function to count unique values for a model field
+            def count_unique_values(model, field_name, column_key):
+                counts = model.objects.values(field_name).annotate(count=Count(field_name))
+                for entry in counts:
+                    unique_value = entry[field_name]
+                    count = entry['count']
+                    column_name_total_values[column_key][unique_value] = count
+
+            # Call the function for each model and field
+            count_unique_values(Topic, 'name', 'topic')
+            count_unique_values(Method, 'name', 'method')
+            count_unique_values(Species, 'name', 'species')
+            count_unique_values(Species, 'phylum', 'phylum')
+
+            print(column_name_total_values)
+
+
+            # If any SearchPanes were used, there will be filter clauses that need to be applied to the query:
             if material_filter_clauses:
-                queryset = material_query.filter(reduce(operator.and_, material_filter_clauses))
-            else:
-                queryset = material_query
+                material_query = material_query.filter(reduce(operator.and_, material_filter_clauses))
 
-            print(queryset.distinct().query)
+            print(material_query.query)
 
-            # Loop through each species in the query result
-            for m in queryset.distinct():
-                #
-                queryset2 = m.species.all()
+            # From the returned materials we want to extract a list of species and their material properties
+            for material in material_query:
+                # Get all the species embedded in this material definition
+                species_in_material = material.species.all()
 
+                # If any SearchPanes were used, there will be filter clauses that need to be applied to the query:
                 if post_fetch_filter_clauses:
-                    queryset2 = queryset2.filter(reduce(operator.and_, post_fetch_filter_clauses))
+                    species_in_material = species_in_material.filter(reduce(operator.and_, post_fetch_filter_clauses))
 
-                print(queryset2.query)
+                #print(species_in_material.query)
 
-                for s in queryset2:
-
+                # For every found species, get the properties of the current material:
+                # - mechanical/measured properties
+                # - article properties (the one connected to this material)
+                # - authors for the article
+                # this is what is used to construct the final payload for the table.
+                # Inside the Table we will need access to the underlying material for the reported species.
+                # It is possible multiple materials have the same species, but they will be listed multiple times
+                # for every unique combination of species<--->material<--->article.
+                for embedded_species in species_in_material:
 
                     # Get the first author based on sequence
-                    first_author_authorship = m.article.articleauthorship_set.filter(sequence='first').values_list('author__family', flat=True).first()
+                    first_author_authorship = material.article.articleauthorship_set.filter(sequence='first').values_list('author__family', flat=True).first()
 
                     # If no 'first' author exists, fall back to the first author added
                     if not first_author_authorship:
-                        first_author_authorship = m.article.articleauthorship_set.first().values_list(
+                        first_author_authorship = material.article.articleauthorship_set.first().values_list(
                             'author__family', flat=True).first()
 
-                    # Add to SearchPane Tracker
-                    column_name_unique_values["species"][s.name] += 1
-                    column_name_unique_values["phylum"][s.phylum] += 1
+                    # We count the specifics of the current species so we can show the SearchPane match counters
+                    # These two are always single matching
+                    column_name_unique_values["species"][embedded_species.name] += 1
+                    column_name_unique_values["phylum"][embedded_species.phylum] += 1
 
-
-                    for individual_topic in m.topic.all():
+                    # These two are lists so can contain 0 to * options
+                    for individual_topic in material.topic.all():
                         column_name_unique_values["topic"][individual_topic.name] += 1
+
+                    for individual_method in material.method.all():
+                        print("Adding method: ", individual_method.name)
+                        column_name_unique_values["method"][individual_method.name] += 1
 
                     # Append a dictionary of selected fields to payload_data for each material
                     payload_data.append({
-                        "pk": f"{m.id}{s.id}",  # OK
-                        "article_id": m.article.id,  # OK
-                        "treatment": m.treatment,  # OK
-                        "species": s.name,  # OK
-                        "substrates": list(m.substrates.values()),  # OK
-                        "method": list(m.method.values()),  # OK
-                        "topic": [individual_topic.name for individual_topic in m.topic.all()],  # OK
+                        "pk": f"{material.id}{embedded_species.id}",  # OK
+                        "article_id": material.article.id,  # OK
+                        "treatment": material.treatment,  # OK
+                        "species": embedded_species.name,  # OK
+                        "substrates": list(material.substrates.values()),  # OK
+                        "method": list(material.method.values()),  # OK
+                        "topic": [individual_topic.name for individual_topic in material.topic.all()],  # OK
                         "properties": [
                             {
                                 "value": prop.value,  # Property value
@@ -470,12 +513,12 @@ def species_search(request):
                                 "unit": prop.unit.symbol  # Unit of the property (from the related Unit model)
                             }
                             # Loop over each property associated with the material
-                            for prop in m.property_set.all()
+                            for prop in material.property_set.all()
                         ],
-                        "phylum": s.phylum,
+                        "phylum": embedded_species.phylum,
                         "first_author": first_author_authorship,
                         # Use the first author (either by sequence or fallback)
-                        "article_reference": f"{first_author_authorship} ({m.article.year})"
+                        "article_reference": f"{first_author_authorship} ({material.article.year})"
                         # Reference with first author
                     })
 
