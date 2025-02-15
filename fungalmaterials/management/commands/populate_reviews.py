@@ -59,6 +59,9 @@ class Command(BaseCommand):
                             "https://doi.org/10.1007/s00253-018-9226-8": [],
                             "https://doi.org/10.1016/j.tibtech.2024.11.006": [],
                             "https://doi.org/10.1007/s42398-024-00305-z": [],
+                            "https://doi.org/10.1186/s40643-024-00836-7": ["Composite"],
+                            "https://doi.org/10.1016/j.enbenv.2025.01.004": ["Composite"],
+                            "https://doi.org/10.1016/j.fbio.2024.105577": [],
                             }
 
         for doi, topics in dois_with_topics.items():
