@@ -160,6 +160,7 @@ class Command(BaseCommand):
         "https://doi.org/10.1016/j.cej.2024.158382": (["Composite"], ["SSF"], ["Ganoderma lucidum"]),
         "https://doi.org/10.1002/adfm.202412196": (["Pure"], ["SSF"], ["Ganoderma lucidum"]),
         "https://doi.org/10.1177/17442591241300711": (["Composite"], ["SSF"], ["Pleurotus ostreatus", "Trametes versicolor"]),
+        "https://doi.org/10.1002/adma.202418464": (["Pure", "Nanopaper"], ["LSF"], ["Schizophyllum commune"]),
     }
 
         for doi, (topics, methods, species_names) in dois.items():
