@@ -44,6 +44,11 @@ jobs:
     - name: Package and copy to server
       if: success()
       run: |
+        # 0. Bypass double-host verification issue
+        echo "" >> ~/.ssh/config
+        echo "Host 85.10.132.158" >> ~/.ssh/config
+        echo "  StrictHostKeyChecking=no" >> ~/.ssh/config
+        echo "  UserKnownHostsFile=/dev/null" >> ~/.ssh/config
         # 1. Tar+GZip current release
         tar --exclude=.git --exclude=.github -cvf ../${{ github.sha }}.tgz .
         # 2. SFTP/SCP -> Server (via IPv4 jump)
