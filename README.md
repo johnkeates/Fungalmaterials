@@ -53,4 +53,19 @@ python manage.py migrate
 python manage.py runserver
 ````
 
+5. Populate with data (recommended order)
+   
+````shell
+# Populate the Methods
+python3 manage.py populate_methods
+# Populate the Topics
+python3 manage.py populate_topics
+# Populate the Species
+python3 manage.py populate_species
+# Populate with Articles
+python3 manage.py populate_articles
+# Populate with Reviews
+python3 manage.py populate_reviews
+````
+
 Other activities like creating new migrations or adding/upgrading packages are left as an exercise to the reader.
