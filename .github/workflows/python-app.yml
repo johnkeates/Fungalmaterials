@@ -52,7 +52,7 @@ jobs:
         # 1. Tar+GZip current release
         tar --exclude=.git --exclude=.github -cvf ../${{ github.sha }}.tgz .
         # 2. SFTP/SCP -> Server (via IPv4 jump)
-        scp -o StrictHostKeyChecking=no -o ProxyJump=webapp@85.10.132.158 ../${{ github.sha }}.tgz webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
+        scp -o StrictHostKeyChecking=no -o ProxyJump=webapp@85.10.132.158 ../${{ github.sha }}.tgz webapp@\[2a01:7c8:fffd:130:5054:ff:fea2:37f\]:/tmp/
 
     - name: Unpack and prepare for environment
       if: success()
