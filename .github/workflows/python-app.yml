@@ -69,7 +69,7 @@ jobs:
         echo -e "\nDB_PASSWORD = '${{ secrets.DB_PASSWORD}}'" >> env-example
         echo -e "\nSECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY}}'" >> env-example
         # 6. Copy env file to .env on the server
-        scp -o StrictHostKeyChecking=no env-example webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/srv/fungalmaterials/releases/${{ github.sha }}/.env
+        scp -o StrictHostKeyChecking=no env-example webapp@\[2a01:7c8:fffd:130:5054:ff:fea2:37f\]:/srv/fungalmaterials/releases/${{ github.sha }}/.env
 
     - name: Install requirements into virtual environment
       if: success()
@@ -98,7 +98,7 @@ jobs:
         echo "sudo systemctl enable gunicorn.socket" >> deploy.sh
         
         # 9. Copy deployment script to server
-        scp -o StrictHostKeyChecking=no deploy.sh webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
+        scp -o StrictHostKeyChecking=no deploy.sh webapp@\[2a01:7c8:fffd:130:5054:ff:fea2:37f\]:/tmp/
 
         # 10. Execute
         ssh -o StrictHostKeyChecking=no -J webapp@85.10.132.158 webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f bash -x /tmp/deploy.sh
