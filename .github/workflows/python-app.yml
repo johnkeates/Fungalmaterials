@@ -81,7 +81,7 @@ jobs:
         echo "source venv/bin/activate" >> deploy.sh
         echo "pip3 install -r requirements.txt" >> deploy.sh
         echo "pip install gunicorn" >> deploy.sh
-        echo "python3 manage.py collectstatic" >> deploy.sh
+        echo "python3 manage.py collectstatic --no-input" >> deploy.sh
 
         echo "sudo systemctl stop gunicorn.socket" >> deploy.sh
         echo "sudo systemctl stop gunicorn.service" >> deploy.sh
