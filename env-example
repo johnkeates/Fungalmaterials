@@ -4,6 +4,6 @@ SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
 
 DB_ENGINE = 'django.db.backends.postgresql'
-DB_NAME = 'fungal_prod'
-DB_USER = 'fungal_prod'
+DB_NAME = 'fungalmaterials_prod'
+DB_USER = 'fungalmaterials_prod'
 DB_HOST = 'localhost'
