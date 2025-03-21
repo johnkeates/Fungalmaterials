@@ -46,16 +46,16 @@ jobs:
       run: |
         # 1. Tar+GZip current release
         tar --exclude=.git --exclude=.github -cvf ../${{ github.sha }}.tgz .
-        # 2. SFTP/SCP -> Server        
-        scp -o StrictHostKeyChecking=no ../${{ github.sha }}.tgz webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
+        # 2. SFTP/SCP -> Server (via IPv4 jump)
+        scp -o StrictHostKeyChecking=no -o ProxyJump=webapp@85.10.132.158 ../${{ github.sha }}.tgz webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
 
     - name: Unpack and prepare for environment
       if: success()
       run: |
         # 3. SSH to server and create deployment directory
-        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f mkdir /srv/fungalmaterials/releases/${{ github.sha }}
+        ssh -o StrictHostKeyChecking=no -J webapp@85.10.132.158 webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f mkdir /srv/fungalmaterials/releases/${{ github.sha }}
         # 4. Unpack the TGZ into the right location
-        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f tar --directory=/srv/fungalmaterials/releases/${{ github.sha }} -xvf /tmp/${{ github.sha }}.tgz
+        ssh -o StrictHostKeyChecking=no -J webapp@85.10.132.158 webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f tar --directory=/srv/fungalmaterials/releases/${{ github.sha }} -xvf /tmp/${{ github.sha }}.tgz
 
     - name: Create environment settings
       if: success()
@@ -70,7 +70,7 @@ jobs:
       if: success()
       run: |
         # 7. Create virtual environment
-        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f python3 -m venv /srv/fungalmaterials/releases/${{ github.sha }}/venv
+        ssh -o StrictHostKeyChecking=no -J webapp@85.10.132.158 webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f python3 -m venv /srv/fungalmaterials/releases/${{ github.sha }}/venv
         # 8. Create deployment script
         echo "cd /srv/fungalmaterials/releases/${{ github.sha }}" > deploy.sh
         echo "source venv/bin/activate" >> deploy.sh
@@ -96,7 +96,7 @@ jobs:
         scp -o StrictHostKeyChecking=no deploy.sh webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
 
         # 10. Execute
-        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f bash -x /tmp/deploy.sh
+        ssh -o StrictHostKeyChecking=no -J webapp@85.10.132.158 webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f bash -x /tmp/deploy.sh
 
         
 
