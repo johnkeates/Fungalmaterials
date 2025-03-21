@@ -1,0 +1,102 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        # we don't actually have any tests
+        true
+        # pytest
+    - uses: webfactory/ssh-agent@v0.7.0
+      with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Package and copy to server
+      if: success()
+      run: |
+        # 1. Tar+GZip current release
+        tar --exclude=.git --exclude=.github -cvf ../${{ github.sha }}.tgz .
+        # 2. SFTP/SCP -> Server        
+        scp -o StrictHostKeyChecking=no ../${{ github.sha }}.tgz webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
+
+    - name: Unpack and prepare for environment
+      if: success()
+      run: |
+        # 3. SSH to server and create deployment directory
+        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f mkdir /srv/fungalmaterials/releases/${{ github.sha }}
+        # 4. Unpack the TGZ into the right location
+        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f tar --directory=/srv/fungalmaterials/releases/${{ github.sha }} -xvf /tmp/${{ github.sha }}.tgz
+
+    - name: Create environment settings
+      if: success()
+      run: |
+        # 5. Create .env file and add secrets
+        echo -e "\nDB_PASSWORD = '${{ secrets.DB_PASSWORD}}'" >> env-example
+        echo -e "\nSECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY}}'" >> env-example
+        # 6. Copy env file to .env on the server
+        scp -o StrictHostKeyChecking=no env-example webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/srv/fungalmaterials/releases/${{ github.sha }}/.env
+
+    - name: Install requirements into virtual environment
+      if: success()
+      run: |
+        # 7. Create virtual environment
+        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f python3 -m venv /srv/fungalmaterials/releases/${{ github.sha }}/venv
+        # 8. Create deployment script
+        echo "cd /srv/fungalmaterials/releases/${{ github.sha }}" > deploy.sh
+        echo "source venv/bin/activate" >> deploy.sh
+        echo "pip3 install -r requirements.txt" >> deploy.sh
+        echo "pip install gunicorn" >> deploy.sh
+        echo "python3 manage.py collectstatic" >> deploy.sh
+
+        echo "sudo systemctl stop gunicorn.socket" >> deploy.sh
+        echo "sudo systemctl stop gunicorn.service" >> deploy.sh
+        
+        echo "python3 manage.py migrate" >> deploy.sh
+        
+        echo "cd /srv/fungalmaterials/releases/" >> deploy.sh
+        echo "rm current" >> deploy.sh
+        echo "ln -fs ${{ github.sha }} current"  >> deploy.sh
+        echo "ln -s /srv/fungalmaterials/media /srv/fungalmaterials/releases/${{ github.sha }}/media"  >> deploy.sh
+        echo "sudo systemctl start gunicorn.service" >> deploy.sh
+        echo "sudo systemctl start gunicorn.socket" >> deploy.sh
+        echo "sudo systemctl enable gunicorn.service" >> deploy.sh
+        echo "sudo systemctl enable gunicorn.socket" >> deploy.sh
+        
+        # 9. Copy deployment script to server
+        scp -o StrictHostKeyChecking=no deploy.sh webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f:/tmp/
+
+        # 10. Execute
+        ssh -o StrictHostKeyChecking=no webapp@2a01:7c8:fffd:130:5054:ff:fea2:37f bash -x /tmp/deploy.sh
+
+        
+
