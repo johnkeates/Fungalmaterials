@@ -43,6 +43,16 @@ Sometimes pip has to be used as a python3 module, instead of using `pip` you wou
 The current configuration automatically uses an insecure token and local SQLite DB for development purposes.
 To override this you have to create a dotenv file, (aptly named `.env`) with contents suitable for your setup. An example is provided in `env-example`.
 
+For local SQLite development you might want to replace the .env examples with:
+
+````
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+````
 
 4. Once your environment is setup, you can start the django development server and optionally run migrations:
 
@@ -51,6 +61,21 @@ To override this you have to create a dotenv file, (aptly named `.env`) with con
 python manage.py migrate
 # Run the development server
 python manage.py runserver
+````
+
+5. Populate with data (recommended order)
+   
+````shell
+# Populate the Methods
+python3 manage.py populate_methods
+# Populate the Topics
+python3 manage.py populate_topics
+# Populate the Species
+python3 manage.py populate_species
+# Populate with Articles
+python3 manage.py populate_articles
+# Populate with Reviews
+python3 manage.py populate_reviews
 ````
 
 Other activities like creating new migrations or adding/upgrading packages are left as an exercise to the reader.
