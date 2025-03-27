@@ -344,7 +344,6 @@ def species_search(request):
                         # Species
                         # Phylum
 
-
             # Start decoding the searchPanes, if any
             if "searchPanes" in json_data:
                 # Check each entry in the searchpane dict
@@ -389,7 +388,7 @@ def species_search(request):
             if len(list_of_search_pane_name_filters['topic']) > 0:
                 # We have topics to filter!
                 # print("Filtering topics", list_of_search_pane_name_filters['topic'])
-#                material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
+                # material_query = material_query.filter(article__topic__name__in=list_of_search_pane_name_filters['topic'])
 
                 material_filter_clauses.append(Q(topic__name__in=list_of_search_pane_name_filters['topic']))
                 # print(species_query.values())
@@ -448,7 +447,6 @@ def species_search(request):
 
             print(column_name_total_values)
 
-
             # If any SearchPanes were used, there will be filter clauses that need to be applied to the query:
             if material_filter_clauses:
                 material_query = material_query.filter(reduce(operator.and_, material_filter_clauses))
@@ -494,7 +492,7 @@ def species_search(request):
                         column_name_unique_values["topic"][individual_topic.name] += 1
 
                     for individual_method in material.method.all():
-                        print("Adding method: ", individual_method.name)
+                        # print("Adding method: ", individual_method.name)
                         column_name_unique_values["method"][individual_method.name] += 1
 
                     # Append a dictionary of selected fields to payload_data for each material

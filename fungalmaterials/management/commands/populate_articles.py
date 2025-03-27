@@ -154,7 +154,7 @@ class Command(BaseCommand):
         "https://doi.org/10.3390/biomimetics9110707": (["Composite"], ["SSF"], ["Ganoderma lucidum"]),
         "https://doi.org/10.1021/acsomega.4c07661": (["Pure"], ["LSF"], ["Fomes fomentarius"]),
         "https://doi.org/10.1038/s41598-024-77435-1": (["Composite"], ["SSF"], ["Pleurotus sajor-caju"]),
-        "https://doi.org/10.3390/ma17246050": (["Composite"], ["SSF"], ["Daedaleopsis tricolor", "Stereum hirsutum", "Fomes fomentarius", "Trametes versicolor", "Ganoderma luciducm", "Ganoderma applanatum", "Bjerkandera adusta", "Hericium erinaceus", "Phellinus nigricans"]),
+        "https://doi.org/10.3390/ma17246050": (["Composite"], ["SSF"], ["Daedaleopsis tricolor", "Stereum hirsutum", "Fomes fomentarius", "Trametes versicolor", "Ganoderma lucidum", "Ganoderma applanatum", "Bjerkandera adusta", "Hericium erinaceus", "Phellinus nigricans"]),
         "https://doi.org/10.1017/btd.2024.26": (["Composite"], ["SSF"], ["Pleurotus ostreatus"]),
         "https://doi.org/10.3390/ma17246111": (["Composite"], ["SSF"], ["Trametes versicolor"]),
         "https://doi.org/10.1016/j.cej.2024.158382": (["Composite"], ["SSF"], ["Ganoderma lucidum"]),
@@ -162,7 +162,7 @@ class Command(BaseCommand):
         "https://doi.org/10.1177/17442591241300711": (["Composite"], ["SSF"], ["Pleurotus ostreatus", "Trametes versicolor"]),
         "https://doi.org/10.1002/adma.202418464": (["Pure", "Nanopaper"], ["LSF"], ["Schizophyllum commune"]),
         "https://doi.org/10.1016/j.matdes.2025.113591": (["Composite"], ["SSF"], ["Ganoderma lucidum"]),
-        "https://doi.org/10.1186/s40694-024-00192-3": ([""], ["LSF", "SSF"], ["Fomes fomentarius"]),
+        "https://doi.org/10.1186/s40694-024-00192-3": (["Composite"], ["LSF", "SSF"], ["Fomes fomentarius"]),
     }
 
         for doi, (topics, methods, species_names) in dois.items():

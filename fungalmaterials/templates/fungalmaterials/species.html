@@ -92,7 +92,7 @@
 
     <div class="row" style="margin-bottom: 10px;">
         <div class="col-12">
-            <h4>A list of species</h4>
+            <h4>Species used in articles on fungal materials</h4>
         </div>
     </div>
 
@@ -116,7 +116,7 @@
                 <thead>
                 <tr>
                     <th>Species</th>
-                    <th>Treatment</th>
+                    <!-- <th>Treatment</th> -->
                     <th class="desktop large-only">Topic</th>
                     <th class="desktop large-only">Method</th>
                     <th>Article</th>
@@ -197,7 +197,6 @@
                             }
                         }
                     },
-                    {"data": "treatment"},
                     {
                         "data": "topic",
                         "render": function (data, type, row) {
@@ -237,9 +236,8 @@
                     {"width": "auto", "targets": [1], "searchable": false, "orderable": false},
                     {"width": "auto", "targets": [2], "searchable": false, "orderable": false},
                     {"width": "auto", "targets": [3], "searchable": false, "orderable": false},
-                    {"width": "auto", "targets": [4], "searchable": false, "orderable": false},
                     {"width": "8px", "targets": -1, className: "dt-right", "searchable": false, "orderable": false},
-                    {name: "Phylum", target: 5, visible: false}
+                    {name: "Phylum", target: 4, visible: false}
                 ],
                 language: {
                     paginate: {"previous": "Previous", "next": "Next"},                     // Change name of button
