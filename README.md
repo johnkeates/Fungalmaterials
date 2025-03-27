@@ -46,12 +46,11 @@ To override this you have to create a dotenv file, (aptly named `.env`) with con
 For local SQLite development you might want to replace the .env examples with:
 
 ````
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DB_ENGINE = 'django.db.backends.sqlite3'
+DB_NAME = 'db.sqlite3'
+DB_USER = 'sqlite'
+DB_HOST = 'localhost'
+DB_PASSWORD = 'sqlite'
 ````
 
 4. Once your environment is setup, you can start the django development server and optionally run migrations:
