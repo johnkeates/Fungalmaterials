@@ -82,12 +82,25 @@
       },
 
       columns: [
-        { "data": "title",
-          "render": function ( data, type, row ) {
-            let max_name_length = 45;
-            if(data && data.length > max_name_length){
-            return data.slice(0, max_name_length) + "..."}
-          return data; }
+        {"data": "title",
+            "render": function (data, type, row) {
+                let max_name_length;
+
+                // Check screen size and adjust max_name_length accordingly
+                if (window.innerWidth >= 1200) { // Large screens (e.g., desktops)
+                    max_name_length = 65;
+                } else if (window.innerWidth >= 768) { // Medium screens (e.g., tablets)
+                    max_name_length = 60;
+                } else { // Small screens (e.g., phones)
+                    max_name_length = 30;
+                }
+
+                // Truncate text if it exceeds the max length
+                if (data && data.length > max_name_length) {
+                    return data.slice(0, max_name_length) + "...";
+                }
+                return data;
+            }
         },
         { "data": "authors" },
         { "data": "year" },
