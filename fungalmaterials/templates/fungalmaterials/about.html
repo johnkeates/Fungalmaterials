@@ -38,7 +38,7 @@
 	    color: var(--text);
 	    text-decoration: none;
 	}
-	h4 {
+	h4, h5, h6 {
     	text-align: center;
   	}
   	#contact-box {
@@ -61,13 +61,13 @@
 <!-- Text -->
 <h4>Description</h4>
 <p>
-Fungalmaterials is a collaborative database for fungal material references. This database is an extension of the review <i><a href="https://doi.org/10.1186/s40694-022-00134-x">Risk assessment of fungal materials</a></i>, published in 2022.
+Fungalmaterials is a collaborative database for fungal material references. This database is an extension of the review <i><a href="https://doi.org/10.1186/s40694-022-00134-x">Risk assessment of fungal materials</a></i>, published in 2022. If you would like to contribute or notice any missing references or information, feel free to get in touch.
 </p>
 
-{% if user.is_superuser or user.is_authenticated %}
 <div id="contact-box" class="shadow-sm">
     <i class="bi bi-envelope" style="font-size: 1.15rem;"> </i> j.g.vandenbrandhof@uu.nl
 </div>
+{% if user.is_superuser or user.is_authenticated %}
 <br>
 <div id="contact-box" class="shadow-sm">
     <i class="bi bi-github" style="font-size: 1rem;"> </i><a href="https://github.com/Realitijd/Fungalmaterials">Fungalmaterials</a>
@@ -79,14 +79,44 @@ Fungalmaterials is a collaborative database for fungal material references. This
 
 <section id="material">
 	<h4>Fungal materials</h4>
+
 	<p>
-	[Pure mycelium & composite mycelium]
+	Fungal materials are bio-based materials derived from fungi, particularly the network of branching hyphae known as mycelium. These materials are formed either by combining fungal growth with lignocellulosic substrate to create composites or by cultivating pure fungal biomass. Fungal materials are gaining significant attention due to their sustainability, biodegradability, and wide-ranging functional properties. In recent years, interest in fungal materials has grown rapidly, as seen in the rise of scientific publications, patents, and start-ups in the field. Fungal materials are generally categorized into two types: mycelium composites and pure mycelium materials.	
+	</p>
 	<br>
+
+	<h5>Mycelium composites</h5>
+	<p>
+	Mycelium composites <span class="badge rounded-pill bg-secondary">Composite</span> are formed when fungi are grown within a lignocellulosic substrate, such as agricultural waste (e.g., hemp, straw, or sawdust). As the network of hyphae colonizes the substrate, it acts like a natural glue, binding the particles into a lightweight, foam-like material. Once the desired growth is achieved, the material is typically dried to halt or kill fungal activity. These composites are notable for their thermal insulation, sound absorption, and biodegradability, making them a strong contender in applications like packaging, construction, and interior design. With further processing, such as heat pressing, they can also resemble wood or cork, making them suitable for use in flooring or furniture. In some applications, the fungi are intentionally kept alive in the final product to create interactive, living <span class="badge rounded-pill bg-secondary">Living</span> materials. For example, some living mycelium composites can respond to physical stimuli, such as pressure, by changing their electrical <span class="badge rounded-pill bg-secondary">Electrical</span> activity, paving the way for future applications in biosensing, interactive materials, and smart architecture. In addition to traditional molding techniques, additive manufacturing <span class="badge rounded-pill bg-secondary">3D</span> of composite materials has emerged as a fabrication method.
+	</p>
+	<br>
+
+	<h5>Pure mycelium</h5>
+	<p>
+	Pure mycelium <span class="badge rounded-pill bg-secondary">Pure</span> materials are made solely from fungal biomass and are typically cultivated through solid-state or liquid-state fermentation. In solid-state methods, a dense fungal skin is harvested from the surface of the substrate, while in liquid cultures, sheets form at the liquid–air interface or fungal biomass is harvested and used to cast films. These materials can be physically or chemically processed to create leather-like material, biodegradable foams, or even meat alternatives. Treatments such as plasticizing or crosslinking can further enhance properties like flexibility, strength, and moisture resistance. Beside fermentation methods, the direct use of mushrooms is also a viable approach. This connects to more traditional practices, such as the production of Amadou <span class="badge rounded-pill bg-secondary">Amadou</span>, a felt-like material derived from different polypore fungi and historically used for making hats, clothing, and tinder. More recently, mushroom biomass is being used to create nanopaper <span class="badge rounded-pill bg-secondary">Nanopaper</span>, a high-performance, paper-like material made from nanofibers of the chitin–glucan fraction. As with composites, pure mycelium materials can also be kept metabolically active. These living materials respond to mechanical or optical stimulation and could potentially be used in wearable technology, environmental sensors, or even biocomputers.
+	</p>
+	<br>
+
+	<br>
+	<br>
+
+
+{% if user.is_superuser or user.is_authenticated %}
+	<h4>Growth methods</h4>
+	<p>
+
+	</p>
+	<br>
+
+
+
+
 	[Growth methods]
 	<br>
-	<span class="badge rounded-pill bg-FB">FB</span>
+	
 	<span class="badge rounded-pill bg-LSF">LSF</span>
 	<span class="badge rounded-pill bg-SSF">SSF</span>
+	<span class="badge rounded-pill bg-FB">FB</span>
 	<br>
 	[Topics]
 	<br>
@@ -102,6 +132,8 @@ Fungalmaterials is a collaborative database for fungal material references. This
 
 	<br>
 	<br>
+{% endif %}
+
 
 	{% if sankey_fig %}
 		<!-- Render the Sankey diagram here -->
@@ -109,7 +141,6 @@ Fungalmaterials is a collaborative database for fungal material references. This
 		    {{ sankey_fig|safe }}  <!-- Use safe to prevent auto-escaping -->
 		    <span class="small text-muted" style="font-size:12px"><i class="bi bi-info-circle"></i> Excluding articles without method or topic selected</span>
 		</div>
-		
 	{% endif %}
 </section>
 
