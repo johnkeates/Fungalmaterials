@@ -162,143 +162,141 @@ Fungalmaterials is a collaborative database for fungal material references. This
 </div>
 
 <!-- CHART -->
-      <script>
-        // Chart1 = Year most issues published
-        Highcharts.chart('chart1', {
-          chart: {
-            type: 'column'
-          },
-          title: {
-            text: ''
-          },
-          subtitle: {
-            text: ''
-          },
-          xAxis: {
-            categories: ['{{articles_year_order|join:"', '"}}'
-            ],
-            labels: {
-            	rotation: -45
-        	},
-         	title: {
-              text: 'Years',
-              style: {
-                fontFamily: '', // Default
-                fontSize: '16px',
-                color: 'black'
-              }
-            },
-            crosshair: true,
-            tickInterval: null, // Set this to null to use a flexible tick interval
-          },
-          yAxis: {
-            min: 0,
-            title: {
-              text: 'Articles',
-              style: {
-                fontFamily: '', // Default
-                fontSize: '16px',
-                color: 'black'
-              }
-            },
-            tickInterval: null,
-          },
-          tooltip: {
-            backgroundColor: 'rgba(232, 232, 232, 0.9)',
-            borderColor: 'black',
-            borderRadius: 5,
-            borderWidth: 1,
-            formatter: function () {
-              var numArticles = this.y;
-              if (numArticles === 1) {
-                  return this.point.category + '<br/>' + numArticles + ' article';
-              } else {
-                  return this.point.category + '<br/>' + numArticles + ' articles';
-              }
-            }
-          },
-          plotOptions: {
-            column: {
-                pointPadding: 0.1, // Set the padding between columns within a group
-                borderWidth: 0,
-                color: '#adb5bd' 
-            },
-          },
-          series: [{
-            data: [{{articles_year_count|join:", "}}]
-          }],
-          legend: {
-            enabled: false
-          }
-        });
-        // Chart2 = Year most issues published
-        Highcharts.chart('chart2', {
-          chart: {
-            type: 'column'
-          },
-          title: {
-            text: ''
-          },
-          subtitle: {
-            text: ''
-          },
-          xAxis: {
-            categories: ['{{reviews_year_order|join:"', '"}}'
-            ],
-            labels: {
-            	rotation: -45
-        	},
-          title: {
-              text: 'Years',
-              style: {
-                fontFamily: '', // Default
-                fontSize: '16px',
-                color: 'black'
-              }
-            },
-            crosshair: true,
-            tickInterval: null, // Set this to null to use a flexible tick interval
-          },
-          yAxis: {
-            min: 0,
-            title: {
-              text: 'Reviews',
-              style: {
-                fontFamily: '', // Default
-                fontSize: '16px',
-                color: 'black'
-              }
-            },
-            tickInterval: null,
-          },
-          tooltip: {
-            backgroundColor: 'rgba(232, 232, 232, 0.9)',
-            borderColor: 'black',
-            borderRadius: 5,
-            borderWidth: 1,
-            formatter: function () {
-              var numReviews = this.y;
-              if (numReviews === 1) {
-                  return this.point.category + '<br/>' + numReviews + ' reviews';
-              } else {
-                  return this.point.category + '<br/>' + numReviews + ' reviews';
-              }
-            }
-          },
-          plotOptions: {
-            column: {
-                pointPadding: 0.1, // Set the padding between columns within a group
-                borderWidth: 0,
-                color: '#adb5bd' 
-            },
-          },
-          series: [{
-            data: [{{reviews_year_count|join:", "}}]
-          }],
-          legend: {
-            enabled: false
-          }
-        });
+<script>
+// Chart1 = Year most issues published
+Highcharts.chart('chart1', {
+  chart: {
+    type: 'column'
+  },
+  title: {
+    text: ''
+  },
+  subtitle: {
+    text: ''
+  },
+  xAxis: {
+    categories: ['{{articles_year_order|join:"', '"}}'],
+    labels: {
+    	rotation: -45
+    },
+ 	  title: {
+      text: 'Years',
+      style: {
+        fontFamily: '', // Default
+        fontSize: '16px',
+        color: 'black'
+      }
+    },
+    crosshair: true,
+    tickInterval: null, // Set this to null to use a flexible tick interval
+  },
+  yAxis: {
+    min: 0,
+    title: {
+      text: 'Articles',
+      style: {
+        fontFamily: '', // Default
+        fontSize: '16px',
+        color: 'black'
+      }
+    },
+    tickInterval: null,
+  },
+  tooltip: {
+    backgroundColor: 'rgba(232, 232, 232, 0.9)',
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1,
+    formatter: function () {
+      var numArticles = this.y;
+      if (numArticles === 1) {
+          return this.point.category + '<br/>' + numArticles + ' article';
+      } else {
+          return this.point.category + '<br/>' + numArticles + ' articles';
+      }
+    }
+  },
+  plotOptions: {
+    column: {
+      pointPadding: 0.1, // Set the padding between columns within a group
+      borderWidth: 0,
+      color: '#adb5bd' 
+    },
+  },
+  series: [{
+    data: [{{articles_year_count|join:", "}}]
+  }],
+  legend: {
+    enabled: false
+  }
+});
+// Chart2 = Year most issues published
+Highcharts.chart('chart2', {
+  chart: {
+    type: 'column'
+  },
+  title: {
+    text: ''
+  },
+  subtitle: {
+    text: ''
+  },
+  xAxis: {
+    categories: ['{{reviews_year_order|join:"', '"}}'],
+    labels: {
+    	rotation: -45
+    },
+  title: {
+      text: 'Years',
+      style: {
+        fontFamily: '', // Default
+        fontSize: '16px',
+        color: 'black'
+      }
+    },
+    crosshair: true,
+    tickInterval: null, // Set this to null to use a flexible tick interval
+  },
+  yAxis: {
+    min: 0,
+    title: {
+      text: 'Reviews',
+      style: {
+        fontFamily: '', // Default
+        fontSize: '16px',
+        color: 'black'
+      }
+    },
+    tickInterval: null,
+  },
+  tooltip: {
+    backgroundColor: 'rgba(232, 232, 232, 0.9)',
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1,
+    formatter: function () {
+      var numReviews = this.y;
+      if (numReviews === 1) {
+          return this.point.category + '<br/>' + numReviews + ' reviews';
+      } else {
+          return this.point.category + '<br/>' + numReviews + ' reviews';
+      }
+    }
+  },
+  plotOptions: {
+    column: {
+      pointPadding: 0.1, // Set the padding between columns within a group
+      borderWidth: 0,
+      color: '#adb5bd' 
+    },
+  },
+  series: [{
+    data: [{{reviews_year_count|join:", "}}]
+  }],
+  legend: {
+    enabled: false
+  }
+});
 </script>
 
 
