@@ -49,6 +49,9 @@
 	    max-width: 275px;
 	    margin: 0 auto;
   	}
+    #chart1, #chart2 {
+        height: 300px;
+    }
 </style>
 
 <title>About | Fungalmaterials</title>
@@ -84,6 +87,22 @@ Fungalmaterials is a collaborative database for fungal material references. This
 	Fungal materials are bio-based materials derived from fungi, particularly the network of branching hyphae known as mycelium. These materials are formed either by combining fungal growth with lignocellulosic substrate to create composites or by cultivating pure fungal biomass. Fungal materials are gaining significant attention due to their sustainability, biodegradability, and wide-ranging functional properties. In recent years, interest in fungal materials has grown rapidly, as seen in the rise of scientific publications, patents, and start-ups in the field. Fungal materials are generally categorized into two types: mycelium composites and pure mycelium materials.	
 	</p>
 	<br>
+
+  	<!-- CHARTS -->
+	<div class="container mt-4">
+        <div class="row">
+            <!-- For screens ≥768px, each chart takes 6 columns (50% width) -->
+            <div class="col-12 col-md-6 mb-4">
+                <div id="chart1"></div>
+            </div>
+            <!-- For screens ≥768px, each chart takes 6 columns (50% width) -->
+            <div class="col-12 col-md-6 mb-4">
+                <div id="chart2"></div>
+            </div>
+        </div>
+    </div>
+ 	<br>
+ 	<br>
 
 	<h5>Mycelium composites</h5>
 	<p>
@@ -147,19 +166,151 @@ Fungalmaterials is a collaborative database for fungal material references. This
 <br>
 <br>
 
-<!-- <section id="material">
-	<h4>Dashboard</h4>
-
-	<br>
-	<br>
-
-</section> -->
-
-<br>
-<br>
-
 </div>
 
+<!-- CHART -->
+      <script>
+        // Chart1 = Year most issues published
+        Highcharts.chart('chart1', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: ''
+          },
+          subtitle: {
+            text: ''
+          },
+          xAxis: {
+            categories: ['{{articles_year_order|join:"', '"}}'
+            ],
+            labels: {
+            	rotation: -45
+        	},
+         	title: {
+              text: 'Years',
+              style: {
+                fontFamily: '', // Default
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'black'
+              }
+            },
+            crosshair: true,
+            tickInterval: null, // Set this to null to use a flexible tick interval
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: 'Articles',
+              style: {
+                fontFamily: '', // Default
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'black'
+              }
+            },
+            tickInterval: null,
+          },
+          tooltip: {
+            backgroundColor: 'rgba(232, 232, 232, 0.9)',
+            borderColor: 'black',
+            borderRadius: 5,
+            borderWidth: 1,
+            formatter: function () {
+              var numArticles = this.y;
+              if (numArticles === 1) {
+                  return this.point.category + '<br/>' + numArticles + ' article';
+              } else {
+                  return this.point.category + '<br/>' + numArticles + ' articles';
+              }
+            }
+          },
+          plotOptions: {
+            column: {
+                pointPadding: 0.1, // Set the padding between columns within a group
+                borderWidth: 0,
+                color: '#28a745' 
+            },
+          },
+          series: [{
+            data: [{{articles_year_count|join:", "}}]
+          }],
+          legend: {
+            enabled: false
+          }
+        });
+        // Chart2 = Year most issues published
+        Highcharts.chart('chart2', {
+          chart: {
+            type: 'column'
+          },
+          title: {
+            text: ''
+          },
+          subtitle: {
+            text: ''
+          },
+          xAxis: {
+            categories: ['{{reviews_year_order|join:"', '"}}'
+            ],
+            labels: {
+            	rotation: -45
+        	},
+          title: {
+              text: 'Years',
+              style: {
+                fontFamily: '', // Default
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'black'
+              }
+            },
+            crosshair: true,
+            tickInterval: null, // Set this to null to use a flexible tick interval
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: 'Reviews',
+              style: {
+                fontFamily: '', // Default
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: 'black'
+              }
+            },
+            tickInterval: null,
+          },
+          tooltip: {
+            backgroundColor: 'rgba(232, 232, 232, 0.9)',
+            borderColor: 'black',
+            borderRadius: 5,
+            borderWidth: 1,
+            formatter: function () {
+              var numReviews = this.y;
+              if (numReviews === 1) {
+                  return this.point.category + '<br/>' + numReviews + ' reviews';
+              } else {
+                  return this.point.category + '<br/>' + numReviews + ' reviews';
+              }
+            }
+          },
+          plotOptions: {
+            column: {
+                pointPadding: 0.1, // Set the padding between columns within a group
+                borderWidth: 0,
+                color: '#17a2b8' 
+            },
+          },
+          series: [{
+            data: [{{reviews_year_count|join:", "}}]
+          }],
+          legend: {
+            enabled: false
+          }
+        });
+</script>
 
 
 {% endblock %}

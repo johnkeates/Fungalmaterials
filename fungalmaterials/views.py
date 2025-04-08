@@ -692,9 +692,44 @@ def about(request):
     # # Use function to generate sankey figure
     # sankey_fig = generate_sankey(combination_list)
 
+
+    def add_missing_years(years, data):
+        all_years = []  # Create a list to store all years, including missing ones
+        data_with_missing = []  # Create a list to store the data for all years, including missing ones
+        if years:  # Check if there are any years
+            start = int(years[0])  # Get the start year and the end year
+            end = int(years[-1])
+            year_counts = defaultdict(int)  # Create a defaultdict to store the counts for each year
+            for count in data:  # Loop through the data and store the count for each year in the defaultdict
+                year_counts[int(count['year'])] = count['year__count']
+            for year in range(start,
+                              end + 1):  # Loop through the range of years and add each year to the list of all_years and its count (if available) or 0 to the list of data_with_missing
+                all_years.append(str(year))
+                data_with_missing.append(year_counts.get(year, 0))
+        return all_years, data_with_missing  # Return the lists of all_years and data_with_missing
+
+
+    # Articles chart
+    articles_year_order = Article.objects.all().values_list('year', flat=True).exclude(approved=False).order_by('year').distinct()
+    articles_year_order = list(articles_year_order)
+    articles_year_count = Article.objects.values('year').annotate(Count('year')).exclude(approved=False).order_by('year')
+    articles_year_order, articles_year_count= add_missing_years(articles_year_order, articles_year_count)  # Call the function to add missing years and add their counts as 0 to the data
+    articles_year_count = list(articles_year_count)
+
+    # Reviews chart
+    reviews_year_order = Review.objects.all().values_list('year', flat=True).exclude(approved=False).order_by('year').distinct()
+    reviews_year_order = list(reviews_year_order)
+    reviews_year_count = Review.objects.values('year').annotate(Count('year')).exclude(approved=False).order_by('year')
+    reviews_year_order, reviews_year_count= add_missing_years(reviews_year_order, reviews_year_count)  # Call the function to add missing years and add their counts as 0 to the data
+    reviews_year_count = list(reviews_year_count)
+
     context = {
         # 'sankey_fig': sankey_fig,
         # 'combination_list': combination_list,
+        'articles_year_order': articles_year_order,
+        'articles_year_count': articles_year_count,
+        'reviews_year_order': reviews_year_order,
+        'reviews_year_count': reviews_year_count,
     }
     return render(request, "fungalmaterials/about.html", context)
 
