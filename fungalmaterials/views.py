@@ -18,7 +18,7 @@ from habanero.filterhandler import switch
 from django.core import serializers
 from django.utils.safestring import mark_safe
 
-from fungalmaterials.functions import author_separation
+from fungalmaterials.functions import authorship_string_article, authorship_string_review
 from fungalmaterials.combinations import generate_sankey
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi, import_new_review_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
@@ -153,11 +153,8 @@ def articles_info(request, pk):
     article.title = mark_safe(article.title)
     article.abstract = mark_safe(article.abstract)
 
-    # Get all article authors
-    authors_list = article.authors.all()
-
     # Apply function to separate authors with "," or "&"
-    authors_list = author_separation(authors_list)
+    authors_list = authorship_string_article(article)
 
     # For species & substrate list
     sorted_species = []
@@ -289,11 +286,8 @@ def reviews_info(request, pk):
     review.title = mark_safe(review.title)
     review.abstract = mark_safe(review.abstract)
 
-    # Get all article authors
-    authors_list = review.authors.all()
-
     # Apply function to separate authors with "," or "&"
-    authors_list = author_separation(authors_list)
+    authors_list = authorship_string_review(review)
 
     context = {
         'review': review,
@@ -556,11 +550,41 @@ def species_search(request):
                         "count": f'{column_name_unique_values[search_pane_column_name][unique_value_name]}'
                     }, )
 
+
+            # FIXME: we re-calculate all data all the time, but present a small set to the client (browser)
+            # This is not amazing performance-wise but does make the browser very happy.
+
+
+            # This page size should be the same on the client (browser) and the server (this code)
+            PAGE_SIZE = 50
+
+            # If dataTables is doing something weird, we start a page/index 0
+            object_start = 0
+
+            if "start" in json_data:
+                if json_data["start"]:
+                    object_start = json_data["start"]
+
+            # Set up a paginator based on the prepared payload list:
+
+            paginator = Paginator(payload_data, PAGE_SIZE)
+
+            desired_page_number = (object_start // PAGE_SIZE) + 1
+
+            print(f"Species pagination status: {object_start}/{desired_page_number}")
+
+            try:
+                payload_data_page = paginator.page(desired_page_number)
+            except PageNotAnInteger:
+                payload_data_page = paginator.page(1)
+            except EmptyPage:
+                payload_data_page = paginator.page(paginator.num_pages)
+
             # Return the data as JSON for DataTable consumption
             return JsonResponse({
                 "recordsTotal": len(payload_data),  # Total record count
                 "recordsFiltered": len(payload_data),  # Filtered record count (same as total if no filtering)
-                'data': payload_data,  # Main payload data containing species and material details
+                'data': payload_data_page.object_list,  # Main payload data containing species and material details
                 'searchPanes': {"options": searchpanes_payload}
                 # 'property_names': serializers.serialize('json', payload_data)  # Include unique material property names
             })
