@@ -18,7 +18,7 @@ from habanero.filterhandler import switch
 from django.core import serializers
 from django.utils.safestring import mark_safe
 
-from fungalmaterials.functions import author_separation, authorship_string
+from fungalmaterials.functions import authorship_string_article, authorship_string_review
 from fungalmaterials.combinations import generate_sankey
 from fungalmaterials.doi import get_work_by_doi, import_new_article_by_doi, import_new_review_by_doi
 from fungalmaterials.forms import DOIImportForm, DOISearchForm
@@ -154,7 +154,7 @@ def articles_info(request, pk):
     article.abstract = mark_safe(article.abstract)
 
     # Apply function to separate authors with "," or "&"
-    authors_list = authorship_string(article)
+    authors_list = authorship_string_article(article)
 
     # For species & substrate list
     sorted_species = []
@@ -286,11 +286,8 @@ def reviews_info(request, pk):
     review.title = mark_safe(review.title)
     review.abstract = mark_safe(review.abstract)
 
-    # Get all article authors
-    authors_list = review.authors.all()
-
     # Apply function to separate authors with "," or "&"
-    authors_list = author_separation(authors_list)
+    authors_list = authorship_string_review(review)
 
     context = {
         'review': review,

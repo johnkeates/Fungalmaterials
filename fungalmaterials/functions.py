@@ -1,9 +1,8 @@
-from fungalmaterials.models import Article
+from django.db.models import QuerySet
+from fungalmaterials.models import Article, Review
 
-def authorship_string(article: Article):
-	# Load all authorships for the supplied article
-	authorships = article.articleauthorship_set.all()
 
+def authorship_string(authorships: QuerySet):
 	# Load two separate sets, one for 'first', one for the others
 	first_authorships = authorships.filter(sequence="first")
 	additional_authorships = authorships.filter(sequence="additional")
@@ -42,21 +41,15 @@ def authorship_string(article: Article):
 
 	return authors
 
-def author_separation(authors):
-	# Convert the QuerySet to a list
-	authors = list(authors)
 
-	# Check the number of authors
-	x = len(authors)
+# Article variant to get a nice list of authors in a string
+def authorship_string_article(article: Article):
+	# Load all authorships for the supplied article
+	authorships = article.articleauthorship_set.all()
+	return authorship_string(authorships)
 
-	# Handle different cases for the number of authors
-	if x == 0:
-		return ""
-	if x == 1:
-		return f"{authors[0].name} {authors[0].family}"
-	elif x == 2:
-		return f"{authors[0].name} {authors[0].family} & {authors[1].name} {authors[1].family}"
-	else:
-		# Join all authors except the last one with ', ', then add the last author with ' & '
-		result = ', '.join([f"{author.name} {author.family}" for author in authors[:-1]]) + f" & {authors[-1].name} {authors[-1].family}"
-		return result
+# Review variant to get a nice list of authors in a string
+def authorship_string_review(review: Review):
+	# Load all authorships for the supplied review
+	authorships = review.reviewauthorship_set.all()
+	return authorship_string(authorships)
