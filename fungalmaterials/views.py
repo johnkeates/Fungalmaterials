@@ -566,7 +566,6 @@ def species_search(request):
                     object_start = json_data["start"]
 
             # Set up a paginator based on the prepared payload list:
-
             paginator = Paginator(payload_data, PAGE_SIZE)
 
             desired_page_number = (object_start // PAGE_SIZE) + 1
